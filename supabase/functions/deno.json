@@ -1,0 +1,21 @@
+{
+  "tasks": {
+    "check": "deno check ai-health/index.ts interview/index.ts explain/index.ts _tests/*.ts _scripts/*.ts",
+    "test": "deno test --allow-env _tests/",
+    "smoke": "deno run --allow-net --allow-env _scripts/smoke.ts",
+    "lint": "deno lint && deno fmt --check"
+  },
+  "lock": false,
+  "nodeModulesDir": "none",
+  "fmt": {
+    "lineWidth": 160
+  },
+  "lint": {
+    "rules": {
+      "exclude": [
+        "no-explicit-any",
+        "no-import-prefix"
+      ]
+    }
+  }
+}
