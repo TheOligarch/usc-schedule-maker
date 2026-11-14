@@ -33,14 +33,12 @@ const INTERESTS: Record<string, string[]> = {
 
 const SCRIPT: Scripted[] = [
   { id: "interests", text: "For your open GE and elective slots, what sounds most interesting right now?", options: Object.keys(INTERESTS), allowFreeText: true, needsSlots: true },
-  { id: "workload", text: "How heavy should those open-slot classes be?", options: ["Keep it light", "Balanced", "Challenge me"], allowFreeText: true, needsSlots: true },
+  { id: "workload", text: "How difficult should those open-slot classes be?", options: ["Easy", "Moderate", "Challenging"], allowFreeText: true, needsSlots: true },
   { id: "format", text: "What kind of class do you learn best in?", options: ["Big lectures are fine", "Small and discussion-based", "Hands-on labs and projects", "No preference"], allowFreeText: true, needsSlots: true },
   { id: "daySpread", text: "How do you like your week laid out?", options: ["Stack classes on as few days as possible", "Spread them evenly across the week", "No strong preference"], allowFreeText: true },
   { id: "dayOff", text: "If you could keep one day free of classes, which would it be?", options: ["Friday", "Monday", "Any day works", "I don't need a day off"], allowFreeText: true },
   { id: "breaks", text: "On a class day, do you want classes back-to-back or with breathing room?", options: ["Back-to-back, get it done", "Short breaks between classes", "Long gaps are fine", "No preference"], allowFreeText: true },
   { id: "maxGap", text: "What is the longest gap between two classes you would tolerate?", options: ["1 hour", "2 hours", "3 hours", "Doesn't matter"], allowFreeText: true },
-  { id: "mornings", text: "When do you actually function?", options: ["Early bird - 8 AM is fine", "Not before 10 AM", "Afternoons and evenings"], allowFreeText: true },
-  { id: "evenings", text: "How late are you willing to be in class?", options: ["Done by 4 PM", "Done by 6 PM", "Evenings are fine"], allowFreeText: true },
   { id: "anythingElse", text: "Last one: anything else the ranking should favor?", options: ["Great professors above all", "Open seats - I register late", "A free lunch hour", "Nope, that's everything"], allowFreeText: true },
 ];
 
@@ -54,8 +52,6 @@ function derivePreferences(history: InterviewHistoryItem[]): Preferences {
   const breaks = answerOf(history, "breaks");
   const gap = answerOf(history, "maxGap");
   const off = answerOf(history, "dayOff");
-  const morning = answerOf(history, "mornings");
-  const evening = answerOf(history, "evenings");
   const notes = history
     .map((h) => h.freeText?.trim())
     .filter((x): x is string => Boolean(x))
@@ -66,8 +62,9 @@ function derivePreferences(history: InterviewHistoryItem[]): Preferences {
     breaks: breaks.startsWith("Back") ? "avoid" : breaks.startsWith("Short") || breaks.startsWith("Long") ? "prefer" : "neutral",
     maxGapMinutes: gap.startsWith("1") ? 60 : gap.startsWith("2") ? 120 : gap.startsWith("3") ? 180 : null,
     preferredDaysOff,
-    comfortStart: morning.startsWith("Not before") ? "10:00" : morning.startsWith("Afternoons") ? "12:00" : null,
-    comfortEnd: evening.startsWith("Done by 4") ? "16:00" : evening.startsWith("Done by 6") ? "18:00" : null,
+    // Start and end times come from the allowed-times calendar, so the interview does not ask.
+    comfortStart: null,
+    comfortEnd: null,
     notes: notes || null,
   };
 }
@@ -102,15 +99,15 @@ function buildShortlists(req: InterviewRequest, data: TermData): Shortlist[] {
       const hasDiscussion = c.sectionIds.some((id) => data.sections[id]?.type === "DIS");
       const hasLab = c.sectionIds.some((id) => ["LAB", "LEC-LAB"].includes(data.sections[id]?.type ?? ""));
       let score = hits.length * 3 + (best ?? 3.5);
-      if (workload.startsWith("Keep") && easiest !== null) score += (5 - easiest) * 0.8;
-      if (workload.startsWith("Challenge") && easiest !== null) score += easiest * 0.5;
+      if (workload.startsWith("Easy") && easiest !== null) score += (5 - easiest) * 0.8;
+      if (workload.startsWith("Challenging") && easiest !== null) score += easiest * 0.5;
       if (format.startsWith("Small") && hasDiscussion) score += 1;
       if (format.startsWith("Hands-on") && hasLab) score += 1.5;
       if (slot.kind === "elective" && c.ge.length > 0) score -= 1;
       const reasons: string[] = [];
       if (hits.length) reasons.push(`matches your interest in ${interest.split(/[,&]/)[0].trim().toLowerCase() || "this area"}`);
       if (best !== null) reasons.push(`lecture instructor rated ${best.toFixed(1)} on RateMyProfessors`);
-      if (workload.startsWith("Keep") && easiest !== null && easiest <= 2.8) reasons.push("students report a lighter workload");
+      if (workload.startsWith("Easy") && easiest !== null && easiest <= 2.8) reasons.push("students report a lighter workload");
       if (slot.kind === "GE" && c.ge.length) reasons.push(`counts for ${c.ge.map(geShort).join(", ")}`);
       if (!reasons.length) reasons.push("fits this slot and has open sections");
       const reason = reasons.join("; ");

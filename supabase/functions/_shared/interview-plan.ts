@@ -1,17 +1,14 @@
 // The interview's shape, decided in code rather than by the model: which topics
 // are asked, in what order, and how they fit in the 10-question budget. Also the
 // built-in questions and answer parsing used when the model is unavailable.
-import { Day, DAYS, HHMM, HHMM_RE, HistoryItem, InterviewRequest, MAX_QUESTIONS, Preferences, Question, Slot } from "./types.ts";
+import { Day, DAYS, HHMM, HistoryItem, InterviewRequest, MAX_QUESTIONS, Preferences, Question, Slot } from "./types.ts";
 
 export type CoreKind =
   | "day-spread"
   | "breaks"
   | "max-gap"
   | "breaks-and-gap"
-  | "days-off"
-  | "start-time"
-  | "end-time"
-  | "comfort-hours";
+  | "days-off";
 
 export type Topic =
   | { id: string; kind: CoreKind; goal: string }
@@ -23,16 +20,13 @@ const CORE_GOALS: Record<CoreKind, string> = {
   "max-gap": "The longest gap between two classes on the same day they would accept.",
   "breaks-and-gap": "Whether they want back-to-back classes or breaks, and the longest gap they would accept.",
   "days-off": "Which weekdays, if any, they would like to keep free of classes.",
-  "start-time": "The earliest time they are comfortable starting class.",
-  "end-time": "The latest time they are comfortable finishing class.",
-  "comfort-hours": "The earliest start and latest finish they are comfortable with.",
 };
 
 function coreKinds(slotCount: number): CoreKind[] {
-  // Fewer, merged schedule questions as open slots take more of the budget.
-  if (slotCount <= 4) return ["day-spread", "breaks", "max-gap", "days-off", "start-time", "end-time"];
-  if (slotCount === 5) return ["day-spread", "breaks", "max-gap", "days-off", "comfort-hours"];
-  return ["day-spread", "breaks-and-gap", "days-off", "comfort-hours"];
+  // Start and end times come from the student's allowed-times calendar, so they are never asked.
+  // Merge the break questions once open slots would otherwise take the whole budget.
+  if (slotCount <= MAX_QUESTIONS - 4) return ["day-spread", "breaks", "max-gap", "days-off"];
+  return ["day-spread", "breaks-and-gap", "days-off"];
 }
 
 /** Splits slot indexes into at most `groups` consecutive, evenly sized groups. */
@@ -115,21 +109,7 @@ export function parseTimes(text: string): HHMM[] {
 
 // ---------- built-in questions (used when the model cannot answer) ----------
 
-function hourOptions(from: number, to: number, count: number, direction: "up" | "down"): string[] {
-  const out: string[] = [];
-  const first = direction === "up" ? Math.ceil(from / 60) * 60 : Math.floor(to / 60) * 60;
-  for (let i = 0; i < count; i++) {
-    const t = first + (direction === "up" ? i : -i) * 60;
-    if (t < from || t > to) break;
-    out.push(to12h(fromMinutes(t)));
-  }
-  return direction === "up" ? out : out.reverse();
-}
-
 export function fallbackQuestion(topic: Topic, req: InterviewRequest): Question {
-  const lo = req.hardHours ? toMinutes(req.hardHours.earliestStart) : 8 * 60;
-  const hi = req.hardHours ? toMinutes(req.hardHours.latestEnd) : 21 * 60;
-  const mid = (lo + hi) / 2;
   const q = (text: string, options: string[]): Question => ({ id: topic.id, text, options, allowFreeText: true });
 
   switch (topic.kind) {
@@ -167,27 +147,6 @@ export function fallbackQuestion(topic: Topic, req: InterviewRequest): Question 
         "Monday and Friday",
         "No day off needed",
       ]);
-    case "start-time":
-      return q("What is the earliest you would comfortably start class?", [
-        ...hourOptions(lo, Math.max(lo, mid), 4, "up"),
-        "No preference",
-      ]);
-    case "end-time":
-      return q("What is the latest you would comfortably finish class?", [
-        ...hourOptions(Math.min(hi, mid), hi, 4, "down"),
-        "No preference",
-      ]);
-    case "comfort-hours": {
-      const third = (hi - lo) / 3;
-      const a = to12h(fromMinutes(Math.round((lo + third) / 60) * 60));
-      const b = to12h(fromMinutes(Math.round((hi - third) / 60) * 60));
-      return q("Which part of the day do you prefer for classes?", [
-        `Earlier in the day, done by ${b}`,
-        `Middle of the day, ${a} to ${b}`,
-        `Later in the day, start after ${a}`,
-        "No preference",
-      ]);
-    }
     case "slots": {
       const labels = topic.slotIndexes.map((i) => req.slots[i].label).join(" and ");
       return q(`What kind of topics interest you for ${labels}?`, [
@@ -248,7 +207,6 @@ export function fallbackPreferences(plan: Topic[], req: InterviewRequest): Prefe
     const text = [item.answer, item.freeText].filter(Boolean).join(". ");
     if (item.freeText?.trim()) notes.push(item.freeText.trim());
     if (!topic || topic.kind === "slots") continue;
-    const times = parseTimes(text);
 
     if (topic.kind === "day-spread") {
       if (/few|stack|compact|pack|cluster/i.test(text)) prefs.daySpread = "compact";
@@ -265,17 +223,10 @@ export function fallbackPreferences(plan: Topic[], req: InterviewRequest): Prefe
       // "No day off needed" names no day, so it correctly yields none.
       prefs.preferredDaysOff = DAY_WORDS.filter(([re]) => re.test(text)).map(([, day]) => day);
     }
-    if (topic.kind === "start-time" && times.length) prefs.comfortStart = times[0];
-    if (topic.kind === "end-time" && times.length) prefs.comfortEnd = times[0];
-    if (topic.kind === "comfort-hours" && times.length) {
-      if (times.length >= 2) [prefs.comfortStart, prefs.comfortEnd] = times;
-      else if (/start|after|later/i.test(text)) prefs.comfortStart = times[0];
-      else prefs.comfortEnd = times[0];
-    }
   }
 
   prefs.notes = notes.length ? notes.join(" ").slice(0, 500) : null;
-  return sanitizePreferences(prefs, req.hardHours);
+  return sanitizePreferences(prefs);
 }
 
 /** Forces any preferences object (model- or rule-made) into contract-valid values. */
@@ -289,24 +240,8 @@ export function sanitizePreferences(
     comfortEnd: string | null;
     notes: string | null;
   },
-  hardHours?: { earliestStart: HHMM; latestEnd: HHMM },
 ): Preferences {
   const oneOf = <T extends string>(v: string, allowed: readonly T[], fallback: T): T => (allowed as readonly string[]).includes(v) ? (v as T) : fallback;
-  const time = (v: string | null): HHMM | null => (v && HHMM_RE.test(v) ? v : null);
-
-  let start = time(raw.comfortStart);
-  let end = time(raw.comfortEnd);
-  if (hardHours) {
-    const lo = toMinutes(hardHours.earliestStart);
-    const hi = toMinutes(hardHours.latestEnd);
-    if (start) start = fromMinutes(Math.min(Math.max(toMinutes(start), lo), hi));
-    if (end) end = fromMinutes(Math.min(Math.max(toMinutes(end), lo), hi));
-  }
-  if (start && end && toMinutes(start) >= toMinutes(end)) {
-    start = null;
-    end = null;
-  }
-
   const gap = raw.maxGapMinutes;
   const notes = raw.notes?.trim();
   return {
@@ -314,8 +249,9 @@ export function sanitizePreferences(
     breaks: oneOf(raw.breaks, ["avoid", "neutral", "prefer"] as const, "neutral"),
     maxGapMinutes: typeof gap === "number" && Number.isFinite(gap) && gap >= 0 && gap <= 720 ? Math.round(gap) : null,
     preferredDaysOff: DAYS.filter((d) => raw.preferredDaysOff.includes(d)),
-    comfortStart: start,
-    comfortEnd: end,
+    // Start and end times come from the allowed-times calendar, never the interview.
+    comfortStart: null,
+    comfortEnd: null,
     notes: notes ? notes.slice(0, 500) : null,
   };
 }
@@ -329,8 +265,6 @@ export function describePreferences(p: Preferences): string[] {
   if (p.breaks === "prefer") out.push("You like having breaks between classes.");
   if (p.maxGapMinutes !== null) out.push(`You want gaps between classes to stay under ${p.maxGapMinutes} minutes.`);
   if (p.preferredDaysOff.length) out.push(`You would like ${p.preferredDaysOff.join(" and ")} free of classes.`);
-  if (p.comfortStart) out.push(`You prefer not to start before ${to12h(p.comfortStart)}.`);
-  if (p.comfortEnd) out.push(`You prefer to be done by ${to12h(p.comfortEnd)}.`);
   if (!out.length) out.push("You have no strong preferences about how your week is laid out.");
   return out;
 }
