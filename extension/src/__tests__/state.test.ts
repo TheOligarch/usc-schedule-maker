@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allowedTimes, buildRequest, defaultState } from "../state";
+import { allowedTimes, buildRequest, defaultState, STEPS } from "../state";
 
 describe("allowed times", () => {
   it("applies the global default to weekdays, honours per-day overrides and days off", () => {
@@ -35,5 +35,12 @@ describe("buildRequest", () => {
     ]);
     expect(req.preferences.daySpread).toBe("compact");
     expect(req.unitCap).toBe(18);
+  });
+});
+
+describe("step order", () => {
+  it("starts on Requirements, then Priorities, Interview, Results", () => {
+    expect(STEPS.map((s) => s.id)).toEqual(["requirements", "priorities", "interview", "results"]);
+    expect(defaultState().step).toBe("requirements");
   });
 });

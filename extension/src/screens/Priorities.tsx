@@ -1,6 +1,4 @@
-import type { Importance, TermRef } from "../lib/contract-types";
-import { relativeTime } from "../lib/time";
-import type { DataSource } from "../lib/termData";
+import type { Importance } from "../lib/contract-types";
 import { Card, Icon, StepFooter } from "../components/ui";
 
 const FACTORS: { key: keyof Importance; label: string; low: string; high: string; help: string }[] = [
@@ -12,17 +10,13 @@ const FACTORS: { key: keyof Importance; label: string; low: string; high: string
 ];
 
 interface Props {
-  terms: TermRef[];
-  termCode: string | null;
-  source: DataSource | null;
   importance: Importance;
-  onTerm: (code: string) => void;
   onImportance: (next: Importance) => void;
+  onBack: () => void;
   onNext: () => void;
-  canContinue: boolean;
 }
 
-export function Priorities({ terms, termCode, source, importance, onTerm, onImportance, onNext, canContinue }: Props) {
+export function Priorities({ importance, onImportance, onBack, onNext }: Props) {
   return (
     <div className="screen">
       <div className="intro">
@@ -32,20 +26,6 @@ export function Priorities({ terms, termCode, source, importance, onTerm, onImpo
           how well they fit you.
         </p>
       </div>
-
-      <Card title="Term" subtitle={source === "sample" ? "Live course data has not been published yet, so a sample term is shown." : "Course data refreshes nightly from the USC Schedule of Classes."}>
-        <div className="term-picker" role="radiogroup" aria-label="Term">
-          {terms.map((t) => (
-            <button key={t.code} type="button" role="radio" aria-checked={t.code === termCode} className={`term-option ${t.code === termCode ? "on" : ""}`} onClick={() => onTerm(t.code)}>
-              <Icon name="calendar" />
-              <span>
-                <strong>{t.name}</strong>
-                <span className="muted small">updated {relativeTime(t.scrapedAt)}</span>
-              </span>
-            </button>
-          ))}
-        </div>
-      </Card>
 
       <Card title="What matters to you?" subtitle="Rate each factor from 1 (don't care) to 10 (top priority). These weights decide how schedules are ranked; they never remove a schedule.">
         <div className="sliders">
@@ -81,9 +61,14 @@ export function Priorities({ terms, termCode, source, importance, onTerm, onImpo
       </Card>
 
       <StepFooter
+        back={
+          <button type="button" className="btn btn-ghost" onClick={onBack}>
+            <Icon name="arrowLeft" /> Back
+          </button>
+        }
         next={
-          <button type="button" className="btn btn-primary" disabled={!canContinue} onClick={onNext}>
-            Next: requirements <Icon name="arrowRight" />
+          <button type="button" className="btn btn-primary" onClick={onNext}>
+            Next: interview <Icon name="arrowRight" />
           </button>
         }
       />

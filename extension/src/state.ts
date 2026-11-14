@@ -3,10 +3,10 @@ import { DEFAULT_RESULT_LIMIT, MAX_RESULT_LIMIT } from "./lib/config";
 import type { Block, Day, Importance, InterviewHistoryItem, Preferences, ScheduleRequest, Shortlist } from "./lib/contract-types";
 import { DAYS, normalizeBlocks } from "./lib/time";
 
-export type StepId = "priorities" | "requirements" | "interview" | "results";
+export type StepId = "requirements" | "priorities" | "interview" | "results";
 export const STEPS: { id: StepId; label: string; hint: string }[] = [
-  { id: "priorities", label: "Priorities", hint: "What matters to you" },
   { id: "requirements", label: "Requirements", hint: "Courses and times" },
+  { id: "priorities", label: "Priorities", hint: "What matters to you" },
   { id: "interview", label: "Interview", hint: "10 quick questions" },
   { id: "results", label: "Schedules", hint: "Ranked for you" },
 ];
@@ -62,7 +62,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
 export function defaultState(): AppState {
   return {
     version: 2,
-    step: "priorities",
+    step: "requirements",
     termCode: null,
     importance: { rmp: 5, daySpread: 5, breaks: 5, seatRisk: 5, finals: 5 },
     required: [],

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import type { TermData } from "../lib/contract-types";
 import { geCategories, geLabel, geShort, unitsLabel } from "../lib/schedule";
 import { allowedTimes, newSlotId, type AppState, type SlotDef, type TimesState } from "../state";
@@ -12,11 +12,12 @@ interface Props {
   data: TermData;
   state: AppState;
   onChange: (patch: Partial<AppState>) => void;
-  onBack: () => void;
+  /** Rendered above the course cards (the term picker). */
+  header?: ReactNode;
   onNext: () => void;
 }
 
-export function Requirements({ data, state, onChange, onBack, onNext }: Props) {
+export function Requirements({ data, state, onChange, header, onNext }: Props) {
   const exclude = useMemo(() => new Set(state.required), [state.required]);
   const categories = useMemo(() => geCategories(data), [data]);
   const [geChoice, setGeChoice] = useState<string>(categories[0] ?? "");
@@ -35,6 +36,7 @@ export function Requirements({ data, state, onChange, onBack, onNext }: Props) {
 
   return (
     <div className="screen">
+      {header}
       <div className="grid-2">
         <Card
           title="Required courses"
@@ -168,16 +170,11 @@ export function Requirements({ data, state, onChange, onBack, onNext }: Props) {
       </Card>
 
       <StepFooter
-        back={
-          <button type="button" className="btn btn-ghost" onClick={onBack}>
-            <Icon name="arrowLeft" /> Back
-          </button>
-        }
         next={
           <>
             {nothing && <span className="muted small footer-hint">Add a course or a slot to continue</span>}
             <button type="button" className="btn btn-primary" disabled={nothing} onClick={onNext}>
-              Next: interview <Icon name="arrowRight" />
+              Next: priorities <Icon name="arrowRight" />
             </button>
           </>
         }

@@ -6,6 +6,7 @@ import { loadTermData, loadTermIndex, type DataSource, type LoadedIndex } from "
 import { relativeTime } from "./lib/time";
 import { defaultState, loadState, saveState, STEPS, type AppState, type StepId } from "./state";
 import { Icon, Notice, Spinner, Stepper } from "./components/ui";
+import { TermPicker } from "./components/TermPicker";
 import { Priorities } from "./screens/Priorities";
 import { Requirements } from "./screens/Requirements";
 import { Interview } from "./screens/Interview";
@@ -62,10 +63,9 @@ export function App({ embedded }: { embedded: boolean }) {
   const data = term && term.code === state.termCode ? term.data : null;
   const hasCourses = state.required.length + state.slots.length > 0;
   const canVisit = (id: StepId): boolean => {
-    if (id === "priorities") return true;
-    if (!data) return false;
     if (id === "requirements") return true;
-    if (id === "interview") return hasCourses;
+    if (!data) return false;
+    if (id === "priorities" || id === "interview") return hasCourses;
     return hasCourses && state.interview !== null;
   };
   const go = (step: StepId) => {
@@ -73,7 +73,7 @@ export function App({ embedded }: { embedded: boolean }) {
     update({ step });
     window.scrollTo({ top: 0 });
   };
-  const step = canVisit(state.step) ? state.step : "priorities";
+  const step = canVisit(state.step) ? state.step : "requirements";
 
   const changeTerm = (code: string) => {
     if (code === state.termCode) return;
@@ -117,7 +117,7 @@ export function App({ embedded }: { embedded: boolean }) {
       <Stepper current={step} canVisit={canVisit} onVisit={go} />
 
       <main className="content" id="main">
-        {index?.note && index.source === "cached" && step === "priorities" && <Notice tone="warn">{index.note}</Notice>}
+        {index?.note && index.source === "cached" && step === "requirements" && <Notice tone="warn">{index.note}</Notice>}
         {termError && (
           <Notice
             tone="error"
@@ -132,22 +132,22 @@ export function App({ embedded }: { embedded: boolean }) {
         )}
         {!index && <Spinner label="Loading terms..." />}
 
-        {index && step === "priorities" && (
-          <Priorities
-            terms={index.index.terms}
-            termCode={state.termCode}
-            source={source}
-            importance={state.importance}
-            onTerm={changeTerm}
-            onImportance={(importance) => update({ importance })}
-            onNext={() => go("requirements")}
-            canContinue={Boolean(data)}
-          />
-        )}
-        {data && step === "requirements" && <Requirements data={data} state={state} onChange={update} onBack={() => go("priorities")} onNext={() => go("interview")} />}
-        {data && step === "interview" && <Interview data={data} sampleData={term?.source === "sample"} state={state} onChange={update} onBack={() => go("requirements")} onNext={() => go("results")} />}
+        {index && step === "requirements" &&
+          (() => {
+            const picker = <TermPicker terms={index.index.terms} termCode={state.termCode} source={source} onTerm={changeTerm} />;
+            return data ? (
+              <Requirements data={data} state={state} onChange={update} header={picker} onNext={() => go("priorities")} />
+            ) : (
+              <div className="screen">
+                {picker}
+                {!termError && <Spinner label="Loading course data..." />}
+              </div>
+            );
+          })()}
+        {data && step === "priorities" && <Priorities importance={state.importance} onImportance={(importance) => update({ importance })} onBack={() => go("requirements")} onNext={() => go("interview")} />}
+        {data && step === "interview" && <Interview data={data} sampleData={term?.source === "sample"} state={state} onChange={update} onBack={() => go("priorities")} onNext={() => go("results")} />}
         {data && step === "results" && <Results data={data} state={state} onChange={update} onEdit={go} />}
-        {index && !data && step !== "priorities" && !termError && <Spinner label="Loading course data..." />}
+        {index && !data && step !== "requirements" && !termError && <Spinner label="Loading course data..." />}
       </main>
 
       <footer className="app-footer small muted">
