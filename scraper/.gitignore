@@ -1,4 +1,6 @@
 node_modules/
-.env
+# Any env file or editor backup of one (.env, .env~, .env.local, ...) holds secrets.
+.env*
+!.env.example
 .cache/
 out/
