@@ -8,6 +8,8 @@
  * than by one hard-coded selector, and a floating launcher is used if none is found.
  */
 
+import { pinUnselectedLook, selectOurTab, TAB_FOCUS_CSS } from "./tabHighlight";
+
 const TAB_ID = "usm-tab";
 const PANEL_ID = "usm-panel";
 const LAUNCHER_ID = "usm-launcher";
@@ -16,6 +18,7 @@ const NAV_LINK_RE = /departments|coursebin|calendar|checkout|registration/i;
 
 let isOpen = false;
 let navBottom = 0;
+let restoreSelection: (() => void) | null = null;
 
 function findNavList(): HTMLUListElement | null {
   const lists = Array.from(document.querySelectorAll<HTMLUListElement>("ul.nav-tabs, ul.navbar-nav, ul.nav, nav ul, #header ul"));
@@ -78,19 +81,10 @@ function setOpen(next: boolean, anchor: Element | null) {
   document.documentElement.style.overflow = isOpen ? "hidden" : "";
   const tab = document.getElementById(TAB_ID);
   if (tab) {
-    tab.classList.toggle("active", isOpen);
-    tab.querySelector("a")?.setAttribute("aria-current", isOpen ? "page" : "false");
-    // Only one tab should look selected while our panel is showing.
-    for (const sibling of Array.from(tab.parentElement?.children ?? [])) {
-      if (sibling === tab) continue;
-      if (isOpen && sibling.classList.contains("active")) {
-        sibling.classList.remove("active");
-        sibling.setAttribute("data-usm-was-active", "1");
-      } else if (!isOpen && sibling.hasAttribute("data-usm-was-active")) {
-        sibling.classList.add("active");
-        sibling.removeAttribute("data-usm-was-active");
-      }
-    }
+    // Only one tab should look selected while our panel is showing: ours, in WebReg's
+    // own selected style. Closing puts WebReg's selected tab back exactly as it was.
+    restoreSelection?.();
+    restoreSelection = isOpen ? selectOurTab(tab) : null;
   }
   const launcher = document.getElementById(LAUNCHER_ID);
   if (launcher) launcher.textContent = isOpen ? "Close Schedule Maker" : "Schedule Maker";
@@ -124,11 +118,17 @@ function injectTab(list: HTMLUListElement): void {
   });
   if (calendar) {
     list.insertBefore(li, calendar.nextSibling);
-    return;
+  } else {
+    // Fallback: keep right-aligned dropdowns (myInfo, term picker) last.
+    const firstDropdown = Array.from(list.children).find((c) => c.classList.contains("dropdown") || c.classList.contains("navbar-right"));
+    list.insertBefore(li, firstDropdown ?? null);
   }
-  // Fallback: keep right-aligned dropdowns (myInfo, term picker) last.
-  const firstDropdown = Array.from(list.children).find((c) => c.classList.contains("dropdown") || c.classList.contains("navbar-right"));
-  list.insertBefore(li, firstDropdown ?? null);
+  // Look like an ordinary WebReg tab, without Bootstrap's grey :focus box or focus ring.
+  const style = document.createElement("style");
+  style.id = `${TAB_ID}-style`;
+  style.textContent = TAB_FOCUS_CSS(TAB_ID);
+  document.head.appendChild(style);
+  pinUnselectedLook(li);
 }
 
 function injectLauncher(): void {
