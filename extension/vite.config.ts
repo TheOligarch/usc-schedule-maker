@@ -13,5 +13,6 @@ export default defineConfig({
     target: "es2022",
     chunkSizeWarningLimit: 900,
   },
-  server: { port: 5173 },
+  // The schedule engine lives in ../engine (usm-engine) and is imported from source.
+  server: { port: 5173, fs: { allow: [".", "../engine"] } },
 });

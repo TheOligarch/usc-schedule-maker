@@ -54,22 +54,20 @@ export function Results({ data, state, onChange, onEdit }: Props) {
 
   // Build schedules whenever the request or the limit changes.
   useEffect(() => {
-    let cancelled = false;
+    const ctrl = new AbortController();
     setRunning(true);
     setEngineError(null);
-    generateSchedules(data, JSON.parse(requestKey), { limit: state.limit })
+    generateSchedules(data, JSON.parse(requestKey), { limit: state.limit, signal: ctrl.signal })
       .then((r) => {
-        if (!cancelled) setRun(r);
+        if (!ctrl.signal.aborted) setRun(r);
       })
       .catch((err: unknown) => {
-        if (!cancelled) setEngineError(err instanceof Error ? err.message : String(err));
+        if (!ctrl.signal.aborted) setEngineError(err instanceof Error ? err.message : String(err));
       })
       .finally(() => {
-        if (!cancelled) setRunning(false);
+        if (!ctrl.signal.aborted) setRunning(false);
       });
-    return () => {
-      cancelled = true;
-    };
+    return () => ctrl.abort();
   }, [data, requestKey, state.limit]);
 
   const schedules = run?.result.schedules ?? [];
@@ -153,7 +151,11 @@ export function Results({ data, state, onChange, onEdit }: Props) {
       <aside className="sched-sidebar" aria-label="Ranked schedules">
         <div className="sidebar-head">
           <div>
-            <strong className="big-num">{total.toLocaleString()}</strong> schedule{total === 1 ? "" : "s"} fit
+            <strong className="big-num">
+              {total.toLocaleString()}
+              {run.truncated ? "+" : ""}
+            </strong>{" "}
+            schedule{total === 1 ? "" : "s"} fit
             <div className="muted small">
               {run.isMock ? "demo engine · " : ""}built in {run.elapsedMs} ms
             </div>
