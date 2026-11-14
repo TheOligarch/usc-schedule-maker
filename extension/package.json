@@ -1,0 +1,35 @@
+{
+  "name": "usc-schedule-maker-extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "USC Schedule Maker - Chrome extension UI (WebReg tab + standalone dev page)",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build:app": "vite build",
+    "build:scripts": "vite build --config vite.scripts.config.ts --mode content && vite build --config vite.scripts.config.ts --mode background",
+    "build": "npm run typecheck && npm run build:app && npm run build:scripts",
+    "zip": "node scripts/zip.mjs",
+    "release": "VITE_USE_MOCKS=false npm run build && npm run zip",
+    "icons": "node scripts/make-icons.mjs"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.3.7",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "fflate": "^0.8.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  }
+}
