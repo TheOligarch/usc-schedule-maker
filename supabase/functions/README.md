@@ -10,8 +10,9 @@ URL: `https://mmdvgvpckweiklkbuxvy.supabase.co/functions/v1/`. CORS is open.
 | `explain`   | POST   | 1-2 sentence "why this ranks here" for each of the top <= 10 schedules                                      |
 
 Request and response shapes are in `_shared/types.ts` and follow section 5 of the shared build contract. `interview` also accepts an optional
-`hardHours: { earliestStart, latestEnd }` (24h `HH:MM`) so its time questions and comfort hours stay inside the student's hard window. Every response carries an
-`x-usm-ai-source: ai | fallback` header: when the model is unavailable, the functions still answer from built-in questions and rules instead of failing.
+`hardHours: { earliestStart, latestEnd }` (24h `HH:MM`) so any times it mentions stay inside the student's hard window; it never asks about start or end times
+and always returns null comfort hours. Every response carries an `x-usm-ai-source: ai | fallback` header: when the model is unavailable, the functions still
+answer from built-in questions and rules instead of failing.
 
 ## Changing the model
 

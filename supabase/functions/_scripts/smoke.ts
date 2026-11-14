@@ -91,6 +91,8 @@ if (finished) {
   check("one shortlist per slot, in order", finished.shortlists?.length === 2 && finished.shortlists[0].label === interview.slots[0].label);
   check("shortlists have at most 5 options", finished.shortlists.every((s: any) => s.options.length <= 5));
   check("summary has bullets", Array.isArray(finished.summary) && finished.summary.length > 0);
+  check("interview never asks about start or end times", !interview.history.some((h) => /start-time|end-time|comfort-hours/.test(h.questionId)));
+  check("comfort hours come back null", finished.preferences?.comfortStart === null && finished.preferences?.comfortEnd === null);
 }
 
 const invalid = await post("interview", { termCode: TERM });
