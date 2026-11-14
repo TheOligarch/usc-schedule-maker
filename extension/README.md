@@ -1,13 +1,13 @@
 # USC Schedule Maker - Chrome extension
 
-Adds a **Schedule Maker** tab to USC WebReg. Students set hard rules (courses, GE/elective slots, unit cap, minimum professor rating, allowed class times), answer a short AI interview, and click through every schedule that fits, ranked by what they actually want.
+Adds a **myScheduleMaker** tab to USC WebReg, immediately to the right of **myCalendar**. Students set hard rules (courses, GE/elective slots, unit cap, minimum professor rating, allowed class times), answer a short AI interview, and compare schedules ranked by what they actually want.
 
 ## Install (load unpacked)
 
-1. Download `release/usc-schedule-maker.zip` from this repo and unzip it.
+1. [Download the release ZIP](https://github.com/TheOligarch/usc-schedule-maker/raw/refs/heads/main/extension/release/usc-schedule-maker.zip) and unzip it.
 2. Open `chrome://extensions`, turn on **Developer mode** (top right).
 3. Click **Load unpacked** and pick the unzipped folder (the one containing `manifest.json`).
-4. Open <https://webreg.usc.edu>, sign in, and click the **Schedule Maker** tab in the top navigation. You can also click the toolbar icon to open the app in its own tab without signing in.
+4. Open <https://webreg.usc.edu>, sign in, refresh the page if already open, and click **myScheduleMaker** to the right of **myCalendar**. You can also click the extension's toolbar icon to open the app in its own tab without signing in.
 
 ## Develop
 
@@ -15,7 +15,7 @@ Node 20+.
 
 ```sh
 cd extension
-npm install
+npm ci
 cp .env.example .env   # then paste the Supabase anon key (public, but never committed)
 npm run dev            # standalone page at http://localhost:5173, no login needed
 npm test               # unit tests (vitest)
@@ -31,7 +31,7 @@ npm run release        # typecheck + build dist/ + write release/usc-schedule-ma
 |---|---|
 | WebReg tab + panel (content script) | `src/content/content.ts` |
 | Live seat counts from classes.usc.edu, toolbar icon (service worker) | `src/background/background.ts` |
-| React app: priorities, requirements, interview, results | `src/App.tsx`, `src/screens/*` |
+| React app: requirements, priorities, interview, results | `src/App.tsx`, `src/screens/*` |
 | Allowed-times drag calendar | `src/components/TimeGrid.tsx` |
 | Schedule Builder-style week view | `src/components/WeekCalendar.tsx` |
 | Term data download + IndexedDB cache | `src/lib/termData.ts` |
