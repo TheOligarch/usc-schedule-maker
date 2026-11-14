@@ -6,6 +6,8 @@ import { CourseSearch } from "../components/CourseSearch";
 import { TimeGrid } from "../components/TimeGrid";
 import { Card, Icon, Notice, StepFooter } from "../components/ui";
 
+/** AdviseUSC course plan, so students can check what they still need while adding courses. */
+const COURSE_PLAN_URL = "https://uscmeyestro.my.site.com/adviseusc/s/course-plan";
 const RMP_OPTIONS = [null, 2.5, 3, 3.5, 4, 4.5];
 
 interface Props {
@@ -41,7 +43,14 @@ export function Requirements({ data, state, onChange, header, onNext }: Props) {
         <Card
           title="Required courses"
           subtitle="Courses that must be in every schedule. Lecture, discussion and lab sections are paired automatically."
-          actions={state.required.length > 0 && <span className="pill">{requiredUnits} units</span>}
+          actions={
+            <>
+              {state.required.length > 0 && <span className="pill">{requiredUnits} units</span>}
+              <a className="btn btn-secondary btn-sm" href={COURSE_PLAN_URL} target="_blank" rel="noopener noreferrer">
+                Check course plan <Icon name="external" size={14} />
+              </a>
+            </>
+          }
         >
           <CourseSearch data={data} exclude={exclude} label="Add a required course" onPick={(c) => onChange({ required: [...state.required, c.code] })} />
           {state.required.length === 0 ? (
