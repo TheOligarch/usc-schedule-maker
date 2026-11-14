@@ -1,5 +1,5 @@
 /**
- * WebReg content script. Adds a "Schedule Maker" tab to WebReg's top navigation and,
+ * WebReg content script. Adds a "myScheduleMaker" tab (right of "myCalendar") to WebReg's top navigation and,
  * when it is selected, shows the React app (an extension page, so WebReg's Bootstrap
  * CSS and scripts cannot interfere with it) in a panel directly under the navigation.
  *
@@ -106,7 +106,7 @@ function injectTab(list: HTMLUListElement): void {
   if (template) li.className = template.className.replace(/\b(active|dropdown|open)\b/g, "").trim();
   const a = document.createElement("a");
   a.href = HASH;
-  a.textContent = "Schedule Maker";
+  a.textContent = "myScheduleMaker";
   a.title = "Build and rank schedules with USC Schedule Maker";
   const templateLink = template?.querySelector("a");
   if (templateLink) a.className = templateLink.className.replace(/\bdropdown-toggle\b/g, "").trim();
@@ -115,7 +115,18 @@ function injectTab(list: HTMLUListElement): void {
     setOpen(!isOpen, list);
   });
   li.appendChild(a);
-  // Keep right-aligned dropdowns (myInfo, term picker) last.
+  // Sit immediately to the right of WebReg's "myCalendar" tab when present.
+  const calendar = Array.from(list.children).find((c) => {
+    const link = c.querySelector(":scope > a");
+    const text = (link?.textContent ?? "").replace(/\s+/g, "").toLowerCase();
+    const href = (link?.getAttribute("href") ?? "").toLowerCase();
+    return text === "mycalendar" || /(^|\/)mycalendar\b/.test(href);
+  });
+  if (calendar) {
+    list.insertBefore(li, calendar.nextSibling);
+    return;
+  }
+  // Fallback: keep right-aligned dropdowns (myInfo, term picker) last.
   const firstDropdown = Array.from(list.children).find((c) => c.classList.contains("dropdown") || c.classList.contains("navbar-right"));
   list.insertBefore(li, firstDropdown ?? null);
 }
