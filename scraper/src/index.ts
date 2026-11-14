@@ -56,11 +56,17 @@ function parseArgs(argv: string[]): Args {
 async function getRmpSnapshot(termCode: string, env: SupabaseEnv | null): Promise<RmpSnapshot> {
   // One snapshot per semester: local cache, then the private scraper-cache bucket, else fetch once.
   const local = join(ROOT, ".cache", `rmp-${termCode}.json`);
+  const remotePath = `rmp/${termCode}.json`;
   if (existsSync(local)) {
     log(`rmp: using local snapshot ${local}`);
-    return JSON.parse(readFileSync(local, "utf8")) as RmpSnapshot;
+    const text = readFileSync(local, "utf8");
+    // Seed the shared cache so CI reuses this snapshot instead of taking a second one.
+    if (env && !(await downloadText(env, CACHE_BUCKET, remotePath))) {
+      await uploadJson(env, CACHE_BUCKET, remotePath, text, 3600);
+      log(`rmp: saved local snapshot to ${CACHE_BUCKET}/${remotePath}`);
+    }
+    return JSON.parse(text) as RmpSnapshot;
   }
-  const remotePath = `rmp/${termCode}.json`;
   if (env) {
     const text = await downloadText(env, CACHE_BUCKET, remotePath);
     if (text) {
