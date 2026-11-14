@@ -1,0 +1,1848 @@
+{
+  "term": {
+    "code": "20271",
+    "name": "Spring 2027",
+    "scrapedAt": "2026-11-14T22:29:28.990Z"
+  },
+  "courses": {
+    "AAN-500": {
+      "code": "AAN-500",
+      "title": "Applied Business Analytics and Artificial Intelligence",
+      "description": "Foundational principles and practical applications of analytics and artificial intelligence (AI) across various business domains with a focus on challenges involved in these techniques.",
+      "units": {
+        "min": 2,
+        "max": 2
+      },
+      "ge": [],
+      "crossListedWith": [],
+      "prereqText": "Class standing: open only to Master Student\nMajor: open only to Applied Analytics\nSchool: open only to BOV",
+      "linkage": "single",
+      "sectionIds": [
+        "12700"
+      ]
+    },
+    "ACAD-311": {
+      "code": "ACAD-311",
+      "title": "Design for User Experience",
+      "description": "Fundamental concepts, techniques, practices, workflows and tools associated with the practice of user experience and interaction design in web and mobile applications.",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "ge": [],
+      "crossListedWith": [
+        "TAC-310"
+      ],
+      "prereqText": "Duplicates credit: former ITP 140 and former 310",
+      "linkage": "single",
+      "sectionIds": [
+        "31846"
+      ]
+    },
+    "AMST-250": {
+      "code": "AMST-250",
+      "title": "The African Diaspora",
+      "description": "History, political-economy and aesthetics of the African Diaspora with emphasis on Latin America, the Caribbean, Europe and Africa.",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "ge": [
+        "DCL",
+        "GPG",
+        "SANA"
+      ],
+      "crossListedWith": [
+        "ENGL-250"
+      ],
+      "prereqText": null,
+      "linkage": "coded",
+      "sectionIds": [
+        "10372",
+        "10376",
+        "10380",
+        "10373",
+        "10375"
+      ]
+    },
+    "BISC-410": {
+      "code": "BISC-410",
+      "title": "Applications of Molecular Biology to Medicine",
+      "description": "Advances and trends in the understanding, diagnosis and treatment of human diseases.",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "ge": [],
+      "crossListedWith": [],
+      "prereqText": "Prerequisite: BISC 312 or BISC 330 or CHEM 350\nClass standing: open only to Senior",
+      "linkage": "single",
+      "sectionIds": [
+        "13030"
+      ]
+    },
+    "BUAD-312": {
+      "code": "BUAD-312",
+      "title": "Statistics and Data Science for Business",
+      "description": "Statistical methods for exploration, visualization, and analysis of large business datasets; simulation; hypothesis testing, multiple regression modeling, and confidence intervals. Coding taught through data applications. (Faster-paced version of BUAD-310g. Duplicates credit in BUAD 310g and the former ITP 251.)",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "ge": [
+        "QREA"
+      ],
+      "crossListedWith": [],
+      "prereqText": "Class standing: open only to Freshman, Sophomore, Junior, Senior\nDuplicates credit: BUAD 310 and former ITP 251",
+      "linkage": "single",
+      "sectionIds": [
+        "14924",
+        "14925"
+      ]
+    },
+    "CSCI-201": {
+      "code": "CSCI-201",
+      "title": "Principles of Software Development",
+      "description": "Object-Oriented Programming in Java; using Java threads, Web Services and SQL to write client/server applications; team project; vibe coding with AI tools.",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "ge": [],
+      "crossListedWith": [],
+      "prereqText": "Prerequisite: CSCI 104 or CSCI 114",
+      "linkage": "coded",
+      "sectionIds": [
+        "30381",
+        "30317",
+        "30383",
+        "29931",
+        "29990",
+        "30380",
+        "29981"
+      ]
+    },
+    "CSCI-350": {
+      "code": "CSCI-350",
+      "title": "Fundamentals of Operating Systems",
+      "description": "Basic issues in concurrency, deadlock control, synchronization scheduling, memory management, protection and access control, inter-process communication, and structured design. Laboratory experiences with Unix-like operating system.",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "ge": [],
+      "crossListedWith": [],
+      "prereqText": "Prerequisite: CSCI 356 or EE 354; CSCI 201 or EE 250\nDuplicates credit: CSCI 402",
+      "linkage": "coded",
+      "sectionIds": [
+        "29993",
+        "29965"
+      ]
+    },
+    "ENGL-250": {
+      "code": "ENGL-250",
+      "title": "The African Diaspora",
+      "description": "History, political-economy and aesthetics of the African Diaspora with emphasis on Latin America, the Caribbean, Europe and Africa.",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "ge": [
+        "GPG",
+        "SANA"
+      ],
+      "crossListedWith": [
+        "AMST-250"
+      ],
+      "prereqText": null,
+      "linkage": "coded",
+      "sectionIds": [
+        "10372",
+        "10376",
+        "10380",
+        "10373",
+        "10375"
+      ]
+    },
+    "PHYS-151": {
+      "code": "PHYS-151",
+      "title": "Fundamentals of Physics I: Mechanics, Oscillations and Waves",
+      "description": "Statics and dynamics of particles and rigid bodies, conservation principles, gravitation, simple harmonic oscillators, wave motion, sound waves.",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "ge": [
+        "DCL",
+        "PSC"
+      ],
+      "crossListedWith": [],
+      "prereqText": "Prerequisite: MATH 125 or MATH 126 or MATH 226 or MATH 129 or MATH 229",
+      "linkage": "ambiguous",
+      "sectionIds": [
+        "50380",
+        "50382",
+        "50381",
+        "50384",
+        "50383",
+        "50386",
+        "50390",
+        "50394",
+        "50398",
+        "50387",
+        "50391",
+        "50395",
+        "50388",
+        "50392",
+        "50396",
+        "50399",
+        "50389",
+        "50393",
+        "50397",
+        "50472"
+      ]
+    },
+    "TAC-310": {
+      "code": "TAC-310",
+      "title": "Design for User Experience",
+      "description": "Fundamental concepts, techniques, practices, workflows and tools associated with the practice of user experience and interaction design in web and mobile applications.",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "ge": [],
+      "crossListedWith": [
+        "ACAD-311"
+      ],
+      "prereqText": "Duplicates credit: former ITP 140 and former 310",
+      "linkage": "single",
+      "sectionIds": [
+        "31846"
+      ]
+    }
+  },
+  "sections": {
+    "10372": {
+      "id": "10372",
+      "courseCodes": [
+        "AMST-250",
+        "ENGL-250"
+      ],
+      "type": "LEC",
+      "linkCode": "Y",
+      "session": "001",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 32,
+        "total": 35
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Edwin",
+          "last": "Hill",
+          "rmpId": "2067531",
+          "rmpMatch": "exact"
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Tue",
+            "Thu"
+          ],
+          "start": "12:30",
+          "end": "13:50"
+        }
+      ],
+      "final": {
+        "date": "2027-05-12",
+        "start": "14:00",
+        "end": "16:00"
+      },
+      "notes": "Register for lec, 1 dis",
+      "webregUrl": "https://classes.usc.edu/term/20271/course/AMST-250"
+    },
+    "10373": {
+      "id": "10373",
+      "courseCodes": [
+        "AMST-250",
+        "ENGL-250"
+      ],
+      "type": "DIS",
+      "linkCode": "Y",
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 7,
+        "total": 25
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [],
+      "meetings": [
+        {
+          "days": [
+            "Fri"
+          ],
+          "start": "10:00",
+          "end": "10:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/AMST-250"
+    },
+    "10375": {
+      "id": "10375",
+      "courseCodes": [
+        "AMST-250",
+        "ENGL-250"
+      ],
+      "type": "DIS",
+      "linkCode": "Y",
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 4,
+        "total": 25
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [],
+      "meetings": [
+        {
+          "days": [
+            "Fri"
+          ],
+          "start": "11:00",
+          "end": "11:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/AMST-250"
+    },
+    "10376": {
+      "id": "10376",
+      "courseCodes": [
+        "AMST-250",
+        "ENGL-250"
+      ],
+      "type": "DIS",
+      "linkCode": "Y",
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 14,
+        "total": 25
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [],
+      "meetings": [
+        {
+          "days": [
+            "Wed"
+          ],
+          "start": "12:00",
+          "end": "12:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/AMST-250"
+    },
+    "10380": {
+      "id": "10380",
+      "courseCodes": [
+        "AMST-250",
+        "ENGL-250"
+      ],
+      "type": "DIS",
+      "linkCode": "Y",
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 7,
+        "total": 25
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [],
+      "meetings": [
+        {
+          "days": [
+            "Wed"
+          ],
+          "start": "13:00",
+          "end": "13:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/AMST-250"
+    },
+    "12700": {
+      "id": "12700",
+      "courseCodes": [
+        "AAN-500"
+      ],
+      "type": "LEC",
+      "linkCode": null,
+      "session": "988",
+      "units": {
+        "min": 2,
+        "max": 2
+      },
+      "dClearance": true,
+      "seats": {
+        "registered": 0,
+        "total": 30
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joyce",
+          "last": "Shen",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Wed"
+          ],
+          "start": "17:30",
+          "end": "19:00"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/AAN-500"
+    },
+    "13030": {
+      "id": "13030",
+      "courseCodes": [
+        "BISC-410"
+      ],
+      "type": "LEC-DIS",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 19,
+        "total": 19
+      },
+      "isFull": true,
+      "online": true,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Peter",
+          "last": "Kuhn",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Mon",
+            "Wed"
+          ],
+          "start": "12:00",
+          "end": "13:50"
+        }
+      ],
+      "final": {
+        "date": "2027-05-07",
+        "start": "11:00",
+        "end": "13:00"
+      },
+      "notes": ".\nThis section is online. The assigned room is available for those that need space for streaming the lecture",
+      "webregUrl": "https://classes.usc.edu/term/20271/course/BISC-410"
+    },
+    "14924": {
+      "id": "14924",
+      "courseCodes": [
+        "BUAD-312"
+      ],
+      "type": "LEC",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 36,
+        "total": 36
+      },
+      "isFull": true,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Jacob",
+          "last": "Bien",
+          "rmpId": "2280303",
+          "rmpMatch": "exact"
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Tue",
+            "Thu"
+          ],
+          "start": "12:00",
+          "end": "13:50"
+        }
+      ],
+      "final": {
+        "date": "2027-05-05",
+        "start": "08:00",
+        "end": "10:00"
+      },
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/BUAD-312"
+    },
+    "14925": {
+      "id": "14925",
+      "courseCodes": [
+        "BUAD-312"
+      ],
+      "type": "LEC",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 36,
+        "total": 36
+      },
+      "isFull": true,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Jacob",
+          "last": "Bien",
+          "rmpId": "2280303",
+          "rmpMatch": "exact"
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Tue",
+            "Thu"
+          ],
+          "start": "14:00",
+          "end": "15:50"
+        }
+      ],
+      "final": {
+        "date": "2027-05-05",
+        "start": "08:00",
+        "end": "10:00"
+      },
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/BUAD-312"
+    },
+    "29931": {
+      "id": "29931",
+      "courseCodes": [
+        "CSCI-201"
+      ],
+      "type": "LAB",
+      "linkCode": "A",
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 30,
+        "total": 30
+      },
+      "isFull": true,
+      "online": false,
+      "campus": null,
+      "instructors": [],
+      "meetings": [
+        {
+          "days": [
+            "Tue"
+          ],
+          "start": "16:00",
+          "end": "17:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/CSCI-201"
+    },
+    "29965": {
+      "id": "29965",
+      "courseCodes": [
+        "CSCI-350"
+      ],
+      "type": "QZ",
+      "linkCode": "A",
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 76,
+        "total": 170
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [],
+      "meetings": [],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/CSCI-350"
+    },
+    "29981": {
+      "id": "29981",
+      "courseCodes": [
+        "CSCI-201"
+      ],
+      "type": "QZ",
+      "linkCode": "A",
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 98,
+        "total": 180
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [],
+      "meetings": [],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/CSCI-201"
+    },
+    "29990": {
+      "id": "29990",
+      "courseCodes": [
+        "CSCI-201"
+      ],
+      "type": "LAB",
+      "linkCode": "A",
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 10,
+        "total": 30
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [],
+      "meetings": [
+        {
+          "days": [
+            "Wed"
+          ],
+          "start": "08:00",
+          "end": "09:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/CSCI-201"
+    },
+    "29993": {
+      "id": "29993",
+      "courseCodes": [
+        "CSCI-350"
+      ],
+      "type": "LEC",
+      "linkCode": "A",
+      "session": "001",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 76,
+        "total": 170
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Tatyana",
+          "last": "Ryutov",
+          "rmpId": "2151320",
+          "rmpMatch": "exact"
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Fri"
+          ],
+          "start": "13:00",
+          "end": "16:20"
+        }
+      ],
+      "final": {
+        "date": "2027-05-05",
+        "start": "14:00",
+        "end": "16:00"
+      },
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/CSCI-350"
+    },
+    "30317": {
+      "id": "30317",
+      "courseCodes": [
+        "CSCI-201"
+      ],
+      "type": "LAB",
+      "linkCode": "A",
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 20,
+        "total": 30
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [],
+      "meetings": [
+        {
+          "days": [
+            "Mon"
+          ],
+          "start": "10:00",
+          "end": "11:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/CSCI-201"
+    },
+    "30380": {
+      "id": "30380",
+      "courseCodes": [
+        "CSCI-201"
+      ],
+      "type": "LAB",
+      "linkCode": "A",
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 30,
+        "total": 30
+      },
+      "isFull": true,
+      "online": false,
+      "campus": null,
+      "instructors": [],
+      "meetings": [
+        {
+          "days": [
+            "Wed"
+          ],
+          "start": "12:00",
+          "end": "13:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/CSCI-201"
+    },
+    "30381": {
+      "id": "30381",
+      "courseCodes": [
+        "CSCI-201"
+      ],
+      "type": "LEC",
+      "linkCode": "A",
+      "session": "001",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 98,
+        "total": 180
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Marco",
+          "last": "Papa",
+          "rmpId": "1104782",
+          "rmpMatch": "exact"
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Tue",
+            "Thu"
+          ],
+          "start": "11:00",
+          "end": "12:20"
+        }
+      ],
+      "final": {
+        "date": "2027-05-11",
+        "start": "16:30",
+        "end": "18:30"
+      },
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/CSCI-201"
+    },
+    "30383": {
+      "id": "30383",
+      "courseCodes": [
+        "CSCI-201"
+      ],
+      "type": "LAB",
+      "linkCode": "A",
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 8,
+        "total": 30
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [],
+      "meetings": [
+        {
+          "days": [
+            "Mon"
+          ],
+          "start": "14:00",
+          "end": "15:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/CSCI-201"
+    },
+    "31846": {
+      "id": "31846",
+      "courseCodes": [
+        "ACAD-311",
+        "TAC-310"
+      ],
+      "type": "LEC",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 30,
+        "total": 30
+      },
+      "isFull": true,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Mikaila",
+          "last": "Hillman",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Mon"
+          ],
+          "start": "17:00",
+          "end": "20:50"
+        }
+      ],
+      "final": {
+        "date": "2027-05-10",
+        "start": "16:30",
+        "end": "18:30"
+      },
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/ACAD-311"
+    },
+    "50380": {
+      "id": "50380",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LEC",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 8,
+        "total": 157
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Bo",
+          "last": "Shrewsbury",
+          "rmpId": "3088220",
+          "rmpMatch": "exact"
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Mon",
+            "Wed",
+            "Fri"
+          ],
+          "start": "08:30",
+          "end": "09:50"
+        }
+      ],
+      "final": {
+        "date": "2027-05-06",
+        "start": "11:00",
+        "end": "13:00"
+      },
+      "notes": "Register for lec, 1 lab & quiz. This course carries GE credit but it is intended for a specific group of students rather than a general student audience. It is part of the curriculum for majors and pre-professional students. .",
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50381": {
+      "id": "50381",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LEC",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 66,
+        "total": 93
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Scott",
+          "last": "Macdonald",
+          "rmpId": "2110249",
+          "rmpMatch": "exact"
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Tue",
+            "Thu"
+          ],
+          "start": "12:00",
+          "end": "13:50"
+        }
+      ],
+      "final": {
+        "date": "2027-05-06",
+        "start": "11:00",
+        "end": "13:00"
+      },
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50382": {
+      "id": "50382",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LEC",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 12,
+        "total": 160
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Bo",
+          "last": "Shrewsbury",
+          "rmpId": "3088220",
+          "rmpMatch": "exact"
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Mon",
+            "Wed",
+            "Fri"
+          ],
+          "start": "14:00",
+          "end": "15:20"
+        }
+      ],
+      "final": {
+        "date": "2027-05-06",
+        "start": "11:00",
+        "end": "13:00"
+      },
+      "notes": "Register for lec, 1 lab & quiz. This course carries GE credit but it is intended for a specific group of students rather than a general student audience. It is part of the curriculum for majors and pre-professional students.",
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50383": {
+      "id": "50383",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "DIS",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 119,
+        "total": 420
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [],
+      "meetings": [
+        {
+          "days": [
+            "Wed"
+          ],
+          "start": "17:00",
+          "end": "18:20"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50384": {
+      "id": "50384",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LEC",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 4,
+        "max": 4
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 33,
+        "total": 90
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Bo",
+          "last": "Shrewsbury",
+          "rmpId": "3088220",
+          "rmpMatch": "exact"
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Tue",
+            "Thu"
+          ],
+          "start": "14:00",
+          "end": "15:50"
+        }
+      ],
+      "final": {
+        "date": "2027-05-06",
+        "start": "11:00",
+        "end": "13:00"
+      },
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50386": {
+      "id": "50386",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 4,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Tue"
+          ],
+          "start": "08:00",
+          "end": "10:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50387": {
+      "id": "50387",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 3,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Wed"
+          ],
+          "start": "08:00",
+          "end": "10:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50388": {
+      "id": "50388",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 1,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Thu"
+          ],
+          "start": "08:00",
+          "end": "10:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50389": {
+      "id": "50389",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 3,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Fri"
+          ],
+          "start": "08:00",
+          "end": "10:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50390": {
+      "id": "50390",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 2,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Tue"
+          ],
+          "start": "11:00",
+          "end": "13:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50391": {
+      "id": "50391",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 7,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Wed"
+          ],
+          "start": "11:00",
+          "end": "13:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50392": {
+      "id": "50392",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 7,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Thu"
+          ],
+          "start": "11:00",
+          "end": "13:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50393": {
+      "id": "50393",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 5,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Fri"
+          ],
+          "start": "11:00",
+          "end": "13:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50394": {
+      "id": "50394",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 17,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Tue"
+          ],
+          "start": "14:00",
+          "end": "16:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50395": {
+      "id": "50395",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 24,
+        "total": 24
+      },
+      "isFull": true,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Wed"
+          ],
+          "start": "14:00",
+          "end": "16:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50396": {
+      "id": "50396",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 13,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Thu"
+          ],
+          "start": "14:00",
+          "end": "16:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50397": {
+      "id": "50397",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 11,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Fri"
+          ],
+          "start": "14:00",
+          "end": "16:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50398": {
+      "id": "50398",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 13,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Tue"
+          ],
+          "start": "17:00",
+          "end": "19:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50399": {
+      "id": "50399",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 9,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Thu"
+          ],
+          "start": "17:00",
+          "end": "19:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    },
+    "50472": {
+      "id": "50472",
+      "courseCodes": [
+        "PHYS-151"
+      ],
+      "type": "LAB",
+      "linkCode": null,
+      "session": "001",
+      "units": {
+        "min": 0,
+        "max": 0
+      },
+      "dClearance": false,
+      "seats": {
+        "registered": 0,
+        "total": 24
+      },
+      "isFull": false,
+      "online": false,
+      "campus": null,
+      "instructors": [
+        {
+          "first": "Joseph",
+          "last": "Vandiver",
+          "rmpId": null,
+          "rmpMatch": null
+        }
+      ],
+      "meetings": [
+        {
+          "days": [
+            "Fri"
+          ],
+          "start": "17:00",
+          "end": "19:50"
+        }
+      ],
+      "final": null,
+      "notes": null,
+      "webregUrl": "https://classes.usc.edu/term/20271/course/PHYS-151"
+    }
+  },
+  "rmp": {
+    "1104782": {
+      "legacyId": "1104782",
+      "first": "Marco",
+      "last": "Papa",
+      "department": "Computer Science",
+      "avg": 2.9,
+      "difficulty": 3.9,
+      "count": 453,
+      "wouldTakeAgain": 43.4
+    },
+    "2067531": {
+      "legacyId": "2067531",
+      "first": "Edwin",
+      "last": "Hill",
+      "department": "French  Italian",
+      "avg": 3.4,
+      "difficulty": 3.4,
+      "count": 16,
+      "wouldTakeAgain": 50
+    },
+    "2110249": {
+      "legacyId": "2110249",
+      "first": "Scott",
+      "last": "MacDonald",
+      "department": "Physics  Astronomy",
+      "avg": 4.2,
+      "difficulty": 3.6,
+      "count": 63,
+      "wouldTakeAgain": 82
+    },
+    "2151320": {
+      "legacyId": "2151320",
+      "first": "Tatyana",
+      "last": "Ryutov",
+      "department": "Computer Science",
+      "avg": 2.2,
+      "difficulty": 3.8,
+      "count": 57,
+      "wouldTakeAgain": 27.6
+    },
+    "2280303": {
+      "legacyId": "2280303",
+      "first": "Jacob",
+      "last": "Bien",
+      "department": "Applied Business Statistics",
+      "avg": 3.8,
+      "difficulty": 3.6,
+      "count": 40,
+      "wouldTakeAgain": 70
+    },
+    "3088220": {
+      "legacyId": "3088220",
+      "first": "Bo",
+      "last": "Shrewsbury",
+      "department": "Physics & Astronomy",
+      "avg": 3,
+      "difficulty": 3.2,
+      "count": 34,
+      "wouldTakeAgain": 41.2
+    }
+  }
+}

@@ -1,0 +1,67 @@
+name: Scrape USC class data
+
+# Nightly full refresh of every not-yet-started term -> Supabase Storage (term-data/) + courses table.
+# A failed run publishes nothing (yesterday's data stays) and GitHub emails the repo owner.
+on:
+  schedule:
+    - cron: "17 10 * * *" # 10:17 UTC = 2:17/3:17 AM Pacific
+  workflow_dispatch:
+    inputs:
+      terms:
+        description: "Comma-separated term codes to force (e.g. 20271). Empty = auto-detect terms that have not started."
+        required: false
+        default: ""
+      dry_run:
+        description: "Scrape and validate without publishing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scrape
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: scraper
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: scraper/package-lock.json
+
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      - run: npm test
+
+      - name: Scrape and publish
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          TERMS: ${{ github.event.inputs.terms }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          args=()
+          if [ -n "$TERMS" ]; then args+=(--terms "$TERMS"); fi
+          if [ "$DRY_RUN" = "true" ]; then args+=(--dry-run); fi
+          npm run scrape -- "${args[@]}"
+
+      - name: Keep the scraped files for a week
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: term-data
+          path: scraper/out/*.json
+          if-no-files-found: ignore
+          retention-days: 7
