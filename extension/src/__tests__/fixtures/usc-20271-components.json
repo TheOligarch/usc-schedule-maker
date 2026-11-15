@@ -1,0 +1,4202 @@
+[
+  {
+    "courseId": 10383,
+    "startTermCode": 0,
+    "endTermCode": null,
+    "classNumber": "120",
+    "sequence": null,
+    "suffix": "Lg",
+    "description": "In-depth survey of key topics related to advances in our knowledge of the diversity of life and evolution; origin of life; eukaryotes/prokaryotes; ecology. ",
+    "fullCourseName": "BISC 120",
+    "isCrossListed": false,
+    "maxUnits": null,
+    "courseNotes": null,
+    "termNotes": null,
+    "duplicateCredit": null,
+    "recommendedPrep": null,
+    "geCode": "33",
+    "scheduledCourseCode": {
+      "prefix": "BISC",
+      "number": "120",
+      "suffix": "",
+      "courseHyphen": "BISC-120",
+      "courseSpace": "BISC 120",
+      "courseSmashed": "BISC120"
+    },
+    "publishedCourseCode": {
+      "prefix": "BISC",
+      "number": "120",
+      "suffix": "",
+      "courseHyphen": "BISC-120",
+      "courseSpace": "BISC 120",
+      "courseSmashed": "BISC120"
+    },
+    "matchedCourseCode": {
+      "prefix": "BISC",
+      "number": "120",
+      "suffix": "",
+      "courseHyphen": "BISC-120",
+      "courseSpace": "BISC 120",
+      "courseSmashed": "BISC120"
+    },
+    "courseUnits": [
+      4
+    ],
+    "sections": [
+      {
+        "sisSectionId": "13003",
+        "linkCode": "E",
+        "linkCodeForSort": "E",
+        "rnrSessionId": 38124,
+        "peSectionId": 761231,
+        "courseId": 10383,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": "Register for lecture and one lab. This course carries GE credit but it is intended for a specific group of students rather than a general student audience. It is part of the curriculum for majors and pre-professional students.",
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "TH",
+            "days": [
+              "Tue",
+              "Thu"
+            ],
+            "startTime": "14:00",
+            "endTime": "15:20",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 120,
+        "registeredSeats": 94,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Raffaella",
+            "lastName": "Ghittoni"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/120/13003",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13004",
+        "linkCode": "E",
+        "linkCodeForSort": "E",
+        "rnrSessionId": 38124,
+        "peSectionId": 761232,
+        "courseId": 10383,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "H",
+            "days": [
+              "Thu"
+            ],
+            "startTime": "08:00",
+            "endTime": "10:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 12,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/120/13004",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13006",
+        "linkCode": "E",
+        "linkCodeForSort": "E",
+        "rnrSessionId": 38124,
+        "peSectionId": 761234,
+        "courseId": 10383,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "H",
+            "days": [
+              "Thu"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 20,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/120/13006",
+        "isCancelled": false,
+        "isFull": true,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13027",
+        "linkCode": "E",
+        "linkCodeForSort": "E",
+        "rnrSessionId": 38124,
+        "peSectionId": 761251,
+        "courseId": 10383,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "H",
+            "days": [
+              "Thu"
+            ],
+            "startTime": "17:00",
+            "endTime": "19:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 20,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/120/13027",
+        "isCancelled": false,
+        "isFull": true,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13005",
+        "linkCode": "E",
+        "linkCodeForSort": "E",
+        "rnrSessionId": 38124,
+        "peSectionId": 761233,
+        "courseId": 10383,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "08:00",
+            "endTime": "10:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 14,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/120/13005",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13008",
+        "linkCode": "E",
+        "linkCodeForSort": "E",
+        "rnrSessionId": 38124,
+        "peSectionId": 761235,
+        "courseId": 10383,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 12,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/120/13008",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13010",
+        "linkCode": "E",
+        "linkCodeForSort": "E",
+        "rnrSessionId": 38124,
+        "peSectionId": 761237,
+        "courseId": 10383,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "14:00",
+            "endTime": "16:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 16,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/120/13010",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      }
+    ],
+    "prerequisiteCourseCodes": null,
+    "corequisiteCourseCodes": null,
+    "courseRestrictions": null,
+    "majorRestrictions": null,
+    "schoolRestrictions": null,
+    "concurrentCourses": null,
+    "remainingSectionSeats": 26,
+    "sectionSeatCount": 120,
+    "termCode": 20271,
+    "prefix": "BISC",
+    "name": "General Biology: Organismal Biology and Evolution",
+    "sortOrder": 0
+  },
+  {
+    "courseId": 10390,
+    "startTermCode": 0,
+    "endTermCode": null,
+    "classNumber": "220",
+    "sequence": null,
+    "suffix": "Lg",
+    "description": "In-depth survey of key topics related to advances in our knowledge of cellular biology and physiology; cell composition/metabolism; gene action; organism structure and function. Recommended preparation: high school chemistry; BISC 120L or BISC 121L.",
+    "fullCourseName": "BISC 220",
+    "isCrossListed": false,
+    "maxUnits": null,
+    "courseNotes": null,
+    "termNotes": null,
+    "duplicateCredit": null,
+    "recommendedPrep": null,
+    "geCode": "33",
+    "scheduledCourseCode": {
+      "prefix": "BISC",
+      "number": "220",
+      "suffix": "",
+      "courseHyphen": "BISC-220",
+      "courseSpace": "BISC 220",
+      "courseSmashed": "BISC220"
+    },
+    "publishedCourseCode": {
+      "prefix": "BISC",
+      "number": "220",
+      "suffix": "",
+      "courseHyphen": "BISC-220",
+      "courseSpace": "BISC 220",
+      "courseSmashed": "BISC220"
+    },
+    "matchedCourseCode": {
+      "prefix": "BISC",
+      "number": "220",
+      "suffix": "",
+      "courseHyphen": "BISC-220",
+      "courseSpace": "BISC 220",
+      "courseSmashed": "BISC220"
+    },
+    "courseUnits": [
+      4
+    ],
+    "sections": [
+      {
+        "sisSectionId": "13011",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761238,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": "Enroll in one lecture section, one lab section, and the quiz section.",
+        "description": "Register for one lecture, one lab and the quiz section 13120. This course carries GE credit but is intended for a specific group of students rather than a general student audience. It is part of the curriculum for majors and pre-professional students. Final exam date: Tues May 07, 8:00-10:00 a.m.",
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "MWF",
+            "days": [
+              "Mon",
+              "Wed",
+              "Fri"
+            ],
+            "startTime": "09:00",
+            "endTime": "09:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 170,
+        "registeredSeats": 40,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Alan",
+            "lastName": "Watts"
+          },
+          {
+            "firstName": "Rita",
+            "lastName": "Barakat"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13011",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13012",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761239,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": "Enroll in one lecture section, one lab section, and the quiz section.",
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "MWF",
+            "days": [
+              "Mon",
+              "Wed",
+              "Fri"
+            ],
+            "startTime": "10:00",
+            "endTime": "10:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 250,
+        "registeredSeats": 103,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Alan",
+            "lastName": "Watts"
+          },
+          {
+            "firstName": "Rita",
+            "lastName": "Barakat"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13012",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13022",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761247,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": "Enroll in one lecture section, one lab section, and the quiz section.",
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "TH",
+            "days": [
+              "Tue",
+              "Thu"
+            ],
+            "startTime": "09:30",
+            "endTime": "10:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 200,
+        "registeredSeats": 21,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Samuel",
+            "lastName": "Hires"
+          },
+          {
+            "firstName": "Rita",
+            "lastName": "Barakat"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13022",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13028",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761252,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": "Enroll in one lecture section, one lab section, and the quiz section.",
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "TH",
+            "days": [
+              "Tue",
+              "Thu"
+            ],
+            "startTime": "14:00",
+            "endTime": "15:20",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 250,
+        "registeredSeats": 71,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Rita",
+            "lastName": "Barakat"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13028",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13140",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761273,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "T",
+            "days": [
+              "Tue"
+            ],
+            "startTime": "08:00",
+            "endTime": "10:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 6,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13140",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13141",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761274,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "T",
+            "days": [
+              "Tue"
+            ],
+            "startTime": "08:00",
+            "endTime": "10:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 2,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13141",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13142",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761275,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "T",
+            "days": [
+              "Tue"
+            ],
+            "startTime": "08:00",
+            "endTime": "10:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 1,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13142",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13146",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761279,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "T",
+            "days": [
+              "Tue"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 18,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13146",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13147",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761280,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "T",
+            "days": [
+              "Tue"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 2,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13147",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13148",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761281,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "T",
+            "days": [
+              "Tue"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 13,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Nancy",
+            "lastName": "Castro"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13148",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13158",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761291,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "T",
+            "days": [
+              "Tue"
+            ],
+            "startTime": "14:00",
+            "endTime": "16:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 18,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13158",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13159",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761292,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "T",
+            "days": [
+              "Tue"
+            ],
+            "startTime": "14:00",
+            "endTime": "16:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 5,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13159",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13160",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761293,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "T",
+            "days": [
+              "Tue"
+            ],
+            "startTime": "14:00",
+            "endTime": "16:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 3,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13160",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13168",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761301,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "T",
+            "days": [
+              "Tue"
+            ],
+            "startTime": "17:00",
+            "endTime": "19:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 8,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13168",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13169",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761302,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "T",
+            "days": [
+              "Tue"
+            ],
+            "startTime": "17:00",
+            "endTime": "19:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 4,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13169",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13170",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761303,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "T",
+            "days": [
+              "Tue"
+            ],
+            "startTime": "17:00",
+            "endTime": "19:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 3,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13170",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13149",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761282,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "W",
+            "days": [
+              "Wed"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 19,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13149",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13150",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761283,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "W",
+            "days": [
+              "Wed"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 6,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13150",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13151",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761284,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "W",
+            "days": [
+              "Wed"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 4,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13151",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13167",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761300,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "W",
+            "days": [
+              "Wed"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 16,
+        "registeredSeats": 1,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13167",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13161",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761294,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "W",
+            "days": [
+              "Wed"
+            ],
+            "startTime": "14:00",
+            "endTime": "16:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 17,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13161",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13162",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761295,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "W",
+            "days": [
+              "Wed"
+            ],
+            "startTime": "14:00",
+            "endTime": "16:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 13,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13162",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13163",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761296,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "W",
+            "days": [
+              "Wed"
+            ],
+            "startTime": "14:00",
+            "endTime": "16:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 6,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13163",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13171",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761304,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "W",
+            "days": [
+              "Wed"
+            ],
+            "startTime": "17:00",
+            "endTime": "19:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 5,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13171",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13172",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761305,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "W",
+            "days": [
+              "Wed"
+            ],
+            "startTime": "17:00",
+            "endTime": "19:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 3,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13172",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13173",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761306,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "W",
+            "days": [
+              "Wed"
+            ],
+            "startTime": "17:00",
+            "endTime": "19:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 2,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13173",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13143",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761276,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "H",
+            "days": [
+              "Thu"
+            ],
+            "startTime": "08:00",
+            "endTime": "10:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 4,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13143",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13144",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761277,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "H",
+            "days": [
+              "Thu"
+            ],
+            "startTime": "08:00",
+            "endTime": "10:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 3,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13144",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13152",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761285,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "H",
+            "days": [
+              "Thu"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 11,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13152",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13153",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761286,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "H",
+            "days": [
+              "Thu"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 11,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13153",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13164",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761297,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "H",
+            "days": [
+              "Thu"
+            ],
+            "startTime": "14:00",
+            "endTime": "16:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 8,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13164",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13165",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761298,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "H",
+            "days": [
+              "Thu"
+            ],
+            "startTime": "14:00",
+            "endTime": "16:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 3,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13165",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13174",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761307,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "H",
+            "days": [
+              "Thu"
+            ],
+            "startTime": "17:00",
+            "endTime": "19:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 12,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13174",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13175",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761308,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "H",
+            "days": [
+              "Thu"
+            ],
+            "startTime": "17:00",
+            "endTime": "19:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 2,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13175",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13176",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761309,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "H",
+            "days": [
+              "Thu"
+            ],
+            "startTime": "17:00",
+            "endTime": "19:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 16,
+        "registeredSeats": 4,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13176",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13145",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761278,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "08:00",
+            "endTime": "10:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 0,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13145",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13154",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761287,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 6,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13154",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13155",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761288,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 1,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13155",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13156",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761289,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 1,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13156",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13157",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761290,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "11:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 16,
+        "registeredSeats": 0,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13157",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13166",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761299,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "16:00",
+            "endTime": "18:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 2,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13166",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13177",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761310,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "16:00",
+            "endTime": "18:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 6,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13177",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13178",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761311,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "16:00",
+            "endTime": "18:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 20,
+        "registeredSeats": 0,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13178",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13179",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761312,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "16:00",
+            "endTime": "18:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 16,
+        "registeredSeats": 2,
+        "waitlistedSeats": null,
+        "rnrMode": "Lab",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13179",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "L",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "13120",
+        "linkCode": "W",
+        "linkCodeForSort": "W",
+        "rnrSessionId": 38124,
+        "peSectionId": 761268,
+        "courseId": 10390,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "14:00",
+            "endTime": "15:20",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 900,
+        "registeredSeats": 204,
+        "waitlistedSeats": null,
+        "rnrMode": "Quiz",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/BISC/220/13120",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "Q",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      }
+    ],
+    "prerequisiteCourseCodes": null,
+    "corequisiteCourseCodes": null,
+    "courseRestrictions": null,
+    "majorRestrictions": null,
+    "schoolRestrictions": null,
+    "concurrentCourses": null,
+    "remainingSectionSeats": 635,
+    "sectionSeatCount": 870,
+    "termCode": 20271,
+    "prefix": "BISC",
+    "name": "General Biology: Cell Biology and Physiology",
+    "sortOrder": 0
+  },
+  {
+    "courseId": 57692,
+    "startTermCode": 0,
+    "endTermCode": null,
+    "classNumber": "112",
+    "sequence": null,
+    "suffix": null,
+    "description": "Instruction on analytic writing that integrates methods of research, identifying and addressing specific audiences and  presenting ideas publicly. Readings examine  modernity and postmodernity.",
+    "fullCourseName": "CORE 112",
+    "isCrossListed": false,
+    "maxUnits": null,
+    "courseNotes": null,
+    "termNotes": null,
+    "duplicateCredit": null,
+    "recommendedPrep": "CORE 111",
+    "geCode": null,
+    "scheduledCourseCode": {
+      "prefix": "CORE",
+      "number": "112",
+      "suffix": "",
+      "courseHyphen": "CORE-112",
+      "courseSpace": "CORE 112",
+      "courseSmashed": "CORE112"
+    },
+    "publishedCourseCode": {
+      "prefix": "CORE",
+      "number": "112",
+      "suffix": "",
+      "courseHyphen": "CORE-112",
+      "courseSpace": "CORE 112",
+      "courseSmashed": "CORE112"
+    },
+    "matchedCourseCode": {
+      "prefix": "CORE",
+      "number": "112",
+      "suffix": "",
+      "courseHyphen": "CORE-112",
+      "courseSpace": "CORE 112",
+      "courseSmashed": "CORE112"
+    },
+    "courseUnits": [
+      4
+    ],
+    "sections": [
+      {
+        "sisSectionId": "63538",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770398,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "MW",
+            "days": [
+              "Mon",
+              "Wed"
+            ],
+            "startTime": "09:30",
+            "endTime": "10:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 1,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Amy",
+            "lastName": "Cannon"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63538",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "63540",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770399,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "MW",
+            "days": [
+              "Mon",
+              "Wed"
+            ],
+            "startTime": "11:00",
+            "endTime": "12:20",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 0,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Amy",
+            "lastName": "Cannon"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63540",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "63542",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770400,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "MW",
+            "days": [
+              "Mon",
+              "Wed"
+            ],
+            "startTime": "12:30",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 2,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Krishna",
+            "lastName": "Narayanamurti"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63542",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "63544",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770401,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "MW",
+            "days": [
+              "Mon",
+              "Wed"
+            ],
+            "startTime": "14:00",
+            "endTime": "15:20",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 1,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Krishna",
+            "lastName": "Narayanamurti"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63544",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "63559",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770409,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "MW",
+            "days": [
+              "Mon",
+              "Wed"
+            ],
+            "startTime": "14:00",
+            "endTime": "15:20",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 0,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Matthew",
+            "lastName": "Hernandez"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63559",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "63546",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770402,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "MW",
+            "days": [
+              "Mon",
+              "Wed"
+            ],
+            "startTime": "15:30",
+            "endTime": "16:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 0,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Stephanie",
+            "lastName": "Mullings"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63546",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "63548",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770403,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "MW",
+            "days": [
+              "Mon",
+              "Wed"
+            ],
+            "startTime": "15:30",
+            "endTime": "16:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 1,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Mitchell",
+            "lastName": "Jacobs"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63548",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "63552",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770405,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "TH",
+            "days": [
+              "Tue",
+              "Thu"
+            ],
+            "startTime": "09:30",
+            "endTime": "10:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 0,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Michael",
+            "lastName": "Petitti"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63552",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "63562",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770412,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "TH",
+            "days": [
+              "Tue",
+              "Thu"
+            ],
+            "startTime": "09:30",
+            "endTime": "10:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 0,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Jennifer",
+            "lastName": "Heine"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63562",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "63554",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770406,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "TH",
+            "days": [
+              "Tue",
+              "Thu"
+            ],
+            "startTime": "11:00",
+            "endTime": "12:20",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 1,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Trisha",
+            "lastName": "Tucker"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63554",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "63556",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770407,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "TH",
+            "days": [
+              "Tue",
+              "Thu"
+            ],
+            "startTime": "12:30",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 0,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Michael",
+            "lastName": "Petitti"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63556",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "63558",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770408,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "TH",
+            "days": [
+              "Tue",
+              "Thu"
+            ],
+            "startTime": "14:00",
+            "endTime": "15:20",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 0,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Lauren",
+            "lastName": "White"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63558",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "63560",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770410,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "TH",
+            "days": [
+              "Tue",
+              "Thu"
+            ],
+            "startTime": "15:30",
+            "endTime": "16:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 0,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Zak",
+            "lastName": "Breckenridge"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63560",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "63564",
+        "linkCode": null,
+        "linkCodeForSort": null,
+        "rnrSessionId": 38124,
+        "peSectionId": 770414,
+        "courseId": 57692,
+        "hasDClearance": true,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "TH",
+            "days": [
+              "Tue",
+              "Thu"
+            ],
+            "startTime": "15:30",
+            "endTime": "16:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 14,
+        "registeredSeats": 1,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Brian",
+            "lastName": "Arechiga"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CORE/112/63564",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      }
+    ],
+    "prerequisiteCourseCodes": null,
+    "corequisiteCourseCodes": null,
+    "courseRestrictions": null,
+    "majorRestrictions": null,
+    "schoolRestrictions": null,
+    "concurrentCourses": null,
+    "remainingSectionSeats": 189,
+    "sectionSeatCount": 196,
+    "termCode": 20271,
+    "prefix": "CORE",
+    "name": "Writing Seminar II: Thematic Option Honors Program",
+    "sortOrder": 0
+  },
+  {
+    "courseId": 59240,
+    "startTermCode": 0,
+    "endTermCode": null,
+    "classNumber": "170",
+    "sequence": null,
+    "suffix": null,
+    "description": "Boolean algebra, propositional and first-order logic, proof techniques. Sets, functions, series, summations. Big-O notation; algorithm analysis. Recursion; basic sorting algorithms.  Graphs and basic graph algorithms.",
+    "fullCourseName": "CSCI 170",
+    "isCrossListed": false,
+    "maxUnits": null,
+    "courseNotes": null,
+    "termNotes": null,
+    "duplicateCredit": null,
+    "recommendedPrep": null,
+    "geCode": null,
+    "scheduledCourseCode": {
+      "prefix": "CSCI",
+      "number": "170",
+      "suffix": "",
+      "courseHyphen": "CSCI-170",
+      "courseSpace": "CSCI 170",
+      "courseSmashed": "CSCI170"
+    },
+    "publishedCourseCode": {
+      "prefix": "CSCI",
+      "number": "170",
+      "suffix": "",
+      "courseHyphen": "CSCI-170",
+      "courseSpace": "CSCI 170",
+      "courseSmashed": "CSCI170"
+    },
+    "matchedCourseCode": {
+      "prefix": "CSCI",
+      "number": "170",
+      "suffix": "",
+      "courseHyphen": "CSCI-170",
+      "courseSpace": "CSCI 170",
+      "courseSmashed": "CSCI170"
+    },
+    "courseUnits": [
+      4
+    ],
+    "sections": [
+      {
+        "sisSectionId": "30108",
+        "linkCode": "A",
+        "linkCodeForSort": "A",
+        "rnrSessionId": 38124,
+        "peSectionId": 764490,
+        "courseId": 59240,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": "Students must complete CSCI 102, or pass its challenge exam, or have AP Computer Science A credit to enroll in this course.",
+        "description": "Students must complete CSCI 102, or pass its challenge exam, or have AP Computer Science A credit to enroll in this course.",
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "TH",
+            "days": [
+              "Tue",
+              "Thu"
+            ],
+            "startTime": "11:00",
+            "endTime": "12:20",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 140,
+        "registeredSeats": 12,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Mate",
+            "lastName": "Szabo"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CSCI/170/30108",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "30295",
+        "linkCode": "A",
+        "linkCodeForSort": "A",
+        "rnrSessionId": 38124,
+        "peSectionId": 764667,
+        "courseId": 59240,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": "Students must complete CSCI 102, or pass its challenge exam, or have AP Computer Science A credit to enroll in this course.",
+        "description": "Students must complete CSCI 102, or pass its challenge exam, or have AP Computer Science A credit to enroll in this course.",
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "TH",
+            "days": [
+              "Tue",
+              "Thu"
+            ],
+            "startTime": "12:30",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 140,
+        "registeredSeats": 14,
+        "waitlistedSeats": null,
+        "rnrMode": "Lecture",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "4.0"
+        ],
+        "instructors": [
+          {
+            "firstName": "Mate",
+            "lastName": "Szabo"
+          }
+        ],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CSCI/170/30295",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "C",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "30349",
+        "linkCode": "A",
+        "linkCodeForSort": "A",
+        "rnrSessionId": 38124,
+        "peSectionId": 764707,
+        "courseId": 59240,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "08:00",
+            "endTime": "09:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 70,
+        "registeredSeats": 5,
+        "waitlistedSeats": null,
+        "rnrMode": "Discussion",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CSCI/170/30349",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "D",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "30373",
+        "linkCode": "A",
+        "linkCodeForSort": "A",
+        "rnrSessionId": 38124,
+        "peSectionId": 764731,
+        "courseId": 59240,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "10:00",
+            "endTime": "11:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 70,
+        "registeredSeats": 1,
+        "waitlistedSeats": null,
+        "rnrMode": "Discussion",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CSCI/170/30373",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "D",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "30377",
+        "linkCode": "A",
+        "linkCodeForSort": "A",
+        "rnrSessionId": 38124,
+        "peSectionId": 764736,
+        "courseId": 59240,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "12:00",
+            "endTime": "13:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 70,
+        "registeredSeats": 11,
+        "waitlistedSeats": null,
+        "rnrMode": "Discussion",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CSCI/170/30377",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "D",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "30116",
+        "linkCode": "A",
+        "linkCodeForSort": "A",
+        "rnrSessionId": 38124,
+        "peSectionId": 764497,
+        "courseId": 59240,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "F",
+            "days": [
+              "Fri"
+            ],
+            "startTime": "14:00",
+            "endTime": "15:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 70,
+        "registeredSeats": 9,
+        "waitlistedSeats": null,
+        "rnrMode": "Discussion",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CSCI/170/30116",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "D",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      },
+      {
+        "sisSectionId": "30343",
+        "linkCode": "A",
+        "linkCodeForSort": "A",
+        "rnrSessionId": 38124,
+        "peSectionId": 764701,
+        "courseId": 59240,
+        "hasDClearance": false,
+        "classType": null,
+        "name": null,
+        "notes": null,
+        "description": null,
+        "group": null,
+        "schedule": [
+          {
+            "dayCode": "W",
+            "days": [
+              "Wed"
+            ],
+            "startTime": "19:00",
+            "endTime": "20:50",
+            "sectionLocationSqNumber": 1
+          }
+        ],
+        "totalSeats": 280,
+        "registeredSeats": 26,
+        "waitlistedSeats": null,
+        "rnrMode": "Quiz",
+        "session": {
+          "termCode": "20271",
+          "rnrSessionCode": "001",
+          "description": null,
+          "rnrSessionId": 38124
+        },
+        "units": [
+          "0.0"
+        ],
+        "instructors": [],
+        "syllabus": "https://usc.simplesyllabus.com/en-US/syllabus/Spring 2027/CSCI/170/30343",
+        "isCancelled": false,
+        "isFull": false,
+        "rnrModeCode": "Q",
+        "term": {
+          "value": 20271,
+          "year": 2027,
+          "term": 1,
+          "season": "Spring"
+        },
+        "termCode": 20271,
+        "season": "Spring",
+        "year": 2027
+      }
+    ],
+    "prerequisiteCourseCodes": [
+      {
+        "order": 1,
+        "requiredCourses": 1,
+        "courseOptions": [
+          {
+            "theRest": "102",
+            "ands": [],
+            "prefix": "CSCI",
+            "number": "102",
+            "suffix": "",
+            "courseHyphen": "CSCI-102",
+            "courseSpace": "CSCI 102",
+            "courseSmashed": "CSCI102"
+          },
+          {
+            "theRest": "113",
+            "ands": [],
+            "prefix": "CSCI",
+            "number": "113",
+            "suffix": "",
+            "courseHyphen": "CSCI-113",
+            "courseSpace": "CSCI 113",
+            "courseSmashed": "CSCI113"
+          }
+        ]
+      }
+    ],
+    "corequisiteCourseCodes": null,
+    "courseRestrictions": null,
+    "majorRestrictions": null,
+    "schoolRestrictions": null,
+    "concurrentCourses": null,
+    "remainingSectionSeats": 254,
+    "sectionSeatCount": 280,
+    "termCode": 20271,
+    "prefix": "CSCI",
+    "name": "Discrete Methods in Computer Science",
+    "sortOrder": 0
+  }
+]

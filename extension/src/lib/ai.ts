@@ -6,6 +6,7 @@
  * anon key. `offline: true` forces the built-in mock for one call, which the UI offers
  * when the AI service is unreachable.
  */
+import { withElectiveInterests } from "./electiveInterests";
 import { FUNCTIONS_BASE, SUPABASE_ANON_KEY, USE_MOCKS } from "./config";
 import type { AiHealth, ExplainRequest, ExplainResponse, InterviewRequest, InterviewResponse, TermData } from "./contract-types";
 import { mockExplain, mockInterview } from "../mocks/mockAi";
@@ -74,9 +75,9 @@ function withClockTimes(res: InterviewResponse): InterviewResponse {
 
 /** One stateless interview turn: send the whole history, get the next question or the conclusions. */
 export async function interviewTurn(req: InterviewRequest, termData: TermData, opts: AiCallOptions = {}): Promise<{ res: InterviewResponse; source: AiSource }> {
-  if (USE_MOCKS || opts.offline) return { res: await mockInterview(req, termData), source: "mock" };
+  if (USE_MOCKS || opts.offline) return { res: withElectiveInterests(req, await mockInterview(req, termData), termData), source: "mock" };
   const { body, source } = await callFunction<InterviewResponse>("interview", "POST", req, opts.signal);
-  return { res: checkInterview(body), source };
+  return { res: withElectiveInterests(req, checkInterview(body), termData), source };
 }
 
 /** 1-2 sentence explanations for the top (<= 10) schedules. */

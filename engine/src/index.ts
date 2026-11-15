@@ -61,6 +61,11 @@ function toRanked(p: Problem, f: Found, scoreScale: number): RankedSchedule {
  * wrapper can give the event loop a turn. The sync API simply drains it.
  */
 export function* generateSteps(data: TermData, req: ScheduleRequest, opts: GenerateOptions = {}): Generator<void, GenerateResult, void> {
+  for (const [code, id] of Object.entries(req.sectionPins ?? {})) {
+    if (!req.required.includes(code) || !data.courses[code]?.sectionIds.includes(id) || !data.sections[id]) {
+      return { totalValid: 0, schedules: [], blockers: [{ constraint: "sectionPin", eliminated: 0, message: `Pinned section ${id} is unavailable for required course ${code}. Clear or change the pin.` }] };
+    }
+  }
   const limit = clampLimit(opts.limit);
   const maxEnumerate = Math.max(1, Math.floor(opts.maxEnumerate ?? DEFAULT_MAX_ENUMERATE));
   const weights = { ...DEFAULT_WEIGHTS, ...(opts.weights ?? {}) };
@@ -77,7 +82,7 @@ export function* generateSteps(data: TermData, req: ScheduleRequest, opts: Gener
     if (!res.truncated && res.count < DIAGNOSTIC_CAP) blockers = yield* computeBlockers(base, problem, res.count, DIAGNOSTIC_CAP);
   }
 
-  const result: GenerateResult = { totalValid: res.count, schedules, blockers };
+  const result: GenerateResult = { totalValid: res.count, totalDistinct: res.distinctCount, schedules, blockers };
   if (res.truncated) result.truncated = true;
   return result;
 }

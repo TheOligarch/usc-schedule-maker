@@ -1,6 +1,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import type { TermData } from "../lib/contract-types";
-import { geCategories, geLabel, geShort, unitsLabel } from "../lib/schedule";
+import { geCategories, geLabel, geShort, unitsLabel, instructorNames, SECTION_TYPE_LABEL } from "../lib/schedule";
+import { fmtMeeting } from "../lib/time";
 import { allowedTimes, newSlotId, type AppState, type SlotDef, type TimesState } from "../state";
 import { CourseSearch } from "../components/CourseSearch";
 import { TimeGrid } from "../components/TimeGrid";
@@ -63,6 +64,22 @@ export function Requirements({ data, state, onChange, header, onNext }: Props) {
                     <div>
                       <span className="code">{code}</span>
                       <span className="title">{c ? c.title : "Not offered this term"}</span>
+                      {c && <div className="field section-pin">
+                        <label htmlFor={`pin-${code}`}>Require a specific section (optional)</label>
+                        <select id={`pin-${code}`} value={state.sectionPins[code] ?? ""} onChange={e => {
+                          const sectionPins = { ...state.sectionPins };
+                          if (e.target.value) sectionPins[code] = e.target.value; else delete sectionPins[code];
+                          onChange({ sectionPins });
+                        }}>
+                          <option value="">Any compatible section</option>
+                          {state.sectionPins[code] && !c.sectionIds.includes(state.sectionPins[code]) && <option value={state.sectionPins[code]}>Unavailable: {state.sectionPins[code]} — clear or change</option>}
+                          {c.sectionIds.map(id => data.sections[id]).filter(Boolean).map(s => <option key={s.id} value={s.id}>
+                            {s.id} · {SECTION_TYPE_LABEL[s.type]} · {s.meetings.map(m => fmtMeeting(m)).join("; ") || "Time TBA"} · {instructorNames(s)}{s.notes ? ` · ${s.notes}` : ""}
+                          </option>)}
+                        </select>
+                        {state.sectionPins[code] && data.sections[state.sectionPins[code]]?.notes && <p className="small">{data.sections[state.sectionPins[code]].notes}</p>}
+                        <span className="muted small">Linked components are selected with this section. A pin is never relaxed.</span>
+                      </div>}
                     </div>
                     <div className="chip-meta">
                       {c?.ge.map((g) => (
@@ -71,7 +88,7 @@ export function Requirements({ data, state, onChange, header, onNext }: Props) {
                         </span>
                       ))}
                       {c && <span className="units">{unitsLabel(c.units)} u</span>}
-                      <button type="button" className="icon-btn" aria-label={`Remove ${code}`} onClick={() => onChange({ required: state.required.filter((x) => x !== code) })}>
+                      <button type="button" className="icon-btn" aria-label={`Remove ${code}`} onClick={() => onChange({ required: state.required.filter((x) => x !== code), sectionPins: Object.fromEntries(Object.entries(state.sectionPins).filter(([key]) => key !== code)) })}>
                         <Icon name="x" size={14} />
                       </button>
                     </div>

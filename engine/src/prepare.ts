@@ -258,7 +258,18 @@ export function buildBase(data: TermData, req: ScheduleRequest, w: ScaledWeights
         unknown.push(code);
         continue;
       }
-      const cs = buildCombos(code, r, data, w, slotCache);
+      const pin = req.sectionPins?.[code];
+      const excluded = new Set(req.excludedSectionIds ?? []);
+      const cs = buildCombos(code, r, data, w, slotCache).filter(c =>
+        (!pin || c.sectionIds.includes(pin)) && !c.sectionIds.some(id => excluded.has(id)));
+      const interest = req.courseInterestScores?.[code];
+      if (kind === "flex" && typeof interest === "number" && Number.isFinite(interest)) {
+        const amount = (1 - Math.max(0, Math.min(1, interest))) * 8;
+        for (const c of cs) {
+          c.base += amount;
+          if (amount) c.penalties.push({ kind: "preference", amount, message: `${code}: a weaker match for your selected elective interests.` });
+        }
+      }
       if (!cs.length) noLink.push(code);
       structural.push(...cs);
     }

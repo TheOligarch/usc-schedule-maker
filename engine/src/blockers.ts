@@ -53,7 +53,7 @@ export function* computeBlockers(base: Base, baseProblem: Problem, baseCount: nu
       structural.push({ reqIndex: r.index, constraint: "unknownCourse", eliminated: 0, message: `${code} is not offered in ${base.data.term?.name ?? "this term"}.` });
     }
     for (const code of r.noLink) {
-      structural.push({ reqIndex: r.index, constraint: "noValidLinkCombo", eliminated: 0, message: `${code} has no valid lecture/discussion/lab combination this term.` });
+      structural.push({ reqIndex: r.index, constraint: "noValidLinkCombo", eliminated: 0, message: `${code} has no verifiable complete lecture/discussion/lab combination under your section pins and feedback. USC may not publish the association; check its section details or change your choices.` });
     }
     if (r.kind === "flex" && !r.codes.length) {
       structural.push({ reqIndex: r.index, constraint: "flexSlot", eliminated: 0, message: `The slot "${r.label}" has no course options.` });

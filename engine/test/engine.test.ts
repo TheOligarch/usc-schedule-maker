@@ -23,22 +23,16 @@ describe("linkage (contract section 4)", () => {
     expect(idSets(r.combos)).toEqual(["31001+31002", "31001+31003"]);
   });
 
-  it("ambiguous: each lecture pairs with the following non-lecture sections", () => {
-    const r = linkCombos(fixture.courses["WRIT-150"], sectionsOf("WRIT-150"));
-    expect(r.ambiguous).toBe(true);
-    expect(idSets(r.combos)).toEqual(["32001+32002", "32003+32004", "32003+32005"]);
+  it("does not infer all-null multi-lecture associations from ordering or professors", () => {
+    const secs = sectionsOf("WRIT-150").map(s => ({ ...s, linkCode: null }));
+    expect(linkCombos({ linkage: "ambiguous" }, secs).combos).toEqual([]);
+    expect(linkCombos({ linkage: "single" }, secs.reverse()).combos).toEqual([]);
   });
 
-  it("ambiguous: a lecture with no following sections may take any of that type", () => {
-    const [l1, d1, l2, d2] = ["32001", "32002", "32003", "32004"].map((id) => fixture.sections[id]);
-    const r = linkCombos({ linkage: "ambiguous" }, [l1, l2, d1, d2]);
-    expect(idSets(r.combos)).toEqual(["32001+32002", "32001+32004", "32002+32003", "32003+32004"]);
-  });
-
-  it("drops a letter whose combination has no lecture", () => {
+  it("rejects a lecture lacking the offered required discussion type", () => {
     const lec = { ...fixture.sections["30001"], linkCode: "A" };
     const dis = { ...fixture.sections["30005"], linkCode: "B" };
-    expect(idSets(linkCombos({ linkage: "coded" }, [lec, dis]).combos)).toEqual(["30001"]);
+    expect(linkCombos({ linkage: "coded" }, [lec, dis]).combos).toEqual([]);
   });
 
   it("enforces linkage inside generateSchedules", () => {
@@ -47,13 +41,12 @@ describe("linkage (contract section 4)", () => {
     expect(sectionSets(r, "CSCI-201")).toEqual(["30001+30003+30006", "30001+30004+30006", "30002+30005+30006"]);
   });
 
-  it("ambiguous courses carry the ambiguousLink penalty and a warning", () => {
-    const r = generateSchedules(fixture, request({ required: ["WRIT-150"] }));
-    expect(r.totalValid).toBe(3);
-    for (const s of r.schedules) {
-      expect(kinds(s)).toContain("ambiguousLink");
-      expect(s.warnings.some((w) => w.includes("guessed from section order"))).toBe(true);
-    }
+  it("reports unverifiable associations rather than ranking a pairing guess", () => {
+    const data = structuredClone(fixture);
+    for (const id of data.courses["WRIT-150"].sectionIds) data.sections[id].linkCode = null;
+    const r = generateSchedules(data, request({ required: ["WRIT-150"] }));
+    expect(r.totalValid).toBe(0);
+    expect(r.blockers.some(b => b.message.includes("no verifiable complete"))).toBe(true);
   });
 });
 
@@ -285,8 +278,10 @@ describe("ranking", () => {
     expect(generateSchedules(fixture, big, { limit: 2 }).schedules).toHaveLength(2);
     expect(generateSchedules(fixture, big, { limit: 0 }).schedules).toHaveLength(1);
     expect(generateSchedules(fixture, big, { limit: 5000 }).schedules.length).toBe(Math.min(100, all.totalValid));
-    // the top 2 are the same as the first 2 of the full ranking
-    expect(generateSchedules(fixture, big, { limit: 2 }).schedules).toEqual(all.schedules.slice(0, 2));
+    // A smaller display limit keeps the best fit and chooses diverse feasible alternatives.
+    const two = generateSchedules(fixture, big, { limit: 2 }).schedules;
+    expect(two[0]).toEqual(all.schedules[0]);
+    for (const s of two) expect(all.schedules).toContainEqual(s);
   });
 
   it("marks truncated enumeration", () => {

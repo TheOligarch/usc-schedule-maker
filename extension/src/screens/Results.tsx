@@ -11,6 +11,7 @@ import { fmtDays, fmtMeeting, fmtTime, relativeTime } from "../lib/time";
 import { allowedTimes, buildRequest, type AppState, type StepId } from "../state";
 import { MiniWeek, WeekCalendar, courseColors } from "../components/WeekCalendar";
 import { Card, Icon, Notice, Spinner } from "../components/ui";
+import { ScheduleFeedback } from "../components/ScheduleFeedback";
 import { CourseBinDialog } from "../components/CourseBinDialog";
 import { mockBinTransport } from "../mocks/mockCourseBin";
 
@@ -52,10 +53,11 @@ interface SeatState {
 }
 
 export function Results({ data, state, onChange, onEdit, binTransport }: Props) {
-  const request = useMemo(() => buildRequest(state), [state]);
+  const request = useMemo(() => buildRequest(state, data), [state, data]);
   const requestKey = JSON.stringify(request);
   const [run, setRun] = useState<EngineRun | null>(null);
   const [running, setRunning] = useState(true);
+  const [retry, setRetry] = useState(0);
   const [engineError, setEngineError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [highlight, setHighlight] = useState<string | null>(null);
@@ -82,7 +84,7 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
         if (!ctrl.signal.aborted) setRunning(false);
       });
     return () => ctrl.abort();
-  }, [data, requestKey, state.limit]);
+  }, [data, requestKey, state.limit, retry]);
 
   const schedules = run?.result.schedules ?? [];
   const selectedIndex = Math.max(0, schedules.findIndex((s) => s.id === selectedId));
@@ -142,10 +144,14 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
   const allowed = allowedTimes(state.times);
   const total = run?.result.totalValid ?? 0;
 
+  const feedback = <ScheduleFeedback key={selected?.id ?? "none"} data={data} schedule={selected} index={selectedIndex} state={state} running={running} onChange={onChange} />;
+
   if (engineError) {
     return (
       <div className="screen">
         <Notice tone="error">The schedule builder failed: {engineError}</Notice>
+        <button type="button" className="btn btn-secondary" onClick={() => setRetry(n => n + 1)}>Retry schedule builder</button>
+        {feedback}
       </div>
     );
   }
@@ -158,7 +164,9 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
       </div>
     );
   }
-  if (total === 0) return <NoResults blockers={run.result.blockers} onEdit={onEdit} />;
+  if (total === 0) return <div className="screen">{running && <Spinner label="Refreshing schedules…" />}
+    <Notice tone="warn">No feasible alternatives fit your current rules. Remove or change feedback here to refresh; your requirements and pins are preserved.</Notice>
+    {feedback}<NoResults blockers={run.result.blockers} onEdit={onEdit} /></div>;
 
   return (
     <div className="results">
@@ -169,13 +177,13 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
               {total.toLocaleString()}
               {run.truncated ? "+" : ""}
             </strong>{" "}
-            schedule{total === 1 ? "" : "s"} fit
+            section combination{total === 1 ? "" : "s"} fit
             <div className="muted small">
-              {run.isMock ? "demo engine · " : ""}built in {run.elapsedMs} ms
+              {run.isMock ? "demo data · " : ""}{run.result.totalDistinct ?? schedules.length} distinct timetable{run.result.totalDistinct === 1 ? "" : "s"}{run.truncated ? "+" : ""} · built in {run.elapsedMs} ms
             </div>
           </div>
           <label className="limit-select">
-            <span className="small muted">Show top</span>
+            <span className="small muted">Show up to</span>
             <select value={state.limit} onChange={(e) => onChange({ limit: Number(e.target.value) })} aria-label="Number of schedules to show">
               {LIMIT_OPTIONS.map((n) => (
                 <option key={n} value={n}>
@@ -226,7 +234,7 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
       </aside>
 
       {selected && (
-        <section className="sched-main" aria-label={`Schedule ${selectedIndex + 1}`}>
+        <section className="sched-main" aria-busy={running} aria-label={`Schedule ${selectedIndex + 1}`}>
           <ScheduleHeader
             data={data}
             schedule={selected}
@@ -235,8 +243,11 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
             onPrev={() => setSelectedId(schedules[selectedIndex - 1]?.id ?? null)}
             onNext={() => setSelectedId(schedules[selectedIndex + 1]?.id ?? null)}
             onEdit={onEdit}
-            onAddToBin={() => setBinFor({ schedule: selected, index: selectedIndex })}
+            busy={running}
+            onAddToBin={() => { if (!running) setBinFor({ schedule: selected, index: selectedIndex }); }}
           />
+          {Object.keys(state.sectionPins).length > 0 && <p className="small">Required sections: {Object.entries(state.sectionPins).map(([c, id]) => `${c} ${id}`).join(", ")}</p>}
+          {feedback}
           <Explanation index={selectedIndex} text={explanations[selected.id]} state={explainState} onRetry={() => void explain()} />
           <Card className="cal-card">
             <WeekCalendar data={data} schedule={selected} allowed={allowed} highlight={highlight} onHighlight={setHighlight} />
@@ -265,6 +276,7 @@ function ScheduleHeader({
   onNext,
   onEdit,
   onAddToBin,
+  busy,
 }: {
   data: TermData;
   schedule: RankedSchedule;
@@ -274,6 +286,7 @@ function ScheduleHeader({
   onNext: () => void;
   onEdit: (s: StepId) => void;
   onAddToBin: () => void;
+  busy: boolean;
 }) {
   const stats = scheduleStats(data, schedule);
   return (
@@ -295,7 +308,7 @@ function ScheduleHeader({
         </p>
       </div>
       <div className="row gap-sm">
-        <button type="button" className="btn btn-primary btn-sm" onClick={onAddToBin} title="Add every section of this schedule to your WebReg myCourseBin">
+        <button type="button" className="btn btn-primary btn-sm" disabled={busy} onClick={onAddToBin} title="Add every section of this schedule to your WebReg myCourseBin">
           <Icon name="plus" size={14} /> Add all to myCourseBin
         </button>
         <button type="button" className="btn btn-ghost btn-sm" onClick={() => onEdit("requirements")}>

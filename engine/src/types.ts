@@ -108,6 +108,12 @@ export interface Importance {
 }
 
 export interface ScheduleRequest {
+  /** Optional hard section choice per required course; linked components still required. */
+  sectionPins?: Record<string, string>;
+  /** Relevance 0..1 for shortlisted electives, from selected interest categories. */
+  courseInterestScores?: Record<string, number>;
+  /** Hard exclusions compiled from results-page feedback. */
+  excludedSectionIds?: string[];
   /** course codes that must all appear */
   required: string[];
   /** each slot: exactly one of up to 5 interchangeable courses (AI shortlist) */
@@ -174,6 +180,8 @@ export interface Blocker {
 }
 
 export interface GenerateResult {
+  /** Equivalent meeting days/times counted once, among enumerated leaves. */
+  totalDistinct?: number;
   /** number of valid schedules found (a lower bound when `truncated`) */
   totalValid: number;
   /** sorted best-first, length <= limit */

@@ -1,4 +1,6 @@
 /** App state: one serialisable object, persisted to localStorage between visits. */
+import { electiveInterestScore, selectedCategories } from "./lib/electiveInterests";
+import { refinementSectionIds, type Refinement } from "./lib/refinement";
 import { DEFAULT_RESULT_LIMIT, MAX_RESULT_LIMIT } from "./lib/config";
 import type { Block, Day, Importance, InterviewHistoryItem, Preferences, ScheduleRequest, Shortlist } from "./lib/contract-types";
 import { geShort } from "./lib/schedule";
@@ -39,6 +41,8 @@ export interface AppState {
   termCode: string | null;
   importance: Importance;
   required: string[];
+  sectionPins: Record<string, string>;
+  refinements: Refinement[];
   slots: SlotDef[];
   unitCap: number | null;
   times: TimesState;
@@ -68,6 +72,8 @@ export function defaultState(): AppState {
     termCode: null,
     importance: { rmp: 5, daySpread: 5, breaks: 5, seatRisk: 5, finals: 5 },
     required: [],
+    sectionPins: {},
+    refinements: [],
     slots: [],
     unitCap: 18,
     times: { global: [{ start: "08:00", end: "20:00" }], overrides: {}, weekends: false },
@@ -155,8 +161,8 @@ export function allowedTimes(times: TimesState): Record<Day, Block[]> {
   return out;
 }
 
-export function interviewSignature(state: Pick<AppState, "required" | "slots" | "termCode">): string {
-  return JSON.stringify([state.termCode, [...state.required].sort(), state.slots.map((s) => [s.label, s.kind, s.geCategory ?? ""])]);
+export function interviewSignature(state: Pick<AppState, "required" | "slots" | "termCode" | "sectionPins">): string {
+  return JSON.stringify([state.termCode, [...state.required].sort(), state.slots.map((s) => [s.label, s.kind, s.geCategory ?? ""]), Object.entries(state.sectionPins ?? {}).sort()]);
 }
 
 /** Shortlist rows aligned to the current slots (missing ones come back empty). */
@@ -164,9 +170,21 @@ export function alignedShortlists(slots: SlotDef[], interview: InterviewResult |
   return slots.map((slot) => interview?.shortlists.find((s) => s.label === slot.label) ?? { label: slot.label, options: [] });
 }
 
-export function buildRequest(state: AppState): ScheduleRequest {
+export function buildRequest(state: AppState, data?: import("./lib/contract-types").TermData): ScheduleRequest {
+  const courseInterestScores: Record<string, number> = {};
+  if (data) for (const [i, slot] of state.slots.entries()) {
+    const labels = selectedCategories(state, i);
+    if (slot.kind !== "elective" || !labels.length) continue;
+    for (const option of alignedShortlists(state.slots, state.interview)[i].options) {
+      const c = data.courses[option.courseCode];
+      if (c) courseInterestScores[c.code] = electiveInterestScore(c, labels);
+    }
+  }
   return {
     required: state.required,
+    sectionPins: state.sectionPins,
+    courseInterestScores,
+    excludedSectionIds: [...new Set(state.refinements.flatMap(r => refinementSectionIds(r, data)))],
     flexSlots: alignedShortlists(state.slots, state.interview).map((s) => ({ label: s.label, options: s.options.map((o) => o.courseCode) })),
     allowedTimes: allowedTimes(state.times),
     unitCap: state.unitCap,

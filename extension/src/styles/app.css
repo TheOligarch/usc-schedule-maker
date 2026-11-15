@@ -436,3 +436,10 @@ table.bin-table td:last-child { text-align: left; }
 .bin-adding { color: var(--warn); }
 .bin-message { margin-top: 2px; max-width: 46ch; }
 .bin-summary { color: var(--ink-2); }
+
+.section-pin { margin-top: 0.6rem; max-width: 100%; }
+.section-pin select { width: 100%; max-width: 36rem; }
+.section-pin p { white-space: pre-wrap; }
+#schedule-feedback { width: 100%; font: inherit; padding: 0.6rem; resize: vertical; }
+
+.quick-reply[aria-pressed="true"] { background: #fff0d7; border-color: #990000; color: #700000; }

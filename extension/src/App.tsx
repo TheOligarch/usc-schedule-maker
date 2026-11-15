@@ -78,7 +78,7 @@ export function App({ embedded }: { embedded: boolean }) {
   const changeTerm = (code: string) => {
     if (code === state.termCode) return;
     // Courses differ by term, so a term switch starts the course choices over.
-    update({ termCode: code, required: [], slots: [], history: [], importanceFollowup: null, interview: null, interviewFor: null });
+    update({ termCode: code, required: [], sectionPins: {}, refinements: [], slots: [], history: [], importanceFollowup: null, interview: null, interviewFor: null });
   };
 
   const startOver = () => {

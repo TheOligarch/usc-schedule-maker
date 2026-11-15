@@ -20,6 +20,7 @@ export interface SearchResult {
   best: Found[];
   /** fewest units among schedules seen (Infinity if none) */
   minUnits: number;
+  distinctCount: number;
 }
 
 export interface SearchOptions {
@@ -29,43 +30,56 @@ export interface SearchOptions {
   cap: number;
 }
 
-/** Bounded max-heap on (total, id): the root is the worst schedule kept. */
-class WorstHeap {
-  readonly items: Found[] = [];
-  constructor(readonly size: number) {}
-  static worse(a: Found, b: Found): boolean {
-    return a.total > b.total || (a.total === b.total && a.id > b.id);
-  }
-  peek(): Found | undefined {
-    return this.items[0];
-  }
-  push(f: Found): void {
-    const h = this.items;
-    if (h.length < this.size) {
-      h.push(f);
-      let i = h.length - 1;
-      while (i > 0) {
-        const p = (i - 1) >> 1;
-        if (!WorstHeap.worse(h[i], h[p])) break;
-        [h[i], h[p]] = [h[p], h[i]];
-        i = p;
-      }
-      return;
-    }
-    if (!WorstHeap.worse(h[0], f)) return;
-    h[0] = f;
-    let i = 0;
-    for (;;) {
-      const l = 2 * i + 1;
-      const r = l + 1;
-      let m = i;
-      if (l < h.length && WorstHeap.worse(h[l], h[m])) m = l;
-      if (r < h.length && WorstHeap.worse(h[r], h[m])) m = r;
-      if (m === i) break;
-      [h[i], h[m]] = [h[m], h[i]];
-      i = m;
+interface TimetableCandidate { found: Found; bits: number[]; }
+
+function timetable(combos: readonly Combo[]): { key: string; bits: number[] } {
+  const meetings = [...new Set(combos.flatMap(c => c.slots.map(s => `${s.day}:${s.s}:${s.e}`)))].sort();
+  // Half-hour occupancy gives nearby starts less diversity than a different day.
+  const bits = new Array<number>(11).fill(0);
+  for (const c of combos) for (const s of c.slots) {
+    for (let t = Math.floor(s.s / 30); t < Math.ceil(s.e / 30); t++) {
+      const bit = s.day * 48 + t;
+      bits[bit >>> 5] |= 1 << (bit & 31);
     }
   }
+  return { key: meetings.join("|") || "TBA", bits };
+}
+
+function popcount(v: number): number {
+  v -= (v >>> 1) & 0x55555555;
+  v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
+  return (((v + (v >>> 4)) & 0x0f0f0f0f) * 0x01010101) >>> 24;
+}
+
+function distance(a: number[], b: number[]): number {
+  let diff = 0, union = 0;
+  for (let i = 0; i < a.length; i++) { diff += popcount(a[i] ^ b[i]); union += popcount(a[i] | b[i]); }
+  return union ? diff / union : 0;
+}
+
+/** Best representative of each timetable, then a quality-aware diversity sample. */
+function diverse(candidates: TimetableCandidate[], limit: number): Found[] {
+  const compare = (a: TimetableCandidate, b: TimetableCandidate) => a.found.total - b.found.total || a.found.id.localeCompare(b.found.id);
+  candidates.sort(compare);
+  if (candidates.length <= limit) return candidates.map(c => c.found);
+  // Bounded selection cost; enumeration still deduplicates every feasible leaf.
+  const pool = candidates.slice(0, Math.max(2000, limit * 20));
+  const picked = [pool[0]];
+  const available = pool.slice(1).map(c => ({ ...c, nearest: distance(c.bits, pool[0].bits) }));
+  const best = pool[0].found.total;
+  const range = Math.max(1, pool[pool.length - 1].found.total - best);
+  while (picked.length < limit && available.length) {
+    let at = 0, utility = -Infinity;
+    for (let i = 0; i < available.length; i++) {
+      const c = available[i];
+      const value = 0.65 * c.nearest + 0.35 * (1 - (c.found.total - best) / range);
+      if (value > utility) { utility = value; at = i; }
+    }
+    const [next] = available.splice(at, 1);
+    picked.push(next);
+    for (const c of available) c.nearest = Math.min(c.nearest, distance(c.bits, next.bits));
+  }
+  return picked.sort(compare).map(c => c.found);
 }
 
 export function scheduleId(combos: readonly Combo[]): string {
@@ -84,7 +98,7 @@ export function scheduleId(combos: readonly Combo[]): string {
 export function* search(p: Problem, opts: SearchOptions): Generator<void, SearchResult, void> {
   const levels = p.order.map((i) => p.reqs[i]);
   const n = levels.length;
-  const result: SearchResult = { count: 0, truncated: false, best: [], minUnits: Infinity };
+  const result: SearchResult = { count: 0, truncated: false, best: [], minUnits: Infinity, distinctCount: 0 };
   if (n === 0) return result;
   for (const L of levels) if (!L.combos.length) return result;
 
@@ -92,7 +106,7 @@ export function* search(p: Problem, opts: SearchOptions): Generator<void, Search
   const suffixMin = new Array<number>(n + 1).fill(0);
   for (let j = n - 1; j >= 0; j--) suffixMin[j] = suffixMin[j + 1] + p.minUnits[j];
   const cap = p.unitCap;
-  const heap = opts.limit > 0 ? new WorstHeap(opts.limit) : null;
+  const candidates = opts.limit > 0 ? new Map<string, TimetableCandidate>() : null;
 
   const pick = new Array<number>(n).fill(-1);
   const shared = new Array<boolean>(n).fill(false);
@@ -141,13 +155,15 @@ export function* search(p: Problem, opts: SearchOptions): Generator<void, Search
     // leaf: a valid schedule
     result.count++;
     if (units < result.minUnits) result.minUnits = units;
-    if (heap) {
+    if (candidates) {
       distinct.length = 0;
       for (let i = 0; i < n; i++) if (!shared[i]) distinct.push(levels[i].combos[pick[i]]);
       const total = Math.round((baseAt[n] + scheduleCost(distinct, p.ctx)) * 1000) / 1000;
-      const worst = heap.peek();
-      if (heap.items.length < heap.size || !worst || total <= worst.total) {
-        heap.push({ total, id: scheduleId(distinct), picks: pick.slice(), shared: shared.slice() });
+      const time = timetable(distinct);
+      const id = scheduleId(distinct);
+      const prev = candidates.get(time.key);
+      if (!prev || total < prev.found.total || (total === prev.found.total && id < prev.found.id)) {
+        candidates.set(time.key, { found: { total, id, picks: pick.slice(), shared: shared.slice() }, bits: time.bits });
       }
     }
     if (result.count >= opts.cap) {
@@ -156,7 +172,10 @@ export function* search(p: Problem, opts: SearchOptions): Generator<void, Search
     }
   }
 
-  if (heap) result.best = heap.items.slice().sort((a, b) => a.total - b.total || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  if (candidates) {
+    result.distinctCount = candidates.size;
+    result.best = diverse([...candidates.values()], opts.limit);
+  }
   return result;
 }
 
