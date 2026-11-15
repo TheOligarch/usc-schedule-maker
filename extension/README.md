@@ -8,6 +8,7 @@ Adds a **myScheduleMaker** tab to USC WebReg, immediately to the right of **myCa
 2. Open `chrome://extensions`, turn on **Developer mode** (top right).
 3. Click **Load unpacked** and pick the unzipped folder (the one containing `manifest.json`).
 4. Open <https://webreg.usc.edu>, sign in, refresh the page if already open, and click **myScheduleMaker** to the right of **myCalendar**. You can also click the extension's toolbar icon to open the app in its own tab without signing in.
+5. Updating? Remove the old card in `chrome://extensions` first (it shows the version). If two copies stay loaded, the newer one takes over the WebReg tab (`src/content/takeover.ts`), but the toolbar icon of each still opens its own copy.
 
 ## Develop
 
@@ -17,13 +18,14 @@ Node 20+.
 cd extension
 npm ci
 cp .env.example .env   # then paste the Supabase anon key (public, but never committed)
-npm run dev            # standalone page at http://localhost:5173, no login needed
+npm run dev            # standalone page at http://localhost:5173, no login needed (live engine + AI)
+npm run dev:mock       # same page in demo mode (mock engine + scripted AI, no key needed)
 npm test               # unit tests (vitest)
 npm run typecheck
 npm run release        # typecheck + build dist/ + write release/usc-schedule-maker.zip
 ```
 
-`npm run release` builds with `VITE_USE_MOCKS=false`, so the zip calls the deployed AI functions. It needs `VITE_SUPABASE_ANON_KEY` in `.env`. `npm run icons` redraws `public/icons/*.png`.
+`npm run dev`, `npm run build` and `npm run release` all build live (`VITE_USE_MOCKS=false`), so they run the real engine and call the deployed AI functions. They need `VITE_SUPABASE_ANON_KEY` in `.env`; `npm run release` refuses to pack the zip without it. `npm run icons` redraws `public/icons/*.png`.
 
 ## How it fits together
 
@@ -45,7 +47,7 @@ Term data comes from the public `term-data` Supabase bucket (`index.json`, then 
 
 ## Integration flag
 
-`VITE_USE_MOCKS` (default `true` for `npm run dev`) is the single switch. `npm run release` always builds with `false`.
+`VITE_USE_MOCKS` is the single switch. It defaults to `false` (live) for `npm run dev` and `npm run build`; demo mode is opt-in with `VITE_USE_MOCKS=true` or `npm run dev:mock`. `npm run release` always builds with `false`. Unit tests use mocks and fixtures directly and do not depend on the flag.
 
 - **Engine**: `false` runs the real engine from `../engine` (`generateSchedulesAsync`, imported from source and bundled into the extension). `true` uses the stand-in in `src/mocks/mockEngine.ts`.
 - **AI**: `false` calls the Supabase Edge Functions `interview` and `explain` with the anon key. `true` uses the scripted interview and explanations in `src/mocks/mockAi.ts`. While the app is on sample term data, the interview stays scripted because the AI shortlists from the real `courses` table. If the AI service is unreachable, the user can switch to the offline interview.

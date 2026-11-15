@@ -9,11 +9,11 @@ export const CLASSES_API = "https://classes.usc.edu/api/Courses/Course";
 export const SUPABASE_ANON_KEY: string = import.meta.env.VITE_SUPABASE_ANON_KEY ?? "";
 
 /**
- * THE integration flag. While true, the schedule engine (lib/engine.ts) and the AI
- * functions (lib/ai.ts) are backed by src/mocks/. Defaults to true until the engine
- * and AI tasks are merged; set VITE_USE_MOCKS=false to use the real implementations.
+ * THE integration flag. Off by default: the real engine (lib/engine.ts) and the deployed
+ * AI functions (lib/ai.ts) run, as in the release build. Set VITE_USE_MOCKS=true (or run
+ * `npm run dev:mock`) to back both with the local stand-ins in src/mocks/.
  */
-export const USE_MOCKS: boolean = (import.meta.env.VITE_USE_MOCKS ?? "true") !== "false";
+export const USE_MOCKS: boolean = import.meta.env.VITE_USE_MOCKS === "true";
 
 export const DEFAULT_RESULT_LIMIT = 10;
 export const MAX_RESULT_LIMIT = 100;
