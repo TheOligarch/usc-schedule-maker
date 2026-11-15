@@ -1,6 +1,7 @@
 /** App state: one serialisable object, persisted to localStorage between visits. */
 import { DEFAULT_RESULT_LIMIT, MAX_RESULT_LIMIT } from "./lib/config";
 import type { Block, Day, Importance, InterviewHistoryItem, Preferences, ScheduleRequest, Shortlist } from "./lib/contract-types";
+import { geShort } from "./lib/schedule";
 import { DAYS, normalizeBlocks } from "./lib/time";
 
 export type StepId = "requirements" | "priorities" | "interview" | "results";
@@ -88,10 +89,44 @@ export function loadState(): AppState {
     const { minRmp: _legacyMinimum, ...parsed } = JSON.parse(raw) as Partial<AppState> & { minRmp?: unknown };
     if (parsed.version !== 2) return defaultState();
     const base = defaultState();
-    return { ...base, ...parsed, times: { ...base.times, ...parsed.times }, importance: { ...base.importance, ...parsed.importance }, limit: Math.min(MAX_RESULT_LIMIT, Math.max(1, parsed.limit ?? base.limit)) };
+    return friendlySlotLabels({ ...base, ...parsed, times: { ...base.times, ...parsed.times }, importance: { ...base.importance, ...parsed.importance }, limit: Math.min(MAX_RESULT_LIMIT, Math.max(1, parsed.limit ?? base.limit)) });
   } catch {
     return defaultState();
   }
+}
+
+/**
+ * Builds before friendly GE labels saved GE slot labels with the raw catalog prefix
+ * ("ARTS course", "ARTS course 2"), and every screen shows the label as is. Rename those
+ * to the GE letter ("GE-A course") along with their shortlists; geCategory stays as stored.
+ */
+export function friendlySlotLabels(state: AppState): AppState {
+  const legacy = (slot: SlotDef): string | null => {
+    if (slot.kind !== "GE" || !slot.geCategory) return null;
+    const raw = slot.geCategory.trim();
+    const short = geShort(raw);
+    const m = /^(.*) course( \d+)?$/.exec(slot.label);
+    return short !== raw && m?.[1] === raw ? short : null;
+  };
+  if (!Array.isArray(state.slots) || !state.slots.some((s) => legacy(s))) return state;
+  const used = new Set(state.slots.filter((s) => !legacy(s)).map((s) => s.label));
+  const renames = new Map<string, string>();
+  const slots = state.slots.map((slot) => {
+    const short = legacy(slot);
+    if (!short) return slot;
+    const base = `${short} course`;
+    let label = slot.label.replace(/^.* course/, base);
+    for (let n = 2; used.has(label); n++) label = `${base} ${n}`;
+    used.add(label);
+    renames.set(slot.label, label);
+    return { ...slot, label };
+  });
+  const interview = state.interview && {
+    ...state.interview,
+    shortlists: state.interview.shortlists.map((s) => (renames.has(s.label) ? { ...s, label: renames.get(s.label)! } : s)),
+  };
+  const next = { ...state, slots, interview };
+  return { ...next, interviewFor: state.interviewFor === interviewSignature(state) ? interviewSignature(next) : state.interviewFor };
 }
 
 export function saveState(state: AppState): void {
