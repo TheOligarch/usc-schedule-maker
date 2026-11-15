@@ -14,7 +14,7 @@ To install, all you need is desktop Google Chrome.
 4. Open <https://webreg.usc.edu>, sign in, and refresh the page if it was already open.
 5. Click **myScheduleMaker**, immediately to the right of **myCalendar**.
 
-Updating from an older download? Chrome keeps running whatever folder it loaded, so a new ZIP changes nothing until you **Remove** the old USC Schedule Maker card in `chrome://extensions` (or click its reload icon after replacing that folder's contents). The card shows the version; the current release is 0.1.5.
+Updating from an older download? Chrome keeps running whatever folder it loaded, so a new ZIP changes nothing until you **Remove** the old USC Schedule Maker card in `chrome://extensions` (or click its reload icon after replacing that folder's contents). The card shows the version; the current release is 0.1.6.
 
 To open the app without signing into WebReg, open Chrome's Extensions menu and click **USC Schedule Maker**. Pin it for a toolbar shortcut.
 

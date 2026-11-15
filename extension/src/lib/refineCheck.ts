@@ -41,22 +41,17 @@ export function aiInterpreter(signal?: AbortSignal): AiInterpreter {
 
 export type CheckResult = { ok: true; refinement: Refinement; count: number } | { ok: false; refinement: Refinement; message: string; reasons: string[] };
 
-/** Interprets the text and dry-runs the engine with it; never changes state itself. */
+/**
+ * Interprets the text and dry-runs the engine with it; never changes state itself.
+ * Only offered while the current rules produce schedules (the refine box is hidden otherwise),
+ * so a zero result is caused by this change together with the current rules.
+ */
 export async function proposeRefinement(text: string, data: TermData, state: AppState, schedule: RankedSchedule | null, opts: { ai?: AiInterpreter | null; signal?: AbortSignal } = {}): Promise<CheckResult> {
   const ctx: ParseContext = { data, codes: requestCodes(state, data), schedule };
   const refinement = await interpretRefinement(text, ctx, opts.ai === undefined ? aiInterpreter(opts.signal) : opts.ai);
   const next = { ...state, refinements: [...state.refinements, refinement] };
   const run = await generateSchedules(data, buildRequest(next, data), { limit: 1, signal: opts.signal });
   if (run.result.totalValid > 0) return { ok: true, refinement, count: run.result.totalValid };
-  const before = await generateSchedules(data, buildRequest(state, data), { limit: 1, signal: opts.signal });
-  if (before.result.totalValid === 0) {
-    return {
-      ok: false,
-      refinement,
-      reasons: before.result.blockers.slice(0, 2).map((b) => b.message),
-      message: `Not applied: no schedule fits your current requirements even without “${refinement.summary}”, so this change cannot be checked. Fix what is blocking schedules first.`,
-    };
-  }
   const reasons = await conflictReasons(data, state, refinement, run.result.blockers.map((b) => b.message), opts.signal);
   return {
     ok: false,

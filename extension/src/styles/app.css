@@ -223,16 +223,18 @@ textarea { width: 100%; resize: vertical; }
 .search-results .meta { display: flex; align-items: center; gap: 4px; color: var(--muted); font-size: 12px; white-space: nowrap; }
 .search-empty { color: var(--muted); cursor: default !important; grid-template-columns: 1fr !important; }
 .chip-list { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.course-chip { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 8px 8px 12px; border: 1px solid var(--line); border-left: 4px solid var(--cardinal); border-radius: 8px; background: var(--surface-2); }
-.course-chip > div:first-child { display: flex; flex-direction: column; min-width: 0; }
+/* Body on the left; the corner (units + remove X) is a fixed top-right column that never wraps or re-centres as the body grows. */
+.course-chip { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; column-gap: 10px; padding: 8px 8px 8px 12px; border: 1px solid var(--line); border-left: 4px solid var(--cardinal); border-radius: 8px; background: var(--surface-2); }
+.chip-body { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; min-width: 0; }
+.chip-corner { grid-column: 2; grid-row: 1; align-self: start; justify-self: end; display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; white-space: nowrap; }
+.chip-corner .units { color: var(--muted); font-size: 12.5px; }
+.chip-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
 .course-chip .code { font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
 .course-chip .title { color: var(--ink-2); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .course-chip.missing { border-left-color: var(--err); }
 .course-chip.missing .title { color: var(--err); }
 .slot-chip { border-left-color: var(--gold); }
 .slot-chip .code .icon { color: var(--gold-ink); }
-.chip-meta { display: flex; align-items: center; gap: 6px; flex: none; }
-.chip-meta .units { color: var(--muted); font-size: 12.5px; }
 .slot-adders select { max-width: 280px; }
 .limits { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
 .limits input[type="number"] { width: 90px; }

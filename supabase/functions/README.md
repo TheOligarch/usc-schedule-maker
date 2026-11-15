@@ -11,8 +11,8 @@ URL: `https://mmdvgvpckweiklkbuxvy.supabase.co/functions/v1/`. CORS is open.
 | `refine`    | POST   | One piece of results-page schedule feedback -> `{ constraints, unparsed }` (structured, validated again)    |
 
 `refine` only translates text the extension's local parser could not fully account for. It never guesses on a model failure: the `fallback` answer returns no
-constraints and the whole text as `unparsed`, which the extension reports as not understood. The extension degrades the same way while the function is not
-deployed (HTTP 404).
+constraints and the whole text as `unparsed`, which the extension reports as not understood. If the function is unreachable (for example HTTP 404 before a
+deploy), the extension degrades the same way. Deployed 2026-11-15 (version 1, JWT verification on, same project secrets as `interview`/`explain`).
 
 Request and response shapes are in `_shared/types.ts` and follow section 5 of the shared build contract. `interview` also accepts an optional
 `hardHours: { earliestStart, latestEnd }` (24h `HH:MM`) so any times it mentions stay inside the student's hard window; it never asks about start or end times

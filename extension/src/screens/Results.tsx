@@ -11,7 +11,7 @@ import { fmtDays, fmtMeeting, fmtTime, freshnessLine } from "../lib/time";
 import { allowedTimes, buildRequest, type AppState, type StepId } from "../state";
 import { MiniWeek, WeekCalendar, courseColors } from "../components/WeekCalendar";
 import { Card, Icon, Notice, Spinner } from "../components/ui";
-import { ScheduleFeedback } from "../components/ScheduleFeedback";
+import { AppliedFeedback, ScheduleFeedback } from "../components/ScheduleFeedback";
 import { CourseBinDialog } from "../components/CourseBinDialog";
 import { mockBinTransport } from "../mocks/mockCourseBin";
 
@@ -146,14 +146,15 @@ export function Results({ data, state, onChange, onEdit, binTransport, sample }:
   const allowed = allowedTimes(state.times);
   const total = run?.result.totalValid ?? 0;
 
-  const feedback = <ScheduleFeedback data={data} schedule={selected} index={selectedIndex} state={state} running={running} onChange={onChange} />;
+  // The refine box needs schedules to refine; when nothing fits only the feedback already in effect is listed, so it can be removed.
+  const applied = state.refinements.length > 0 && <Card title="Schedule feedback in effect"><AppliedFeedback state={state} disabled={running} onChange={onChange} /></Card>;
 
   if (engineError) {
     return (
       <div className="screen">
         <Notice tone="error">The schedule builder failed: {engineError}</Notice>
         <button type="button" className="btn btn-secondary" onClick={() => setRetry(n => n + 1)}>Retry schedule builder</button>
-        {feedback}
+        {applied}
       </div>
     );
   }
@@ -167,8 +168,8 @@ export function Results({ data, state, onChange, onEdit, binTransport, sample }:
     );
   }
   if (total === 0) return <div className="screen">{running && <Spinner label="Refreshing schedules…" />}
-    <Notice tone="warn">No feasible alternatives fit your current rules. Remove or change feedback here to refresh; your requirements and pins are preserved.</Notice>
-    {feedback}<NoResults blockers={run.result.blockers} onEdit={onEdit} /></div>;
+    {applied && <Notice tone="warn">No feasible alternatives fit your current rules. Remove feedback here to refresh; your requirements and pins are preserved.</Notice>}
+    {applied}<NoResults blockers={run.result.blockers} onEdit={onEdit} /></div>;
 
   return (
     <div className="results">
@@ -249,7 +250,7 @@ export function Results({ data, state, onChange, onEdit, binTransport, sample }:
             onAddToBin={() => { if (!running) setBinFor({ schedule: selected, index: selectedIndex }); }}
           />
           {Object.values(state.sectionPins).some((ids) => ids.length) && <p className="small">Required sections: {Object.entries(state.sectionPins).filter(([, ids]) => ids.length).map(([c, ids]) => `${c} ${ids.join(" + ")}`).join(", ")}</p>}
-          {feedback}
+          <ScheduleFeedback data={data} schedule={selected} index={selectedIndex} state={state} running={running} onChange={onChange} />
           <Explanation index={selectedIndex} text={explanations[selected.id]} state={explainState} onRetry={() => void explain()} />
           <Card className="cal-card">
             <WeekCalendar data={data} schedule={selected} allowed={allowed} highlight={highlight} onHighlight={setHighlight} />

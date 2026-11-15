@@ -1,5 +1,4 @@
 import type { TermRef } from "../lib/contract-types";
-import { freshnessLine } from "../lib/time";
 import type { DataSource } from "../lib/termData";
 import { Card, Icon } from "./ui";
 
@@ -12,7 +11,6 @@ export function TermPicker({ terms, termCode, source, onTerm }: { terms: TermRef
             <Icon name="calendar" />
             <span>
               <strong>{t.name}</strong>
-              <span className="muted small">{freshnessLine(t.scrapedAt, { sample: source === "sample" })}</span>
             </span>
           </button>
         ))}

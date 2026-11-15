@@ -131,6 +131,35 @@ describe("clear-section vs remove-course controls", () => {
     expect(container.textContent).not.toContain("never relaxed");
   });
 
+  it("units and the remove-course X share a fixed top-right corner, apart from the pin pickers and clear-pin chips", async () => {
+    await act(async () => root.render(<Harness start={{ ...defaultState(), required: ["BISC-120"] }} />));
+    const card = container.querySelector<HTMLLIElement>("li.course-chip")!;
+    const corner = () => card.querySelector<HTMLDivElement>(":scope > .chip-corner")!;
+    const before = corner();
+    expect([...card.children].map((c) => c.className)).toEqual(["chip-body", "chip-corner"]);
+    expect([...before.children].map((c) => c.textContent || c.getAttribute("aria-label"))).toEqual(["4 u", "Remove course BISC-120"]);
+    await choose("pin-BISC-120", "13003");
+    await choose("pin-BISC-120-lab", "13006");
+    // pickers and their clear chips grow the body; the corner is the same node with the same contents
+    expect(corner()).toBe(before);
+    expect(corner().children).toHaveLength(2);
+    expect(corner().querySelector(".pin-clear")).toBeNull();
+    expect(card.querySelector(".chip-body")!.querySelectorAll(".pin-clear")).toHaveLength(2);
+    expect(card.querySelector(".chip-body")!.querySelector(".course-remove")).toBeNull();
+  });
+
+  it("the card stylesheet keeps the corner top-aligned and unwrapped while the body shrinks", async () => {
+    const css = (await import("../styles/app.css?raw")).default as string;
+    const rule = (sel: string) => css.split("\n").find((line) => line.startsWith(`${sel} {`)) ?? "";
+    expect(rule(".course-chip")).toContain("display: grid");
+    expect(rule(".course-chip")).toContain("grid-template-columns: minmax(0, 1fr) auto");
+    expect(rule(".course-chip")).toContain("align-items: start");
+    expect(rule(".chip-corner")).toMatch(/grid-column: 2; grid-row: 1; align-self: start;/);
+    expect(rule(".chip-corner")).toContain("flex-wrap: nowrap");
+    expect(rule(".chip-corner")).toContain("white-space: nowrap");
+    expect(rule(".chip-body")).toContain("min-width: 0");
+  });
+
   it("a pin the term no longer offers can be cleared without removing the course", async () => {
     await act(async () => root.render(<Harness start={{ ...defaultState(), required: ["BISC-120"], sectionPins: { "BISC-120": ["99999"] } }} />));
     expect(container.textContent).toContain("Section 99999 is no longer offered");

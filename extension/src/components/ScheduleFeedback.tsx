@@ -57,13 +57,19 @@ export function ScheduleFeedback({ data, schedule, index, state, running, onChan
     {error && <Notice tone="error">{error}</Notice>}
     {conflict && <Notice tone="warn"><span>{conflict.message}</span>{conflict.reasons.length > 0 && <ul className="small">{conflict.reasons.map(r => <li key={r}>{r}</li>)}</ul>}</Notice>}
     {applied && !conflict && !error && <p className="small" role="status">{applied}</p>}
-    {state.refinements.length > 0 && <div aria-label="Applied schedule feedback" aria-live="polite">
-      <p className="small">Applied to every new alternative:</p>
-      <ul>{state.refinements.map((r, i) => <li key={`${i}-${r.scheduleId}`}>
-        <span title={r.text}>{r.summary}</span>{" "}
-        <button type="button" className="btn btn-ghost btn-sm" disabled={busy} aria-label={`Remove feedback: ${r.summary}`} onClick={() => onChange({ refinements: state.refinements.filter((_, at) => at !== i) })}>Remove</button>
-      </li>)}</ul>
-      <button type="button" className="btn btn-ghost btn-sm" disabled={busy} onClick={() => onChange({ refinements: [] })}>Clear feedback and refresh</button>
-    </div>}
+    <AppliedFeedback state={state} disabled={busy} onChange={onChange} />
   </Card>;
+}
+
+/** The feedback in effect, each removable; also shown on its own when nothing fits. */
+export function AppliedFeedback({ state, disabled, onChange }: { state: AppState; disabled: boolean; onChange: (patch: Partial<AppState>) => void }) {
+  if (!state.refinements.length) return null;
+  return <div aria-label="Applied schedule feedback" aria-live="polite">
+    <p className="small">Applied to every new alternative:</p>
+    <ul>{state.refinements.map((r, i) => <li key={`${i}-${r.scheduleId}`}>
+      <span title={r.text}>{r.summary}</span>{" "}
+      <button type="button" className="btn btn-ghost btn-sm" disabled={disabled} aria-label={`Remove feedback: ${r.summary}`} onClick={() => onChange({ refinements: state.refinements.filter((_, at) => at !== i) })}>Remove</button>
+    </li>)}</ul>
+    <button type="button" className="btn btn-ghost btn-sm" disabled={disabled} onClick={() => onChange({ refinements: [] })}>Clear feedback and refresh</button>
+  </div>;
 }

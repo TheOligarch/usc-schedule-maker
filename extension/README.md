@@ -55,7 +55,7 @@ Term data comes from the public `term-data` Supabase bucket (`index.json`, then 
 ## Data and credits
 
 - Ratings from RateMyProfessors.com. Only the lecture instructor's rating is used. Matches made on first initial + last name are labelled "possible match".
-- Seat counts come from the term data file. The UI shows one freshness line everywhere ("Live seat counts from classes.usc.edu, updated 3 hours ago") from the timestamp of the data in use: the live seat fetch when every course on screen has one, otherwise the term file's `scrapedAt`. Sample data and a missing timestamp get their own truthful wording. Inside the installed extension, the schedule being viewed is refreshed live from classes.usc.edu (at most 6 requests at a time, public course endpoint only).
+- Seat counts come from the term data file. The top bar and the schedules page show one freshness line ("Live seat counts from classes.usc.edu, updated 3 hours ago"; the Step 1 term picker shows only the term name) from the timestamp of the data in use: the live seat fetch when every course on screen has one, otherwise the term file's `scrapedAt`. Sample data and a missing timestamp get their own truthful wording. Inside the installed extension, the schedule being viewed is refreshed live from classes.usc.edu (at most 6 requests at a time, public course endpoint only).
 - "Register" links open the course in WebReg (`/Courses?Program=<DEPT>&Course=<CODE>`) with the schedule's chosen sections for that course outlined and the first one scrolled into view. WebReg keeps the term in the session, so if it is on a different term the page says so and links to WebReg's term switch. The highlight is visual only.
 - "Add all to myCourseBin" (Results, per schedule) adds every section of the schedule to the student's WebReg course bin after a confirmation listing them. It works only inside the WebReg tab: the app asks the content script, which loads each course's WebReg page in the signed-in session, takes the section's own "Add to myCourseBin" form (its `data-ajax-url`, `/api/section/<term>/<section>/add`, and its anti-forgery token), and sends the same POST that form sends, with the `X-CSRF: 1` header WebReg's own scripts add to every same-origin request (without it WebReg answers 401 "Missing or invalid X-CSRF header."), one section at a time. As on WebReg's own page, HTTP 200 counts as added and any other status as failed, showing WebReg's message. A section already in the bin is not posted: WebReg's course page replaces its add form with an "Already in Course Bin" label, which the content script reads from the same page and reports as already in the bin (WebReg answers a repeat add with the same empty 200 as a new one, so the answer cannot tell them apart). It refuses when WebReg's session term differs from the schedule's, stops on a session problem, and shows each section as added, already in the bin, or failed with WebReg's message. Every request passes an allowlist (`isAllowedBinRequest` in `src/lib/courseBin.ts`) that admits only a course-page read and that add, so nothing can be registered, dropped, checked out or removed.
 - Not affiliated with USC.
@@ -69,7 +69,8 @@ rules (`src/lib/sectionPins.ts`), so only registrable linked combinations are of
 choosing a lecture narrows the lab/discussion lists to the ones linked to it, and choosing a
 component from another link group replaces the incompatible pin. Students can pin the
 lecture, a component, or both. Each pin has its own small "clear section" chip X inside the
-picker, separate from the course's remove button at the card edge. Course codes saved or
+picker. The course's unit count and remove button sit together in the card's top-right
+corner, which stays fixed as the pickers, chips, tags or notes grow the card. Course codes saved or
 typed in another format ("csci 201", a cross-listed alias) are matched to the term's own
 code when data loads, and sections listed only under a cross-listed code are included, so
 the pickers populate for every course with published sections. Pins survive interview,
@@ -87,7 +88,10 @@ parser cannot fully account for goes to the `refine` AI function; its answer is 
 against the same shapes and the student's actual courses. Text neither can use is reported
 as not understood, and partially used text lists the words that were not used.
 
-Before anything is applied, the candidate refinement is dry-run through the real engine
+The refine box appears only once the current rules produce at least one schedule. When
+nothing fits, the page keeps its no-results guidance and lists only feedback already in
+effect, so it can be removed. Before anything is applied, the candidate refinement is
+dry-run through the real engine
 (`src/lib/refineCheck.ts`). If no section combination is left, a warning explains the
 conflict (a pinned section, a course whose every combination breaks the rule, or earlier
 feedback) and nothing changes: the current schedules, earlier feedback and the typed text

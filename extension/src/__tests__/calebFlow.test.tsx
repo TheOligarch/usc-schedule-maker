@@ -104,6 +104,7 @@ it("warns and does not apply feedback that leaves no schedule, keeping schedules
   expect(dry.length).toBeGreaterThan(0);
   for (const call of dry) expect(call[2]).toMatchObject({ limit: 1 });
   expect(container.querySelector<HTMLTextAreaElement>("#schedule-feedback")!.value).toBe("no BISC lab on Friday");
+  expect(container.textContent).not.toContain("No schedule fits all of your requirements"); // prior schedules and the box stay
 });
 
 it("explains a conflict with earlier feedback rather than a course", async () => {
@@ -218,11 +219,26 @@ it("the sections card shows the freshness of the data in use, never a refresh sc
   expect(container.textContent).not.toMatch(/nightly/i);
 });
 
-it("does not blame new feedback when nothing fit before it", async () => {
+it("hides the refine box when the first generation finds no schedule, keeping the no-results guidance", async () => {
   const start = initial();
   start.times = { ...start.times, global: [{ start: "08:00", end: "09:00" }] };
   await render(start);
-  await feedback("no classes before 8am");
-  expect(container.textContent).toContain("no schedule fits your current requirements even without “No classes before 8:00 AM”");
-  expect(current.refinements).toEqual([]);
+  expect(container.textContent).toContain("No schedule fits all of your requirements");
+  expect(container.querySelector("#schedule-feedback")).toBeNull();
+  expect(container.textContent).not.toContain("Refine your schedules");
+  expect(container.querySelector('[aria-label="Suggestions from this schedule"]')).toBeNull();
+  expect(container.textContent).not.toContain("Schedule feedback in effect");
 });
+
+it("when earlier feedback leaves nothing, lists only that feedback so it can be removed", async () => {
+  const start = { ...initial(), sectionPins: { "BISC-120": ["13005"] } };
+  start.refinements = [await interpretRefinement("no BISC lab on Friday", { data, codes: ["BISC-120"], schedule: null }, null)];
+  await render(start);
+  expect(container.textContent).toContain("No schedule fits all of your requirements");
+  expect(container.querySelector("#schedule-feedback")).toBeNull();
+  expect(container.textContent).toContain("Schedule feedback in effect");
+  await act(async () => button("Clear feedback and refresh").click()); await settle();
+  expect(current.refinements).toEqual([]);
+  expect(container.querySelector("#schedule-feedback")).not.toBeNull();
+});
+

@@ -36,12 +36,14 @@ describe("the freshness line", () => {
     expect(freshnessLine("garbage")).toBe("Live seat counts from classes.usc.edu; last update time unavailable");
     expect(freshnessLine(ago(MIN), { sample: true })).toBe("Sample seat counts, not from classes.usc.edu");
   });
-  it("the term picker shows it for each term", async () => {
+  it("the Step 1 term picker shows the term name without a freshness subtitle", async () => {
     vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
     const el = document.createElement("div");
     const root = createRoot(el);
     await act(async () => root.render(<TermPicker terms={[{ code: "20271", name: "Spring 2027", scrapedAt: new Date(Date.now() - 3 * HOUR).toISOString() }]} termCode="20271" source="live" onTerm={() => {}} />));
-    expect(el.textContent).toContain("Live seat counts from classes.usc.edu, updated 3 hours ago");
+    expect(el.textContent).toContain("Spring 2027");
+    expect(el.querySelector(".term-option")!.textContent).toBe("Spring 2027");
+    expect(el.textContent).not.toContain("Live seat counts");
     expect(el.textContent).not.toMatch(/nightly/i);
     await act(async () => root.unmount());
     vi.unstubAllGlobals();
