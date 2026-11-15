@@ -420,3 +420,19 @@ table.sections td:last-child { text-align: right; }
   .bubble { max-width: 95%; }
   .quick-replies, .free-text { padding-left: 0; }
 }
+
+/* Add a whole schedule to WebReg's myCourseBin */
+.sched-head .row { flex-wrap: wrap; }
+.modal-backdrop { position: fixed; inset: 0; z-index: 50; background: rgba(31, 26, 23, 0.42); display: grid; place-items: center; padding: 16px; }
+.modal { width: min(640px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.modal .card-head { margin-bottom: 0; }
+.modal-foot { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
+table.bin-table td:last-child { text-align: left; }
+.bin-status { display: inline-flex; align-items: center; gap: 4px; font-weight: 600; white-space: nowrap; }
+.bin-added { color: var(--ok); }
+.bin-already { color: var(--ink-2); }
+.bin-failed { color: var(--err); }
+.bin-pending, .bin-skipped { color: var(--muted); font-weight: 500; }
+.bin-adding { color: var(--warn); }
+.bin-message { margin-top: 2px; max-width: 46ch; }
+.bin-summary { color: var(--ink-2); }

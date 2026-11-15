@@ -1,0 +1,24 @@
+{
+  "_comment": "Real WebReg response captured 2026-11-15 (Spring 2027, signed in) to an authorized repeat add of CSCI-103 section 29966 while it was already in myCourseBin. Same request shape as webreg-add-200-success.json (with X-CSRF: 1). Token scrubbed; no cookies or personal data. The answer is identical to a first add (200, empty body), and the bin was unchanged afterwards (29966 listed once, Scheduled 6 before and after), so an already-in-bin section can only be recognized from the course page's 'Already in Course Bin' label.",
+  "request": {
+    "method": "POST",
+    "url": "https://webreg.usc.edu/api/section/20271/29966/add",
+    "headers": {
+      "Accept": "*/*",
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      "X-Requested-With": "XMLHttpRequest",
+      "X-CSRF": "1"
+    },
+    "body": "submit=&__RequestVerificationToken=SCRUBBED&X-Requested-With=XMLHttpRequest"
+  },
+  "response": {
+    "status": 200,
+    "statusText": "OK",
+    "headers": {
+      "Transfer-Encoding": "chunked",
+      "Strict-Transport-Security": "max-age=31536000",
+      "Connection": "keep-alive"
+    },
+    "body": ""
+  }
+}
