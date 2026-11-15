@@ -41,12 +41,18 @@ describe("setup and interview guidance", () => {
     expect(priorities).toContain("These factors help decide the rankings for your potential schedules");
     expect(priorities).not.toContain("These weights decide how schedules are ranked");
     expect(priorities).toContain('id="imp-rmp"');
+    expect(priorities).toContain('id="imp-seatRisk"');
+    expect(priorities).toContain('id="imp-finals"');
+    expect(priorities).not.toContain('id="imp-daySpread"');
+    expect(priorities).not.toContain('id="imp-breaks"');
     expect(priorities).toContain("How important are RateMyProfessor ratings of lecture instructors?");
     state.slots = [{ id: "s", label: "Elective", kind: "elective" }];
     state.interview = { preferences: DEFAULT_PREFERENCES, summary: [], shortlists: [{ label: "Elective", options: [] }] };
     const interview = renderToStaticMarkup(<Interview data={SAMPLE_TERM} sampleData={true} state={state} onChange={noop} onBack={noop} onNext={noop} />);
     expect(interview).toContain("each schedule chooses one from each list");
     expect(interview).toContain("Check your course plan");
+    expect(interview).toContain('id="interview-importance-daySpread"');
+    expect(interview).toContain('id="interview-importance-breaks"');
     for (const field of ["pref-start", "pref-end", "Preferred days off", "Minimum professor rating"]) expect(interview).not.toContain(field);
     expect(interview).toContain("Edit up to 5 real courses per slot");
   });

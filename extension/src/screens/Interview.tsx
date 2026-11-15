@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AI_IS_MOCK, AiError, interviewTurn, type AiSource } from "../lib/ai";
 import { MAX_INTERVIEW_QUESTIONS, MAX_SHORTLIST } from "../lib/config";
-import type { Course, InterviewHistoryItem, InterviewQuestion, Preferences, Shortlist, TermData } from "../lib/contract-types";
+import type { Course, Importance, InterviewHistoryItem, InterviewQuestion, Preferences, Shortlist, TermData } from "../lib/contract-types";
 import { geLabel, geShort, unitsLabel } from "../lib/schedule";
 import { toHHMM, toMin } from "../lib/time";
 import { alignedShortlists, allowedTimes, interviewSignature, type AppState, type InterviewResult, type SlotDef } from "../state";
+import { InterviewImportance } from "../components/InterviewImportance";
 import { CourseSearch } from "../components/CourseSearch";
 import { Card, Icon, Notice, Segmented, Spinner, StepFooter } from "../components/ui";
 
@@ -160,6 +161,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
                   <span className="q-num">{state.history.length + 1}</span>
                   {question.text}
                 </div>
+                <InterviewImportance questionId={question.id} importance={state.importance} onImportance={(importance) => onChange({ importance })} />
                 <div className="quick-replies" role="group" aria-label="Quick replies">
                   {question.options.map((opt) => (
                     <button key={opt} type="button" className="quick-reply" onClick={() => answer(opt, freeText)}>
@@ -242,7 +244,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
               Your courses or slots changed after the interview. The shortlists below may not match; redo the interview or edit them.
             </Notice>
           )}
-          <InterviewSummary data={data} slots={state.slots} required={state.required} result={state.interview} onChange={(interview) => onChange({ interview })} onRedo={redo} />
+          <InterviewSummary data={data} slots={state.slots} required={state.required} result={state.interview} importance={state.importance} onImportance={(importance) => onChange({ importance })} onChange={(interview) => onChange({ interview })} onRedo={redo} />
         </>
       )}
 
@@ -275,6 +277,8 @@ function InterviewSummary({
   slots,
   required,
   result,
+  importance,
+  onImportance,
   onChange,
   onRedo,
 }: {
@@ -282,6 +286,8 @@ function InterviewSummary({
   slots: SlotDef[];
   required: string[];
   result: InterviewResult;
+  importance: Importance;
+  onImportance: (importance: Importance) => void;
   onChange: (r: InterviewResult) => void;
   onRedo: () => void;
 }) {
@@ -322,6 +328,7 @@ function InterviewSummary({
                 { value: "spread", label: "Spread out" },
               ]}
             />
+            <InterviewImportance questionId="day-spread" importance={importance} onImportance={onImportance} />
           </div>
           <div className="field">
             <span className="field-label">Between classes</span>
@@ -335,6 +342,7 @@ function InterviewSummary({
                 { value: "prefer", label: "Breaks" },
               ]}
             />
+            <InterviewImportance questionId="breaks" importance={importance} onImportance={onImportance} />
           </div>
           <div className="field">
             <label htmlFor="pref-gap">Longest gap you'd like</label>

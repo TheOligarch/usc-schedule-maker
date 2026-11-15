@@ -21,8 +21,8 @@ To update, download and extract the new ZIP, replace the contents of your instal
 ## Build your schedule
 
 1. **Requirements:** choose your term and required courses, add open GE categories or elective slots, and set your unit cap and available class times. Leave a day empty to keep it free. **Check course plan** opens AdviseUSC for reference.
-2. **Priorities:** set preference weights, including how much professor ratings should influence ranking. Lower-rated and unrated instructors remain candidates.
-3. **Interview:** answer a few questions about your interests and week layout. Review and edit the summary and up to five real courses per open slot; each generated schedule chooses one course per slot. The app does not audit your degree requirements.
+2. **Priorities:** set how much professor ratings, seat availability, and final-exam conflicts should influence ranking. Lower-rated and unrated instructors remain candidates.
+3. **Interview:** answer a few questions about your interests and week layout. Set the importance of week layout and breaks beside the matching questions, or edit those weights with your preferences in the summary. Review and edit the summary and up to five real courses per open slot; each generated schedule chooses one course per slot. The app does not audit your degree requirements.
 4. **Results:** compare ranked schedules in a weekly calendar, inspect warnings and explanations, and follow section links to USC's course pages. Results default to the top 10, with up to 100 available.
 
 Registration and adding sections to your course bin happen in WebReg.
