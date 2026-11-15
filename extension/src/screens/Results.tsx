@@ -5,6 +5,7 @@ import type { Blocker, Penalty, PenaltyKind, RankedSchedule, TermData } from "..
 import { generateSchedules, type EngineRun } from "../lib/engine";
 import { displayString, geShort, instructorNames, isLectureType, scheduleStats, sectionRmp, SECTION_TYPE_LABEL, unitsLabel } from "../lib/schedule";
 import { fetchLiveSeats, liveSeatsAvailable, withLiveSeats, type LiveSeat } from "../lib/seats";
+import { webregRegisterUrl } from "../lib/webreg";
 import { fmtDays, fmtMeeting, fmtTime, relativeTime } from "../lib/time";
 import { allowedTimes, buildRequest, type AppState, type StepId } from "../state";
 import { MiniWeek, WeekCalendar, courseColors } from "../components/WeekCalendar";
@@ -486,7 +487,13 @@ function SectionDetails({
                             {sec.dClearance && <span className="tag tag-risk">D-clearance</span>}
                           </td>
                           <td>
-                            <a className="btn btn-link btn-sm" href={sec.webregUrl} target="_blank" rel="noopener noreferrer" aria-label={`Open ${c.courseCode} section ${sec.id} in WebReg`}>
+                            <a
+                              className="btn btn-link btn-sm"
+                              href={webregRegisterUrl(c.courseCode, c.sectionIds)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={`Register for ${c.courseCode} in WebReg, with this schedule's sections highlighted`}
+                            >
                               Register <Icon name="external" size={12} />
                             </a>
                           </td>
