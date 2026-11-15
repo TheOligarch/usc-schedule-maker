@@ -4,7 +4,6 @@
  * loaded term data. The real functions replace it through src/lib/ai.ts.
  */
 import type {
-  Day,
   ExplainRequest,
   ExplainResponse,
   InterviewHistoryItem,
@@ -37,10 +36,8 @@ const SCRIPT: Scripted[] = [
   { id: "workload", text: "How difficult should those open-slot classes be?", options: ["Easy", "Moderate", "Challenging"], allowFreeText: true, needsSlots: true },
   { id: "format", text: "What kind of class do you learn best in?", options: ["Big lectures are fine", "Small and discussion-based", "Hands-on labs and projects", "No preference"], allowFreeText: true, needsSlots: true },
   { id: "daySpread", text: "How do you like your week laid out?", options: ["Stack classes on as few days as possible", "Spread them evenly across the week", "No strong preference"], allowFreeText: true },
-  { id: "dayOff", text: "If you could keep one day free of classes, which would it be?", options: ["Friday", "Monday", "Any day works", "I don't need a day off"], allowFreeText: true },
   { id: "breaks", text: "On a class day, do you want classes back-to-back or with breathing room?", options: ["Back-to-back, get it done", "Short breaks between classes", "Long gaps are fine", "No preference"], allowFreeText: true },
   { id: "maxGap", text: "What is the longest gap between two classes you would tolerate?", options: ["1 hour", "2 hours", "3 hours", "Doesn't matter"], allowFreeText: true },
-  { id: "anythingElse", text: "Last one: anything else the ranking should favor?", options: ["Great professors above all", "Open seats - I register late", "A free lunch hour", "Nope, that's everything"], allowFreeText: true },
 ];
 
 function answerOf(history: InterviewHistoryItem[], id: string): string {
@@ -52,17 +49,15 @@ function derivePreferences(history: InterviewHistoryItem[]): Preferences {
   const spread = answerOf(history, "daySpread");
   const breaks = answerOf(history, "breaks");
   const gap = answerOf(history, "maxGap");
-  const off = answerOf(history, "dayOff");
   const notes = history
     .map((h) => h.freeText?.trim())
     .filter((x): x is string => Boolean(x))
     .join(" ");
-  const preferredDaysOff: Day[] = off.startsWith("Friday") ? ["Fri"] : off.startsWith("Monday") ? ["Mon"] : [];
   return {
     daySpread: spread.startsWith("Stack") ? "compact" : spread.startsWith("Spread") ? "spread" : "neutral",
     breaks: breaks.startsWith("Back") ? "avoid" : breaks.startsWith("Short") || breaks.startsWith("Long") ? "prefer" : "neutral",
     maxGapMinutes: gap.startsWith("1") ? 60 : gap.startsWith("2") ? 120 : gap.startsWith("3") ? 180 : null,
-    preferredDaysOff,
+    preferredDaysOff: [],
     // Start and end times come from the allowed-times calendar, so the interview does not ask.
     comfortStart: null,
     comfortEnd: null,

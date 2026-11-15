@@ -258,24 +258,7 @@ export function mockGenerateSchedules(data: TermData, req: ScheduleRequest, opts
           : `Your allowed times rule out ${all.length - inTime.length} of ${all.length} section combinations of ${courseCode}.`,
         inTime.length === 0,
       );
-    const minRmp = req.minRmp;
-    const rated =
-      minRmp === null
-        ? inTime
-        : inTime.filter((b) => {
-            const rmp = b.lecture ? sectionRmp(data, b.lecture) : null;
-            return !rmp || rmp.match !== "exact" || rmp.teacher.avg >= minRmp;
-          });
-    if (report && rated.length < inTime.length)
-      block(
-        "minRmp",
-        inTime.length - rated.length,
-        rated.length === 0
-          ? `Every remaining ${courseCode} lecture instructor is rated below your minimum of ${minRmp}.`
-          : `Your minimum rating of ${minRmp} rules out ${inTime.length - rated.length} section combinations of ${courseCode}.`,
-        rated.length === 0,
-      );
-    return rated;
+    return inTime;
   };
 
   interface Item {
@@ -291,7 +274,7 @@ export function mockGenerateSchedules(data: TermData, req: ScheduleRequest, opts
       block(
         "flexSlot",
         Math.max(1, options.length),
-        options.length === 0 ? `"${slot.label}" has no course options yet.` : `None of the ${options.length} options for "${slot.label}" fit your allowed times and minimum rating.`,
+        options.length === 0 ? `"${slot.label}" has no course options yet.` : `None of the ${options.length} options for "${slot.label}" fit your allowed times.`,
         true,
       );
     items.push({ label: slot.label, bundles });

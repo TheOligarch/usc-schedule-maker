@@ -1,0 +1,39 @@
+import { describe, expect, it } from "vitest";
+import { renderToStaticMarkup } from "react-dom/server";
+import { Requirements } from "../screens/Requirements";
+import { Priorities } from "../screens/Priorities";
+import { Interview } from "../screens/Interview";
+import { defaultState, DEFAULT_PREFERENCES } from "../state";
+import { SAMPLE_TERM } from "../mocks/sampleTerm";
+
+const noop = () => {};
+
+describe("setup and interview guidance", () => {
+  it("explains slot selection and tuition on Requirements without a rating filter", () => {
+    const html = renderToStaticMarkup(<Requirements data={SAMPLE_TERM} state={defaultState()} onChange={noop} onNext={noop} />);
+    expect(html).toContain("Add a GE category or elective you still need");
+    expect(html).toContain("up to five real courses per slot");
+    expect(html).toContain("each schedule chooses one course");
+    expect(html).toContain("does not audit your degree");
+    expect(html).toContain("12–18 units");
+    expect(html).toContain("units over 18 generally cost extra");
+    expect(html).toContain("Program rules and exceptions may apply");
+    expect(html).toContain("Discover-Dornsife-Crafting-Your-Course-Plan.pdf#page=7");
+    expect(html).not.toContain("min-rmp");
+    expect(html).not.toContain("Minimum professor rating");
+  });
+
+  it("offers rating priority and an editable shortlist without repeating setup controls", () => {
+    const state = defaultState();
+    const priorities = renderToStaticMarkup(<Priorities importance={state.importance} onImportance={noop} onBack={noop} onNext={noop} />);
+    expect(priorities).toContain("Professor ratings affect ranking, never eligibility");
+    expect(priorities).toContain('id="imp-rmp"');
+    state.slots = [{ id: "s", label: "Elective", kind: "elective" }];
+    state.interview = { preferences: DEFAULT_PREFERENCES, summary: [], shortlists: [{ label: "Elective", options: [] }] };
+    const interview = renderToStaticMarkup(<Interview data={SAMPLE_TERM} sampleData={true} state={state} onChange={noop} onBack={noop} onNext={noop} />);
+    expect(interview).toContain("each schedule chooses one from each list");
+    expect(interview).toContain("Check your course plan");
+    for (const field of ["pref-start", "pref-end", "Preferred days off", "Minimum professor rating"]) expect(interview).not.toContain(field);
+    expect(interview).toContain("Edit up to 5 real courses per slot");
+  });
+});

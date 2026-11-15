@@ -11,8 +11,9 @@ URL: `https://mmdvgvpckweiklkbuxvy.supabase.co/functions/v1/`. CORS is open.
 
 Request and response shapes are in `_shared/types.ts` and follow section 5 of the shared build contract. `interview` also accepts an optional
 `hardHours: { earliestStart, latestEnd }` (24h `HH:MM`) so any times it mentions stay inside the student's hard window; it never asks about start or end times
-and always returns null comfort hours. Every response carries an `x-usm-ai-source: ai | fallback` header: when the model is unavailable, the functions still
-answer from built-in questions and rules instead of failing.
+and always returns null comfort hours. Days off, available times, unit cap and professor-rating settings are not asked again; the model question is rejected if
+it drifts into these settings. Every response carries an `x-usm-ai-source: ai | fallback` header: when the model is unavailable, the functions still answer from
+built-in questions and rules instead of failing.
 
 ## Changing the model
 
@@ -35,6 +36,8 @@ the ten-question budget, alongside the existing GE/elective questions. The exten
 Answers appear in the editable summary and preference notes in both AI and fallback modes. Seminar-slot answers also feed the existing course shortlist
 selection. Required-course interests are retained as context; individual WRIT-150/GESM sections are not ranked by topic. Backend changes require deploying the
 `interview` function; bundled offline changes require a new extension build.
+
+The interview asks only about interests, day spread and gaps between classes. It finishes when these topics are covered, without padding to ten questions.
 
 ## Checks
 

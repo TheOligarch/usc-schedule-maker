@@ -107,10 +107,12 @@ describe("hard constraints", () => {
     expect(r.schedules[0].warnings.some((w) => w.includes("variable units"))).toBe(true);
   });
 
-  it("minRmp excludes low-rated lecture instructors only", () => {
+  it("legacy minRmp never excludes low-rated lecture instructors", () => {
     const r = generateSchedules(fixture, request({ required: ["CSCI-201"], minRmp: 3 }));
-    expect(r.totalValid).toBe(2);
-    expect(r.schedules.every((s) => !s.courses[0].sectionIds.includes("30002"))).toBe(true);
+    expect(r.totalValid).toBe(3);
+    expect(r.schedules.some((s) => s.courses[0].sectionIds.includes("30002"))).toBe(true);
+    expect(r.schedules[0].score).toBeGreaterThan(r.schedules[r.schedules.length - 1].score);
+    expect(r.blockers.some((b) => b.constraint === "minRmp")).toBe(false);
   });
 
   it("unrated, few-rating and missing instructors get a small noRmp penalty, not excluded", () => {
@@ -327,11 +329,11 @@ describe("blockers", () => {
     expect(r.blockers[0].message).toBe("Removing your 6-unit cap would give 2 schedules (the smallest is 7 units).");
   });
 
-  it("explains a minimum RMP rating", () => {
+  it("a low rating cannot be reported as a blocker, even for a legacy request", () => {
     const r = generateSchedules(fixture, request({ required: ["AHIS-120"], minRmp: 3 }));
-    expect(r.totalValid).toBe(0);
-    expect(r.blockers[0].constraint).toBe("minRmp");
-    expect(r.blockers[0].message).toContain("rules out every section of AHIS-120");
+    expect(r.totalValid).toBe(1);
+    expect(r.blockers.some((b) => b.constraint === "minRmp")).toBe(false);
+    expect(r.schedules[0].penalties.some((p) => p.kind === "preference" && p.message.includes("2.1/5"))).toBe(true);
   });
 
   it("explains unavoidable time conflicts", () => {

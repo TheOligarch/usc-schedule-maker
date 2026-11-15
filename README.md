@@ -20,9 +20,9 @@ To update, download and extract the new ZIP, replace the contents of your instal
 
 ## Build your schedule
 
-1. **Requirements:** choose your term and required courses, then add flexible GE or elective slots. **Check course plan** opens AdviseUSC for reference.
-2. **Priorities:** set your unit cap, professor-rating minimum, available class times, and preference weights. Drag multiple allowed-time blocks to leave gaps; leave a day empty to keep it free.
-3. **Interview:** answer a short guided interview with quick replies and optional free text. Review and edit the preference summary and course shortlists.
+1. **Requirements:** choose your term and required courses, add open GE categories or elective slots, and set your unit cap and available class times. Leave a day empty to keep it free. **Check course plan** opens AdviseUSC for reference.
+2. **Priorities:** set preference weights, including how much professor ratings should influence ranking. Lower-rated and unrated instructors remain candidates.
+3. **Interview:** answer a few questions about your interests and week layout. Review and edit the summary and up to five real courses per open slot; each generated schedule chooses one course per slot. The app does not audit your degree requirements.
 4. **Results:** compare ranked schedules in a weekly calendar, inspect warnings and explanations, and follow section links to USC's course pages. Results default to the top 10, with up to 100 available.
 
 Registration and adding sections to your course bin happen in WebReg.
@@ -31,7 +31,7 @@ Registration and adding sections to your course bin happen in WebReg.
 
 AI translates the interview into structured preferences, suggests real catalog courses for flexible slots, and explains the top schedules. A deterministic TypeScript engine generates and ranks schedules in your browser, including checking class-time conflicts.
 
-Hard constraints include required courses, allowed meeting times, unit cap, and minimum ratings for rated lecture instructors. Soft penalties rank tradeoffs such as full sections, D-clearance, online or TBA meetings, final-exam conflicts, uncertain section links, and missing ratings. When nothing fits, diagnostics identify constraints whose relaxation would admit more schedules.
+Hard constraints include required courses, allowed meeting times, and unit cap. Professor ratings are a soft ranking preference, with a small penalty for missing ratings. Soft penalties rank tradeoffs such as full sections, D-clearance, online or TBA meetings, final-exam conflicts, uncertain section links, and missing ratings. When nothing fits, diagnostics identify constraints whose relaxation would admit more schedules.
 
 | Component | Stack and role |
 | --- | --- |
@@ -100,7 +100,7 @@ For engine development, run `npm ci`, `npm test`, `npm run typecheck`, and `npm 
 | App shows mock mode | Set `VITE_USE_MOCKS=false` and restart Vite, or install the prebuilt release. |
 | App shows sample or cached data | Check connectivity and the data-source notice. Sample data has invented instructors and ratings; cached data may be stale. |
 | AI interview is unavailable | Check the public anon key for source builds and backend configuration. The UI offers **Use offline interview**; the backend also has a rules-based fallback. |
-| No schedules fit | Review the constraint diagnostics and adjust courses, allowed hours, unit cap, or minimum rating. |
+| No schedules fit | Review the constraint diagnostics and adjust courses, allowed hours, or unit cap. |
 
 ## Data, limitations, and credits
 
@@ -110,6 +110,8 @@ For engine development, run `npm ci`, `npm test`, `npm run typecheck`, and `npm 
 - Ambiguous section linkage receives a warning and penalty. TBA meetings have no known times to check. Finals may be unavailable; review section details before registering.
 - Dense searches have an enumeration limit; see the [engine guide](engine/README.md) for truncation and scoring details.
 - This independent student project is unaffiliated with USC or RateMyProfessors.
+
+See [User Feedback](<User Feedback.md>) for the running feedback log and implementation status.
 
 ## Future work
 

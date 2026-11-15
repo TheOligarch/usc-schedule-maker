@@ -22,7 +22,6 @@ export interface Requirement {
   /** combos passing the hard per-course filters, best (lowest base) first */
   combos: Combo[];
   timeFails: number;
-  rmpFails: number;
   overlapFails: number;
   /** union of covered codes over all combos */
   covered: Set<string>;
@@ -34,7 +33,6 @@ export interface Relax {
   /** requirement index whose time check is skipped */
   ignoreTimesFor?: number;
   noUnitCap?: boolean;
-  noMinRmp?: boolean;
   ignoreConflicts?: boolean;
   /** requirement index left out entirely */
   drop?: number;
@@ -168,7 +166,6 @@ function buildCombos(
   code: string,
   resolved: Resolved,
   data: TermData,
-  req: ScheduleRequest,
   w: ScaledWeights,
   slotCache: Map<string, Slot[]>,
 ): Combo[] {
@@ -210,7 +207,7 @@ function buildCombos(
 
     const lecture = secs.find((s) => s.type.startsWith("LEC")) ?? secs[0];
     const units = course ? course.units.min : lecture.units?.min ?? 0;
-    const cost = comboCost({ code, course, sections: secs, ambiguous: link.ambiguous, rmp: data.rmp ?? {}, minRmp: req.minRmp, w });
+    const cost = comboCost({ code, course, sections: secs, ambiguous: link.ambiguous, rmp: data.rmp ?? {}, w });
 
     combos.push({
       courseCode: code,
@@ -226,9 +223,7 @@ function buildCombos(
       warnings: cost.warnings,
       final: finalOf(secs),
       timeOk: true,
-      rmpOk: !cost.rmpBelowMin,
       selfOverlap,
-      rmpBelowMin: cost.rmpBelowMin,
     });
   }
   return combos;
@@ -240,7 +235,7 @@ export interface Base {
   req: ScheduleRequest;
   w: ScaledWeights;
   ctx: ScoreCtx;
-  reqs: Omit<Requirement, "combos" | "timeFails" | "rmpFails" | "overlapFails">[];
+  reqs: Omit<Requirement, "combos" | "timeFails" | "overlapFails">[];
 }
 
 export function buildBase(data: TermData, req: ScheduleRequest, w: ScaledWeights): Base {
@@ -263,7 +258,7 @@ export function buildBase(data: TermData, req: ScheduleRequest, w: ScaledWeights
         unknown.push(code);
         continue;
       }
-      const cs = buildCombos(code, r, data, req, w, slotCache);
+      const cs = buildCombos(code, r, data, w, slotCache);
       if (!cs.length) noLink.push(code);
       structural.push(...cs);
     }
@@ -285,7 +280,6 @@ export function buildProblem(base: Base, relax: Relax = {}): Problem {
     if (relax.drop === r.index) continue;
     const ignoreTimes = relax.ignoreTimesFor === r.index;
     let timeFails = 0;
-    let rmpFails = 0;
     let overlapFails = 0;
     const combos: Combo[] = [];
     for (const c of r.structural) {
@@ -297,15 +291,11 @@ export function buildProblem(base: Base, relax: Relax = {}): Problem {
         timeFails++;
         continue;
       }
-      if (c.rmpBelowMin && !relax.noMinRmp) {
-        rmpFails++;
-        continue;
-      }
       combos.push(c);
     }
     // best first so good schedules are found early (stable for equal cost)
     combos.sort((a, b) => a.base - b.base);
-    reqs.push({ ...r, combos, timeFails, rmpFails, overlapFails });
+    reqs.push({ ...r, combos, timeFails, overlapFails });
   }
 
   const order = reqs.map((_, i) => i).sort((a, b) => reqs[a].combos.length - reqs[b].combos.length || a - b);

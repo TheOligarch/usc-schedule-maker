@@ -1,7 +1,9 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { generateSchedulesAsync } from "../../../engine/src/index";
 import { SAMPLE_TERM } from "../mocks/sampleTerm";
-import { buildRequest, defaultState } from "../state";
+import { buildRequest, defaultState, loadState } from "../state";
+import { fixture } from "../../../engine/test/fixture";
+import { mockGenerateSchedules } from "../mocks/mockEngine";
 import { placedMeetings } from "../lib/schedule";
 
 describe("real engine (engine/) on the sample term, via the UI's request builder", () => {
@@ -33,4 +35,42 @@ describe("real engine (engine/) on the sample term, via the UI's request builder
     expect(res.totalValid).toBe(0);
     expect(res.blockers.length).toBeGreaterThan(0);
   });
+});
+
+
+describe("rating preferences through saved state and the UI request boundary", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  for (const engine of ["real", "offline"] as const) {
+    it(`${engine}: keeps lower-rated schedules and makes rating priority affect scores`, async () => {
+      const run = async (rmp: number) => {
+        vi.stubGlobal("localStorage", { getItem: () => JSON.stringify({ ...defaultState(), required: ["CSCI-201"], minRmp: 5, importance: { ...defaultState().importance, rmp } }) });
+        const req = buildRequest(loadState());
+        expect(req).not.toHaveProperty("minRmp");
+        return engine === "real" ? generateSchedulesAsync(fixture, req) : mockGenerateSchedules(fixture, req);
+      };
+      const low = await run(1);
+      const high = await run(10);
+      expect(low.totalValid).toBe(3);
+      expect(high.totalValid).toBe(3);
+      expect(high.blockers.some((b) => b.constraint === "minRmp")).toBe(false);
+      const lowerRated = (result: typeof low) => result.schedules.find((s) => s.courses[0].sectionIds.includes("30002"))!;
+      expect(lowerRated(high)).toBeDefined();
+      expect(lowerRated(high).score).toBeLessThan(lowerRated(low).score);
+      expect(high.schedules[0].score).toBeGreaterThan(lowerRated(high).score);
+      expect(high.schedules[0].courses[0].sectionIds).toContain("30001");
+    });
+
+    it(`${engine}: ignores direct legacy filters and retains unrated instructors`, async () => {
+      for (const required of [["AHIS-120"], ["WRIT-150"]]) {
+        const state = defaultState();
+        state.required = required;
+        const req = { ...buildRequest(state), minRmp: 5 };
+        const result = engine === "real" ? await generateSchedulesAsync(fixture, req) : mockGenerateSchedules(fixture, req);
+        expect(result.totalValid).toBeGreaterThan(0);
+        expect(result.blockers.some((b) => b.constraint === "minRmp")).toBe(false);
+        if (required[0] === "WRIT-150") expect(result.schedules.some((s) => s.penalties.some((p) => p.kind === "noRmp"))).toBe(true);
+      }
+    });
+  }
 });

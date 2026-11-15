@@ -1,6 +1,6 @@
 # USC Schedule Maker - Chrome extension
 
-Adds a **myScheduleMaker** tab to USC WebReg, immediately to the right of **myCalendar**. Students set hard rules (courses, GE/elective slots, unit cap, minimum professor rating, allowed class times), answer a short AI interview, and compare schedules ranked by what they actually want.
+Adds a **myScheduleMaker** tab to USC WebReg, immediately to the right of **myCalendar**. Students set hard rules (courses, GE/elective slots, unit cap, allowed class times), answer a short AI interview, and compare schedules ranked by their priorities, including professor ratings. Ratings never exclude a schedule.
 
 ## Install (load unpacked)
 

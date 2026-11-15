@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { allowedTimes, buildRequest, defaultState, STEPS } from "../state";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { allowedTimes, buildRequest, defaultState, loadState, saveState, STEPS } from "../state";
 
 describe("allowed times", () => {
   it("applies the global default to weekdays, honours per-day overrides and days off", () => {
@@ -42,5 +42,22 @@ describe("step order", () => {
   it("starts on Requirements, then Priorities, Interview, Results", () => {
     expect(STEPS.map((s) => s.id)).toEqual(["requirements", "priorities", "interview", "results"]);
     expect(defaultState().step).toBe("requirements");
+  });
+});
+
+
+describe("saved rating settings", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("discards the old minimum, preserves priority weights, and never emits a rating filter", () => {
+    let stored = JSON.stringify({ ...defaultState(), minRmp: 4.5, importance: { ...defaultState().importance, rmp: 9 } });
+    vi.stubGlobal("localStorage", { getItem: () => stored, setItem: (_key: string, value: string) => { stored = value; } });
+    const state = loadState();
+    expect(state).not.toHaveProperty("minRmp");
+    expect(state.importance.rmp).toBe(9);
+    expect(buildRequest(state)).not.toHaveProperty("minRmp");
+    saveState(state);
+    expect(JSON.parse(stored)).not.toHaveProperty("minRmp");
+    expect(loadState().importance.rmp).toBe(9);
   });
 });

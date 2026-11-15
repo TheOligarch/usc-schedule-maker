@@ -2,14 +2,13 @@
 // are asked, in what order, and how they fit in the 10-question budget. Also the
 // built-in questions and answer parsing used when the model is unavailable.
 import { courseInterestNotes, CourseInterestTopic, courseInterestTopics, withCourseInterestNotes } from "./course-interests.ts";
-import { Day, DAYS, HHMM, HistoryItem, InterviewRequest, MAX_QUESTIONS, Preferences, Question, Slot } from "./types.ts";
+import { DAYS, HHMM, HistoryItem, InterviewRequest, MAX_QUESTIONS, Preferences, Question, Slot } from "./types.ts";
 
 export type CoreKind =
   | "day-spread"
   | "breaks"
   | "max-gap"
-  | "breaks-and-gap"
-  | "days-off";
+  | "breaks-and-gap";
 
 export type Topic =
   | { id: string; kind: CoreKind; goal: string }
@@ -21,14 +20,13 @@ const CORE_GOALS: Record<CoreKind, string> = {
   "breaks": "Whether they want classes back-to-back or with breaks in between on the same day.",
   "max-gap": "The longest gap between two classes on the same day they would accept.",
   "breaks-and-gap": "Whether they want back-to-back classes or breaks, and the longest gap they would accept.",
-  "days-off": "Which weekdays, if any, they would like to keep free of classes.",
 };
 
 function coreKinds(slotCount: number): CoreKind[] {
   // Start and end times come from the student's allowed-times calendar, so they are never asked.
   // Merge the break questions once open slots would otherwise take the whole budget.
-  if (slotCount <= MAX_QUESTIONS - 4) return ["day-spread", "breaks", "max-gap", "days-off"];
-  return ["day-spread", "breaks-and-gap", "days-off"];
+  if (slotCount <= MAX_QUESTIONS - 3) return ["day-spread", "breaks", "max-gap"];
+  return ["day-spread", "breaks-and-gap"];
 }
 
 /** Splits slot indexes into at most `groups` consecutive, evenly sized groups. */
@@ -146,13 +144,6 @@ export function fallbackQuestion(topic: Topic, req: InterviewRequest): Question 
         "Longer breaks are fine, up to 2 hours",
         "No strong preference",
       ]);
-    case "days-off":
-      return q("Is there a day you would love to keep free of classes?", [
-        "Friday",
-        "Monday",
-        "Monday and Friday",
-        "No day off needed",
-      ]);
     case "course-interest":
       return q(topic.text, topic.options);
     case "slots": {
@@ -169,16 +160,6 @@ export function fallbackQuestion(topic: Topic, req: InterviewRequest): Question 
 }
 
 // ---------- preference parsing without the model ----------
-
-const DAY_WORDS: [RegExp, Day][] = [
-  [/\bmon(day)?s?\b/i, "Mon"],
-  [/\btue(s|sday)?s?\b/i, "Tue"],
-  [/\bwed(nesday)?s?\b/i, "Wed"],
-  [/\bthu(r|rs|rsday)?s?\b/i, "Thu"],
-  [/\bfri(day)?s?\b/i, "Fri"],
-  [/\bsat(urday)?s?\b/i, "Sat"],
-  [/\bsun(day)?s?\b/i, "Sun"],
-];
 
 function parseGapMinutes(text: string): number | null {
   const hours = text.match(/(\d+(?:\.\d+)?)\s*(?:h\b|hr|hour)/i);
@@ -227,10 +208,6 @@ export function fallbackPreferences(plan: Topic[], req: InterviewRequest): Prefe
     }
     if (topic.kind === "max-gap" || topic.kind === "breaks-and-gap") {
       prefs.maxGapMinutes = parseGapMinutes(text) ?? prefs.maxGapMinutes;
-    }
-    if (topic.kind === "days-off") {
-      // "No day off needed" names no day, so it correctly yields none.
-      prefs.preferredDaysOff = DAY_WORDS.filter(([re]) => re.test(text)).map(([, day]) => day);
     }
   }
 

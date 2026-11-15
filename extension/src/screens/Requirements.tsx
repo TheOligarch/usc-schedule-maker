@@ -8,7 +8,6 @@ import { Card, Icon, Notice, StepFooter } from "../components/ui";
 
 /** AdviseUSC course plan, so students can check what they still need while adding courses. */
 const COURSE_PLAN_URL = "https://uscmeyestro.my.site.com/adviseusc/s/course-plan";
-const RMP_OPTIONS = [null, 2.5, 3, 3.5, 4, 4.5];
 
 interface Props {
   data: TermData;
@@ -84,7 +83,8 @@ export function Requirements({ data, state, onChange, header, onNext }: Props) {
           {missing.length > 0 && <Notice tone="warn">{missing.join(", ")} is not offered this term and will block every schedule. Remove it or pick another term.</Notice>}
         </Card>
 
-        <Card title="GE and elective slots" subtitle="Open slots you still need to fill. The interview shortlists up to 5 courses per slot that fit your interests, and the builder tries each one.">
+        <Card title="GE and elective slots" subtitle="Add a GE category or elective you still need. The interview asks about your interests and suggests up to five real courses per slot. Edit the list, then each schedule chooses one course from it.">
+          <p className="muted small">Check your course plan for the requirements you need; this app does not audit your degree.</p>
           <div className="slot-adders">
             <div className="row gap-sm wrap">
               <label className="sr-only" htmlFor="ge-cat">
@@ -157,18 +157,15 @@ export function Requirements({ data, state, onChange, header, onNext }: Props) {
               </label>
             </div>
             <span className="muted small">Variable-unit courses count their minimum.</span>
+            <p className="muted small">
+              Standard undergraduate tuition covers 12–18 units; units over 18 generally cost extra. Program rules and exceptions may apply.{" "}
+              <a href="https://dornsife.usc.edu/advising/wp-content/uploads/sites/96/2026/04/Discover-Dornsife-Crafting-Your-Course-Plan.pdf#page=7" target="_blank" rel="noopener noreferrer">USC courseload policy</a>
+            </p>
             {overCap && <span className="error-text small">Your required courses already add up to {requiredUnits} units.</span>}
           </div>
           <div className="field">
-            <label htmlFor="min-rmp">Minimum professor rating</label>
-            <select id="min-rmp" value={state.minRmp ?? ""} onChange={(e) => onChange({ minRmp: e.target.value === "" ? null : Number(e.target.value) })}>
-              {RMP_OPTIONS.map((v) => (
-                <option key={String(v)} value={v ?? ""}>
-                  {v === null ? "No minimum" : `${v.toFixed(1)} / 5 or higher`}
-                </option>
-              ))}
-            </select>
-            <span className="muted small">Applies to lecture instructors on RateMyProfessors. Unrated instructors are kept, ranked a little lower.</span>
+            <span className="field-label">Professor ratings</span>
+            <p className="muted small">Ratings affect ranking, never eligibility. Set their importance on the next page; lower-rated and unrated instructors remain options.</p>
           </div>
         </div>
       </Card>

@@ -45,7 +45,7 @@ describe("offline course-aware interview", () => {
         await vi.runAllTimersAsync();
         const res = await pending;
         if (res.done) {
-          expect(req.history.length).toBeLessThanOrEqual(10);
+          expect(req.history.length).toBeLessThan(10);
           const ids = req.history.map((h) => h.questionId);
           expect(ids.filter((id) => ["writing-interests", "seminar-interests"].includes(id))).toEqual(testCase.expected);
           expect(new Set(ids).size).toBe(ids.length);
@@ -57,6 +57,7 @@ describe("offline course-aware interview", () => {
           return;
         }
         const q = res.question;
+        expect([q.text, ...q.options].join(" ")).not.toMatch(/days? off|available|units?|ratings?|professors?|instructors?|Friday|Monday|start time|end time/i);
         req.history.push({
           questionId: q.id,
           question: q.text,
@@ -77,7 +78,7 @@ describe("offline course-aware interview", () => {
         "GESM-121g": { ...base, code: "GESM-121g", title: "Climate justice", description: "Climate justice", ge: ["GESM"], crossListedWith: [] },
       },
     };
-    const history = ["seminar-interests", "workload", "format", "daySpread", "dayOff", "breaks", "maxGap", "anythingElse"].map((id) => ({
+    const history = ["seminar-interests", "workload", "format", "daySpread", "breaks", "maxGap"].map((id) => ({
       questionId: id, question: "?", answer: id === "seminar-interests" ? "Climate justice" : "No preference",
     }));
     const pending = mockInterview({ termCode: data.term.code, required: [], slots: [{ label: "GESM course", kind: "GE", geCategory: "GESM" }], history }, data);

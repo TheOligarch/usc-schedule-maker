@@ -102,7 +102,7 @@ export interface ScheduleRequest {
   flexSlots: { label: string; options: string[] }[]; // exactly one of up to 5 interchangeable courses per slot
   allowedTimes: Record<Day, Block[]>; // every meeting must sit inside a block; [] = day off
   unitCap: number | null; // counts each course's units.min
-  minRmp: number | null; // lecture instructor RMP avg below this -> excluded; unrated -> small penalty
+  minRmp?: number | null; // deprecated and ignored; use importance.rmp for soft ranking
   importance: Importance; // 1-10 each
   preferences: Preferences;
 }
@@ -144,7 +144,7 @@ export interface RankedSchedule {
 }
 
 export interface Blocker {
-  constraint: string; // e.g. "allowedTimes", "unitCap", "minRmp", "timeConflict", "noValidLinkCombo"
+  constraint: string; // e.g. "allowedTimes", "unitCap", "timeConflict", "noValidLinkCombo"
   eliminated: number;
   message: string;
 }

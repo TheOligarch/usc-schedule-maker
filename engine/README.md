@@ -31,10 +31,10 @@ bundler (Vite, esbuild, ...) or the `dist/` output of `npm run build`.
   counted once); a flex slot can never be filled by a class already chosen.
 - **Hard constraints**: every meeting inside one of that day's allowed blocks
   (`[]` = day off; TBA meetings never violate), no overlaps (including within a
-  course's own sections), `unitCap` on `units.min`, `minRmp` on the lecture
-  instructor's RMP average. An instructor with fewer than `rmpMinRatings`
-  ratings, no RMP match, or a lecture with no instructor counts as unrated:
-  a small `noRmp` penalty, never excluded. Exactly one course per flex slot.
+  course's own sections), and `unitCap` on `units.min`. Exactly one course per flex slot.
+  Professor ratings never exclude a schedule; legacy `minRmp` requests are accepted but ignored.
+  An instructor with fewer than `rmpMinRatings` ratings, no RMP match, or a lecture with no
+  instructor counts as unrated: a small `noRmp` penalty, never excluded.
 - **Soft scoring**: every weight is in `src/weights.ts` (one documented table)
   and is multiplied by `importance[key] / 5` for its importance knob. Heavy:
   full, waitlist, D-clearance, online/TBA/HSC, final-exam conflict, ambiguous
@@ -44,7 +44,7 @@ bundler (Vite, esbuild, ...) or the `dist/` output of `npm run build`.
   Pass `opts.weights` to override any weight per call.
 - **Blockers**: each single constraint (earlier start, later end, gaps between
   blocks, each day off, a course whose every section is outside your times,
-  unit cap, minimum RMP, time conflicts) is relaxed alone and the number of
+  unit cap, time conflicts) is relaxed alone and the number of
   extra schedules it admits is reported, most first. When nothing fits and no
   relaxation helps, it suggests dropping a course; when even that fails it
   says several constraints must change.
@@ -60,8 +60,9 @@ blocker counts stop at 20,000 (shown as "N+"). On a synthetic full-size term
 (~10,000 sections, 5 courses x 36 combos + a 5-option slot) a request takes
 ~0.2s in Node; a dense request that hits the 100k cap stays under ~1s.
 
-## Contract deviations (additive only)
+## Contract compatibility
 
+- `minRmp` is optional and ignored. Use `importance.rmp` to scale the soft rating and missing-rating penalties.
 - `GenerateResult.truncated?: boolean`.
 - `generateSchedules` / `generateSchedulesAsync` accept extra options:
   `maxEnumerate`, `weights`, `diagnostics`; the async variant also takes
