@@ -83,7 +83,7 @@ export function Requirements({ data, state, onChange, header, onNext }: Props) {
           {missing.length > 0 && <Notice tone="warn">{missing.join(", ")} is not offered this term and will block every schedule. Remove it or pick another term.</Notice>}
         </Card>
 
-        <Card title="GE and elective slots" subtitle="The interview will ask about your interests and come up with up to five potential real courses for each open slot.">
+        <Card title="GE and elective slots" subtitle="The interview will ask about your interests and come up with up to five potential courses for each open slot.">
           <p className="muted small">Check your course plan for the requirements you need; this app does not audit your degree.</p>
           <div className="slot-adders">
             <div className="row gap-sm wrap">
