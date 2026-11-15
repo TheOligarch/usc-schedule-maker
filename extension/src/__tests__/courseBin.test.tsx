@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import csci103Html from "./fixtures/webreg-course-CSCI-103.html?raw";
 import phys151Html from "./fixtures/webreg-course-PHYS-151.html?raw";
 import missingCsrf from "./fixtures/webreg-add-401-missing-csrf.json";
+import addSuccess from "./fixtures/webreg-add-200-success.json";
 import { CourseBinDialog } from "../components/CourseBinDialog";
 import { createCourseBinService, findAddForm, guardedFetcher, handleCourseBinMessage, pageActiveTerm, type Fetcher } from "../content/courseBin";
 import {
@@ -73,11 +74,14 @@ function fakeWebReg(options: { activeTerm?: string; answers?: Record<string, () 
     const id = /\/api\/section\/\d{5}\/(\w+)\/add$/.exec(u.pathname)?.[1];
     // Like the real WebReg: an add without its X-CSRF header gets the captured 401.
     if (method === "POST" && id && new Headers(init.headers).get("X-CSRF") !== "1") return realRefusal();
-    if (method === "POST" && id) return options.answers?.[id]?.() ?? new Response(JSON.stringify({ success: true, message: "Section added to myCourseBin." }), { status: 200 });
+    if (method === "POST" && id) return options.answers?.[id]?.() ?? realSuccess();
     return new Response("not found", { status: 404 });
   };
   return { fetcher, seen, posts: () => seen.filter((s) => s.method === "POST") };
 }
+
+/** WebReg's real answer to a successful add (fixtures/webreg-add-200-success.json): 200, empty body. */
+const realSuccess = () => new Response(addSuccess.response.body, { status: addSuccess.response.status, statusText: addSuccess.response.statusText });
 
 /** WebReg's real answer to an add sent without its X-CSRF header (fixtures/webreg-add-401-missing-csrf.json). */
 const realRefusal = () => new Response(missingCsrf.response.body, { status: missingCsrf.response.status, statusText: missingCsrf.response.statusText });
@@ -195,6 +199,12 @@ describe("WebReg's answer to an add", () => {
     expect(classifyAddResponse({ status: 500, body: "<html><body><h1>Error.</h1><p>An error occurred.</p></body></html>" })).toEqual({ outcome: "failed", message: "Error. An error occurred." });
     expect(classifyAddResponse({ status: 400, body: "" })).toEqual({ outcome: "failed", message: "WebReg answered HTTP 400." });
     expect(classifyAddResponse({ status: 204, body: "" })).toEqual({ outcome: "failed", message: "WebReg answered HTTP 204." });
+  });
+
+  it("reads WebReg's real success answer (200, empty body) as added", () => {
+    expect(addSuccess.request.headers["X-CSRF"]).toBe("1");
+    expect(buildAddRequest({ path: new URL(addSuccess.request.url).pathname, token: "SCRUBBED" })).toMatchObject({ url: addSuccess.request.url, init: { headers: addSuccess.request.headers, body: addSuccess.request.body } });
+    expect(classifyAddResponse({ status: addSuccess.response.status, body: addSuccess.response.body })).toEqual({ outcome: "added", message: null });
   });
 
   it("stops on WebReg's real refusal of an add without its X-CSRF header, showing WebReg's message", () => {

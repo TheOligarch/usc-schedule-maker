@@ -1,0 +1,24 @@
+{
+  "_comment": "Real WebReg response captured 2026-11-15 (Spring 2027, signed in) to the second authorized live add of CSCI-103 section 29966, sent by extension 0.1.2 (87c44c4) with WebReg's X-CSRF header. The section then appeared in myCourseBin (Registered 0, Scheduled 1). Token scrubbed; no cookies or personal data. The body is empty: WebReg's own handler (handleAddCourseBin) reads only the status, 200 meaning added.",
+  "request": {
+    "method": "POST",
+    "url": "https://webreg.usc.edu/api/section/20271/29966/add",
+    "headers": {
+      "Accept": "*/*",
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      "X-Requested-With": "XMLHttpRequest",
+      "X-CSRF": "1"
+    },
+    "body": "submit=&__RequestVerificationToken=SCRUBBED&X-Requested-With=XMLHttpRequest"
+  },
+  "response": {
+    "status": 200,
+    "statusText": "OK",
+    "headers": {
+      "Transfer-Encoding": "chunked",
+      "Strict-Transport-Security": "max-age=31536000",
+      "Connection": "keep-alive"
+    },
+    "body": ""
+  }
+}
