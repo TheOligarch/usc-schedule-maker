@@ -53,6 +53,6 @@ describe("setup and interview guidance", () => {
     expect(interview).toContain('id="interview-importance-daySpread"');
     expect(interview).toContain('id="interview-importance-breaks"');
     for (const field of ["pref-start", "pref-end", "Preferred days off", "Minimum professor rating"]) expect(interview).not.toContain(field);
-    expect(interview).toContain("Edit up to 5 real courses per slot");
+    expect(interview).toContain("Edit up to 5 courses per slot");
   });
 });
