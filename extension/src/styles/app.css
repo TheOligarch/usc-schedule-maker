@@ -372,15 +372,6 @@ textarea { width: 100%; resize: vertical; }
 .wc-event, .mw-ev { background: var(--bg); border-color: var(--bd); color: var(--tx); }
 .mw-ev { background: var(--bd); }
 
-.why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
-.why-title { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 8px; }
-.penalties { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.pen { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: baseline; font-size: 13px; }
-.pen .tag { margin-left: 0; }
-.pen-warn { grid-template-columns: auto 1fr; color: var(--ink-2); }
-.pen-warn .icon { color: var(--warn); }
-.pen-amt { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-
 .course-details { display: flex; flex-direction: column; gap: 12px; }
 .course-detail { border: 1px solid var(--line); border-left: 4px solid var(--bd); border-radius: 8px; padding: 10px 12px; transition: box-shadow 0.12s; }
 .course-detail.lit { box-shadow: 0 0 0 2px var(--bd); }
