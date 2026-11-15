@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { AiError, explainSchedules } from "../lib/ai";
 import { MAX_RESULT_LIMIT } from "../lib/config";
-import type { Blocker, Penalty, PenaltyKind, RankedSchedule, TermData } from "../lib/contract-types";
+import type { Blocker, PenaltyKind, RankedSchedule, TermData } from "../lib/contract-types";
 import { generateSchedules, type EngineRun } from "../lib/engine";
 import { displayString, geShort, instructorNames, isLectureType, scheduleStats, sectionRmp, SECTION_TYPE_LABEL, unitsLabel } from "../lib/schedule";
 import { fetchLiveSeats, liveSeatsAvailable, withLiveSeats, type LiveSeat } from "../lib/seats";
@@ -226,7 +226,6 @@ export function Results({ data, state, onChange, onEdit }: Props) {
           <Card className="cal-card">
             <WeekCalendar data={data} schedule={selected} allowed={allowed} highlight={highlight} onHighlight={setHighlight} />
           </Card>
-          <WhyRank schedule={selected} />
           <SectionDetails
             data={data}
             schedule={selected}
@@ -302,57 +301,6 @@ function Explanation({ index, text, state, onRetry }: { index: number; text: str
           <p className="muted">No explanation for this schedule.</p>
         )}
       </div>
-    </div>
-  );
-}
-
-function WhyRank({ schedule }: { schedule: RankedSchedule }) {
-  const heavy = schedule.penalties.filter((p) => HEAVY.includes(p.kind));
-  const soft = schedule.penalties.filter((p) => !HEAVY.includes(p.kind));
-  if (schedule.penalties.length === 0 && schedule.warnings.length === 0)
-    return (
-      <Notice tone="info">
-        <strong>No trade-offs.</strong> Every section has a seat and a set time, and it matches all of your preferences.
-      </Notice>
-    );
-  return (
-    <Card title="What holds it back" subtitle="Penalties lower the fit score; they never remove a schedule.">
-      <div className="why-grid">
-        {heavy.length > 0 && <PenaltyList title="Risks" items={heavy} tone="risk" />}
-        {soft.length > 0 && <PenaltyList title="Trade-offs" items={soft} tone="soft" />}
-        {schedule.warnings.length > 0 && (
-          <div>
-            <h3 className="why-title">Heads up</h3>
-            <ul className="penalties">
-              {schedule.warnings.map((w) => (
-                <li key={w} className="pen pen-warn">
-                  <Icon name="info" size={14} />
-                  <span>{w}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    </Card>
-  );
-}
-
-function PenaltyList({ title, items, tone }: { title: string; items: Penalty[]; tone: "risk" | "soft" }) {
-  return (
-    <div>
-      <h3 className="why-title">{title}</h3>
-      <ul className="penalties">
-        {items.map((p, i) => (
-          <li key={`${p.kind}-${p.sectionId ?? ""}-${i}`} className={`pen pen-${tone}`}>
-            <span className={`tag ${tone === "risk" ? "tag-risk" : "tag-soft"}`}>{PENALTY_LABEL[p.kind]}</span>
-            <span>{p.message}</span>
-            <span className="pen-amt" title="Points taken off the fit score">
-              -{p.amount.toFixed(1)}
-            </span>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
