@@ -11,9 +11,8 @@ const noop = () => {};
 describe("setup and interview guidance", () => {
   it("explains slot selection and tuition on Requirements without a rating filter", () => {
     const html = renderToStaticMarkup(<Requirements data={SAMPLE_TERM} state={defaultState()} onChange={noop} onNext={noop} />);
-    expect(html).toContain("Add a GE category or elective you still need");
-    expect(html).toContain("up to five real courses per slot");
-    expect(html).toContain("each schedule chooses one course");
+    expect(html).toContain("The interview will ask about your interests and come up with up to five potential courses for each open slot.");
+    expect(html).not.toContain("Edit the list, then each schedule chooses one course from it");
     expect(html).toContain("does not audit your degree");
     expect(html).toContain("12–18 units");
     expect(html).toContain("units over 18 generally cost extra");
@@ -54,6 +53,6 @@ describe("setup and interview guidance", () => {
     expect(interview).toContain('id="interview-importance-daySpread"');
     expect(interview).toContain('id="interview-importance-breaks"');
     for (const field of ["pref-start", "pref-end", "Preferred days off", "Minimum professor rating"]) expect(interview).not.toContain(field);
-    expect(interview).toContain("Edit up to 5 real courses per slot");
+    expect(interview).toContain("Edit up to 5 courses per slot");
   });
 });

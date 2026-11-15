@@ -141,7 +141,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
               <Icon name="sparkle" /> Quick interview
             </>
           }
-          subtitle={`A few questions (up to ${MAX_INTERVIEW_QUESTIONS}) about your interests and week layout. For each open requirement, we suggest up to five real courses. Edit the list before building schedules; each schedule chooses one course per slot.`}
+          subtitle={`A few questions (up to ${MAX_INTERVIEW_QUESTIONS}) about your interests and week layout. For each open requirement, we suggest up to five courses. Edit the list before building schedules; each schedule chooses one course per slot.`}
           actions={
             AI_IS_MOCK || offline || source === "mock" ? (
               <span className="pill pill-muted">Offline demo interview</span>
@@ -331,7 +331,7 @@ function InterviewSummary({
             <Icon name="sparkle" /> Here is what we learned
           </>
         }
-        subtitle="This information will help us rank your schedule. Feel free to edit or change anything"
+        subtitle="This information will help us come up with the best schedules for you. Feel free to edit or change any preferences"
         actions={
           <button type="button" className="btn btn-ghost btn-sm" onClick={onRedo}>
             <Icon name="refresh" size={14} /> Redo interview
@@ -390,7 +390,7 @@ function InterviewSummary({
       </Card>
 
       {slots.length > 0 && (
-        <Card title="Shortlists for your open slots" subtitle={`These lists reflect your interests for the open requirements you added. Edit up to ${MAX_SHORTLIST} real courses per slot; each schedule chooses one from each list. Check your course plan to confirm what counts toward your degree.`}>
+        <Card title="Shortlists for your open slots" subtitle={`These lists reflect your interests for the open requirements you added. Edit up to ${MAX_SHORTLIST} courses per slot; each schedule chooses one from each list. Check your course plan to confirm what counts toward your degree.`}>
           <div className="shortlists">
             {slots.map((slot) => (
               <ShortlistEditor key={slot.id} data={data} slot={slot} required={required} shortlist={shortlists.find((s) => s.label === slot.label)!} onChange={(next) => setShortlist(slot.label, next)} />

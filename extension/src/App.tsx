@@ -97,7 +97,7 @@ export function App({ embedded }: { embedded: boolean }) {
           </span>
           <span className="brand-text">
             <strong>Schedule Maker</strong>
-            <span>Ranks and builds schedules by what you actually want</span>
+            <span>Builds and ranks course schedules by what you actually want</span>
           </span>
         </div>
         <div className="topbar-right">

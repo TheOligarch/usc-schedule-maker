@@ -83,7 +83,7 @@ export function Requirements({ data, state, onChange, header, onNext }: Props) {
           {missing.length > 0 && <Notice tone="warn">{missing.join(", ")} is not offered this term and will block every schedule. Remove it or pick another term.</Notice>}
         </Card>
 
-        <Card title="GE and elective slots" subtitle="Add a GE category or elective you still need. The interview asks about your interests and suggests up to five real courses per slot. Edit the list, then each schedule chooses one course from it.">
+        <Card title="GE and elective slots" subtitle="The interview will ask about your interests and come up with up to five potential courses for each open slot.">
           <p className="muted small">Check your course plan for the requirements you need; this app does not audit your degree.</p>
           <div className="slot-adders">
             <div className="row gap-sm wrap">
@@ -158,7 +158,7 @@ export function Requirements({ data, state, onChange, header, onNext }: Props) {
           <span className="muted small">Variable-unit courses count their minimum.</span>
           <p className="muted small">
             Standard undergraduate tuition covers 12–18 units; units over 18 generally cost extra. Program rules and exceptions may apply.{" "}
-            <a href="https://dornsife.usc.edu/advising/wp-content/uploads/sites/96/2026/04/Discover-Dornsife-Crafting-Your-Course-Plan.pdf#page=7" target="_blank" rel="noopener noreferrer">USC courseload policy</a>
+            <a href="https://dornsife.usc.edu/advising/wp-content/uploads/sites/96/2026/04/Discover-Dornsife-Crafting-Your-Course-Plan.pdf#page=7" target="_blank" rel="noopener noreferrer">USC Courseload Policy</a>
           </p>
           {overCap && <span className="error-text small">Your required courses already add up to {requiredUnits} units.</span>}
         </div>

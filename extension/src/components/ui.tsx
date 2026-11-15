@@ -41,7 +41,6 @@ export function Stepper({ current, canVisit, onVisit }: { current: StepId; canVi
                 <span className="step-num">{status === "done" ? <Icon name="check" size={14} /> : i + 1}</span>
                 <span className="step-text">
                   <span className="step-label">{step.label}</span>
-                  <span className="step-hint">{step.hint}</span>
                 </span>
               </button>
             </li>

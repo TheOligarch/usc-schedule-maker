@@ -103,7 +103,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .step-num { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line-2); font-weight: 700; font-size: 12.5px; color: var(--muted); }
 .step-text { display: flex; flex-direction: column; min-width: 0; }
 .step-label { font-weight: 600; }
-.step-hint { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .step-current button { border-bottom-color: var(--cardinal); }
 .step-current .step-num { background: var(--cardinal); border-color: var(--cardinal); color: #fff; }
 .step-done .step-num { background: var(--gold); border-color: var(--gold); color: var(--cardinal-dark); }
@@ -116,7 +115,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .card-head h2 .icon { color: var(--cardinal); }
 .card-head p { margin-top: 3px; font-size: 13px; max-width: 70ch; }
 .card-actions { display: flex; gap: 8px; align-items: center; flex: none; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
 
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
@@ -414,7 +413,6 @@ table.sections td:last-child { text-align: right; }
   .topbar { padding: 10px 16px; flex-wrap: wrap; }
   .brand-text span { display: none; }
   .stepper ol { padding: 0 8px; }
-  .step-hint { display: none; }
   .slider-row { grid-template-columns: 1fr 44px; }
   .slider-label { grid-column: 1 / -1; }
   .timegrid, .weekcal { overflow-x: auto; }
