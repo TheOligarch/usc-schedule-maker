@@ -7,7 +7,7 @@ import { generateSchedules, type EngineRun } from "../lib/engine";
 import { displayString, geShort, instructorNames, isLectureType, scheduleStats, sectionRmp, SECTION_TYPE_LABEL, unitsLabel } from "../lib/schedule";
 import { fetchLiveSeats, liveSeatsAvailable, withLiveSeats, type LiveSeat } from "../lib/seats";
 import { webregRegisterUrl } from "../lib/webreg";
-import { fmtDays, fmtMeeting, fmtTime, relativeTime } from "../lib/time";
+import { fmtDays, fmtMeeting, fmtTime, freshnessLine } from "../lib/time";
 import { allowedTimes, buildRequest, type AppState, type StepId } from "../state";
 import { MiniWeek, WeekCalendar, courseColors } from "../components/WeekCalendar";
 import { Card, Icon, Notice, Spinner } from "../components/ui";
@@ -43,6 +43,8 @@ interface Props {
   onEdit: (step: StepId) => void;
   /** Overrides how sections are added to myCourseBin (tests). */
   binTransport?: BinTransport | null;
+  /** The bundled sample term is shown (no live data published). */
+  sample?: boolean;
 }
 
 interface SeatState {
@@ -52,7 +54,7 @@ interface SeatState {
   error: string | null;
 }
 
-export function Results({ data, state, onChange, onEdit, binTransport }: Props) {
+export function Results({ data, state, onChange, onEdit, binTransport, sample }: Props) {
   const request = useMemo(() => buildRequest(state, data), [state, data]);
   const requestKey = JSON.stringify(request);
   const [run, setRun] = useState<EngineRun | null>(null);
@@ -144,7 +146,7 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
   const allowed = allowedTimes(state.times);
   const total = run?.result.totalValid ?? 0;
 
-  const feedback = <ScheduleFeedback key={selected?.id ?? "none"} data={data} schedule={selected} index={selectedIndex} state={state} running={running} onChange={onChange} />;
+  const feedback = <ScheduleFeedback data={data} schedule={selected} index={selectedIndex} state={state} running={running} onChange={onChange} />;
 
   if (engineError) {
     return (
@@ -246,13 +248,14 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
             busy={running}
             onAddToBin={() => { if (!running) setBinFor({ schedule: selected, index: selectedIndex }); }}
           />
-          {Object.keys(state.sectionPins).length > 0 && <p className="small">Required sections: {Object.entries(state.sectionPins).map(([c, id]) => `${c} ${id}`).join(", ")}</p>}
+          {Object.values(state.sectionPins).some((ids) => ids.length) && <p className="small">Required sections: {Object.entries(state.sectionPins).filter(([, ids]) => ids.length).map(([c, ids]) => `${c} ${ids.join(" + ")}`).join(", ")}</p>}
           {feedback}
           <Explanation index={selectedIndex} text={explanations[selected.id]} state={explainState} onRetry={() => void explain()} />
           <Card className="cal-card">
             <WeekCalendar data={data} schedule={selected} allowed={allowed} highlight={highlight} onHighlight={setHighlight} />
           </Card>
           <SectionDetails
+            sample={sample ?? false}
             data={data}
             schedule={selected}
             seats={seatState}
@@ -356,6 +359,7 @@ function Explanation({ index, text, state, onRetry }: { index: number; text: str
 }
 
 function SectionDetails({
+  sample,
   data,
   schedule,
   seats,
@@ -363,6 +367,7 @@ function SectionDetails({
   highlight,
   onHighlight,
 }: {
+  sample: boolean;
   data: TermData;
   schedule: RankedSchedule;
   seats: SeatState;
@@ -372,18 +377,13 @@ function SectionDetails({
 }) {
   const colors = courseColors(schedule);
   const live = liveSeatsAvailable();
-  const fetched = schedule.courses.map((c) => seats.fetchedAt[c.courseCode]).filter(Boolean);
-  const lastFetch = fetched.length ? Math.min(...fetched) : null;
+  // The oldest data on screen: live fetches where every course has one, else the term file.
+  const fetched = schedule.courses.map((c) => seats.fetchedAt[c.courseCode]);
+  const updatedAt = fetched.length && fetched.every(Boolean) ? Math.min(...fetched) : data.term.scrapedAt;
   return (
     <Card
       title="Sections"
-      subtitle={
-        live
-          ? lastFetch
-            ? `Live seat counts from classes.usc.edu, updated ${relativeTime(new Date(lastFetch).toISOString())}.`
-            : "Seat counts from the nightly snapshot."
-          : `Seat counts from the nightly snapshot (${relativeTime(data.term.scrapedAt)}). Install the extension for live counts.`
-      }
+      subtitle={`${freshnessLine(updatedAt, { sample })}.${live || sample ? "" : " Install the extension to refresh seat counts."}`}
       actions={
         live && (
           <button type="button" className="btn btn-ghost btn-sm" onClick={onRefreshSeats} disabled={seats.loading}>
@@ -392,7 +392,7 @@ function SectionDetails({
         )
       }
     >
-      {seats.error && <Notice tone="warn">{seats.error} Showing nightly numbers instead.</Notice>}
+      {seats.error && <Notice tone="warn">{seats.error} Showing the last downloaded numbers instead.</Notice>}
       <div className="course-details">
         {schedule.courses.map((c) => {
           const course = data.courses[c.courseCode];

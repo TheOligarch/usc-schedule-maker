@@ -55,26 +55,46 @@ Term data comes from the public `term-data` Supabase bucket (`index.json`, then 
 ## Data and credits
 
 - Ratings from RateMyProfessors.com. Only the lecture instructor's rating is used. Matches made on first initial + last name are labelled "possible match".
-- Seat counts come from the nightly snapshot. Inside the installed extension, the schedule being viewed is refreshed live from classes.usc.edu (at most 6 requests at a time, public course endpoint only).
+- Seat counts come from the term data file. The UI shows one freshness line everywhere ("Live seat counts from classes.usc.edu, updated 3 hours ago") from the timestamp of the data in use: the live seat fetch when every course on screen has one, otherwise the term file's `scrapedAt`. Sample data and a missing timestamp get their own truthful wording. Inside the installed extension, the schedule being viewed is refreshed live from classes.usc.edu (at most 6 requests at a time, public course endpoint only).
 - "Register" links open the course in WebReg (`/Courses?Program=<DEPT>&Course=<CODE>`) with the schedule's chosen sections for that course outlined and the first one scrolled into view. WebReg keeps the term in the session, so if it is on a different term the page says so and links to WebReg's term switch. The highlight is visual only.
 - "Add all to myCourseBin" (Results, per schedule) adds every section of the schedule to the student's WebReg course bin after a confirmation listing them. It works only inside the WebReg tab: the app asks the content script, which loads each course's WebReg page in the signed-in session, takes the section's own "Add to myCourseBin" form (its `data-ajax-url`, `/api/section/<term>/<section>/add`, and its anti-forgery token), and sends the same POST that form sends, with the `X-CSRF: 1` header WebReg's own scripts add to every same-origin request (without it WebReg answers 401 "Missing or invalid X-CSRF header."), one section at a time. As on WebReg's own page, HTTP 200 counts as added and any other status as failed, showing WebReg's message. A section already in the bin is not posted: WebReg's course page replaces its add form with an "Already in Course Bin" label, which the content script reads from the same page and reports as already in the bin (WebReg answers a repeat add with the same empty 200 as a new one, so the answer cannot tell them apart). It refuses when WebReg's session term differs from the schedule's, stops on a session problem, and shows each section as added, already in the bin, or failed with WebReg's message. Every request passes an allowlist (`isAllowedBinRequest` in `src/lib/courseBin.ts`) that admits only a course-page read and that add, so nothing can be registered, dropped, checked out or removed.
 - Not affiliated with USC.
 
 ## Section choices and schedule refinement
 
-Requirements offers an optional section pin for each required course, including section
-ID, type, meetings, instructor and section notes/theme when USC publishes them. Clearing
-it restores automatic choice. Pins survive interview, saved state and results refinements;
-a missing or incompatible pin blocks generation explicitly.
+Requirements offers optional section pins for each required course: one picker per
+component (lecture, lab, discussion, quiz), listing section ID, meetings, instructors and
+section notes/themes when USC publishes them. Options come from the engine's own linkage
+rules (`src/lib/sectionPins.ts`), so only registrable linked combinations are offered:
+choosing a lecture narrows the lab/discussion lists to the ones linked to it, and choosing a
+component from another link group replaces the incompatible pin. Students can pin the
+lecture, a component, or both. Each pin has its own small "clear section" chip X inside the
+picker, separate from the course's remove button at the card edge. Course codes saved or
+typed in another format ("csci 201", a cross-listed alias) are matched to the term's own
+code when data loads, and sections listed only under a cross-listed code are included, so
+the pickers populate for every course with published sections. Pins survive interview,
+saved state (older single-ID pins are migrated) and results refinements; a missing or
+unlinked pin blocks generation explicitly and is never relaxed.
 
-Results accepts one text exclusion at a time, for example “I dont want a BISC lab on
-Friday”, “avoid this lab on Friday”, or “no classes before 10am”. Name a department or
-course to scope it; “this” resolves against the viewed schedule when unambiguous. Supported
-forms use `no`, `avoid`, or `I dont want`, a component/class subject, and a weekday or
-`before`/`after` a 12-hour time. Unsupported or unmatched feedback shows an error instead
-of claiming to apply it. Changes compile to hard section exclusions and regenerate locally;
-remove/clear feedback to undo, including when no alternatives remain. Requirements,
-preferences and pins stay intact. This parser is local and requires no new Edge Function.
+Results accepts free-text schedule feedback (`src/lib/refinement.ts`). A local parser turns
+common phrasings into structured constraints over meetings, courses, components, sections
+and instructors: days off and days to avoid, per-course or per-component days ("CORE 112
+only on TTh"), earliest start / latest end (optionally per day), time windows to keep free,
+avoiding or requiring instructors, keeping or dropping a particular section ("keep this
+lab"), maximum gap, minimum break / no back-to-back, days per week, and classes or hours per
+day. "Prefer"/"ideally" makes a constraint soft (it re-ranks instead of excluding). Text the
+parser cannot fully account for goes to the `refine` AI function; its answer is validated
+against the same shapes and the student's actual courses. Text neither can use is reported
+as not understood, and partially used text lists the words that were not used.
+
+Before anything is applied, the candidate refinement is dry-run through the real engine
+(`src/lib/refineCheck.ts`). If no section combination is left, a warning explains the
+conflict (a pinned section, a course whose every combination breaks the rule, or earlier
+feedback) and nothing changes: the current schedules, earlier feedback and the typed text
+stay as they were. Applied constraints compile to hard section exclusions, soft section
+costs and engine whole-week rules, recompiled against newer catalogs. The refine box's
+placeholder and suggestion chips are built from the schedule on screen (a real course
+component and day, its earliest start, its lightest day).
 
 Elective slot questions show five subject categories with multiple selection and free text.
 The AI service retains its topic IDs; the client also uses chosen categories against the

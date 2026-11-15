@@ -1,6 +1,6 @@
 # AI functions (Supabase Edge Functions)
 
-Three Deno functions on project `mmdvgvpckweiklkbuxvy`, called by the extension with the anon key (`Authorization: Bearer <anon>` and `apikey: <anon>`). Base
+Four Deno functions on project `mmdvgvpckweiklkbuxvy`, called by the extension with the anon key (`Authorization: Bearer <anon>` and `apikey: <anon>`). Base
 URL: `https://mmdvgvpckweiklkbuxvy.supabase.co/functions/v1/`. CORS is open.
 
 | Function    | Method | Does                                                                                                        |
@@ -8,6 +8,11 @@ URL: `https://mmdvgvpckweiklkbuxvy.supabase.co/functions/v1/`. CORS is open.
 | `ai-health` | GET    | `{ keyPresent, model, modelOk }` after one tiny model call (`error` added only when `modelOk` is false)     |
 | `interview` | POST   | One stateless turn of the guided interview (at most 10 questions), then preferences, shortlists and summary |
 | `explain`   | POST   | 1-2 sentence "why this ranks here" for each of the top <= 10 schedules                                      |
+| `refine`    | POST   | One piece of results-page schedule feedback -> `{ constraints, unparsed }` (structured, validated again)    |
+
+`refine` only translates text the extension's local parser could not fully account for. It never guesses on a model failure: the `fallback` answer returns no
+constraints and the whole text as `unparsed`, which the extension reports as not understood. The extension degrades the same way while the function is not
+deployed (HTTP 404).
 
 Request and response shapes are in `_shared/types.ts` and follow section 5 of the shared build contract. `interview` also accepts an optional
 `hardHours: { earliestStart, latestEnd }` (24h `HH:MM`) so any times it mentions stay inside the student's hard window; it never asks about start or end times

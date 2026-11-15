@@ -34,9 +34,17 @@ bundler (Vite, esbuild, ...) or the `dist/` output of `npm run build`.
 - **Hard constraints**: every meeting inside one of that day's allowed blocks
   (`[]` = day off; TBA meetings never violate), no overlaps (including within a
   course's own sections), and `unitCap` on `units.min`. Exactly one course per flex slot.
-  `sectionPins` maps each required course to a mandatory section ID. Invalid pins
-  block results; `excludedSectionIds` from feedback are hard exclusions. Neither is
+  `sectionPins` maps each required course to one mandatory section ID or a list of
+  them (a lecture and/or linked components); every pinned ID must be in the chosen
+  combination. Missing pins, or a list that is not one registrable linked combination,
+  block results. `excludedSectionIds` from feedback are hard exclusions. None of these is
   relaxed by diagnostics or to fill a result limit.
+- **Feedback extensions**: `sectionCosts` adds a soft per-section cost (with its message)
+  to every combination using that section. `scheduleRules` are whole-week limits checked
+  at each leaf: `maxGap`, `minBreak` and `maxMinutesPerDay` in minutes, `maxDays` and
+  `maxPerDay` (meetings per day) as counts, optionally limited to `days`. Hard rules exclude
+  schedules (reported by the `scheduleRule` blocker); soft rules add a "preference" penalty
+  per violation.
   Professor ratings never exclude a schedule; legacy `minRmp` requests are accepted but ignored.
   An instructor with fewer than `rmpMinRatings` ratings, no RMP match, or a lecture with no
   instructor counts as unrated: a small `noRmp` penalty, never excluded.
@@ -81,7 +89,7 @@ courses plus an elective slot, 20,439 valid combinations) runs under the existin
   `maxEnumerate`, `weights`, `diagnostics`; the async variant also takes
   `signal` and `sliceMs`.
 - Extra blocker `constraint` values: `unknownCourse`, `requiredCourse`,
-  `flexSlot`, `combination`, `sectionPin`.
+  `flexSlot`, `combination`, `sectionPin`, `scheduleRule`.
 
 ## Scripts
 

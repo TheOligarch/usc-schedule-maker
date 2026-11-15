@@ -76,3 +76,52 @@ describe("timetable diversity", () => {
     expect(generateSchedules(data, req).schedules.find(s => s.courses[0].courseCode === "ARLT-100")!.score).toBeGreaterThan(r.schedules.find(s => s.courses[0].courseCode === "ARLT-100")!.score);
   });
 });
+
+describe("results-page feedback: whole-week rules, soft section costs, multi-section pins", () => {
+  const csci = (extra = {}) => generateSchedules(fixture, request({ required: ["CSCI-201"], ...extra }));
+  const has = (r: ReturnType<typeof csci>, id: string) => r.schedules.some((s) => s.courses[0].sectionIds.includes(id));
+  const rule = (kind: string, value: number, hard = true, days?: string[]) => ({ kind, value, hard, label: `${kind} ${value}`, ...(days ? { days } : {}) });
+
+  it("hard rules exclude schedules over the whole week and are reported as a blocker", () => {
+    expect(csci({ scheduleRules: [rule("maxDays", 3)] }).totalValid).toBe(3);
+    const none = csci({ scheduleRules: [rule("maxDays", 2)] });
+    expect(none.totalValid).toBe(0);
+    expect(none.blockers.some((b) => b.constraint === "scheduleRule" && b.message.includes('"maxDays 2"'))).toBe(true);
+    const breaks = csci({ scheduleRules: [rule("minBreak", 30)] }); // B: Thu 3:50 PM lecture then 4:00 PM discussion
+    expect(breaks.totalValid).toBe(2);
+    expect(has(breaks, "30002")).toBe(false);
+    const gaps = csci({ scheduleRules: [rule("maxGap", 60)] }); // A leaves 70+ minutes before Friday's quiz
+    expect(gaps.totalValid).toBe(1);
+    expect(gaps.schedules[0].courses[0].sectionIds).toContain("30002");
+    const friday = csci({ scheduleRules: [rule("maxPerDay", 1, true, ["Fri"])] });
+    expect(friday.schedules.map((s) => s.courses[0].sectionIds)).toEqual([["30002", "30005", "30006"]]);
+    expect(csci({ scheduleRules: [rule("maxMinutesPerDay", 160)] }).totalValid).toBe(3);
+    expect(csci({ scheduleRules: [rule("maxMinutesPerDay", 150)] }).totalValid).toBe(2); // B's Thursday is 1h50m + 50m
+  });
+
+  it("soft rules re-rank instead of excluding, with a visible penalty", () => {
+    const r = csci({ scheduleRules: [rule("maxGap", 60, false)] });
+    expect(r.totalValid).toBe(3);
+    expect(r.schedules[0].courses[0].sectionIds).toContain("30002");
+    expect(r.schedules.slice(1).every((s) => s.penalties.some((p) => p.message === 'Misses your feedback "maxGap 60"'))).toBe(true);
+  });
+
+  it("soft section costs push a section down the ranking without removing it", () => {
+    const base = csci();
+    const costed = csci({ sectionCosts: { "30001": { amount: 50, message: "Section 30001 misses your feedback" } } });
+    expect(costed.totalValid).toBe(base.totalValid);
+    expect(costed.schedules[0].courses[0].sectionIds).not.toContain("30001");
+    const hit = costed.schedules.find((s) => s.courses[0].sectionIds.includes("30001"))!;
+    expect(hit.penalties.some((p) => p.sectionId === "30001" && p.message.includes("misses your feedback"))).toBe(true);
+  });
+
+  it("pins a lecture and a linked component together, and refuses an unlinked pair", () => {
+    const both = run({ "CSCI-201": ["30001", "30004"] } as never);
+    expect(both.schedules.map((s) => s.courses[0].sectionIds)).toEqual([["30001", "30004", "30006"]]);
+    const bad = run({ "CSCI-201": ["30002", "30003"] } as never);
+    expect(bad.totalValid).toBe(0);
+    expect(bad.blockers[0]).toMatchObject({ constraint: "sectionPin" });
+    expect(bad.blockers[0].message).toContain("not a registrable linked combination");
+    expect(run({ "CSCI-201": ["30004"] } as never).schedules[0].courses[0].sectionIds).toEqual(["30001", "30004", "30006"]);
+  });
+});

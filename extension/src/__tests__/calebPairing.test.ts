@@ -30,7 +30,7 @@ it("changing only the required lab's link code cannot yield a lecture+quiz witho
 
 it("a lab's published instructor may differ from the lecture professors without invalidating linkage", async () => {
   const data = liveTerm();
-  const state = { ...defaultState(), required: ["BISC-220"], sectionPins: { "BISC-220": "13148" } };
+  const state = { ...defaultState(), required: ["BISC-220"], sectionPins: { "BISC-220": ["13148"] } };
   const result = await generateSchedulesAsync(data, buildRequest(state));
   expect(result.schedules.length).toBeGreaterThan(0);
   for (const schedule of result.schedules) {

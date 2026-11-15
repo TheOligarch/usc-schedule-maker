@@ -1,4 +1,5 @@
 import { isLecture } from "./linkage";
+import { type CompiledRule, SOFT_RULE_COST, compileRules, violations } from "./rules";
 import { DAYS, WEEKDAYS, dayIndex, fmtClock, fmtDays, toMinutes } from "./time";
 import type { Course, Day, Penalty, RmpTeacher, ScheduleRequest, Section } from "./types";
 import type { ScaledWeights } from "./weights";
@@ -48,6 +49,9 @@ export interface ScoreCtx {
   spreadTarget: number;
   comfortStart: number;
   comfortEnd: number;
+  /** whole-schedule rules from results-page feedback */
+  hardRules: CompiledRule[];
+  softRules: CompiledRule[];
 }
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
@@ -75,6 +79,8 @@ export function buildScoreCtx(req: ScheduleRequest, w: ScaledWeights): ScoreCtx 
     spreadTarget,
     comfortStart: Number.isNaN(cs) ? -1 : cs,
     comfortEnd: Number.isNaN(ce) ? -1 : ce,
+    hardRules: compileRules(req.scheduleRules?.filter((r) => r.hard)),
+    softRules: compileRules(req.scheduleRules?.filter((r) => !r.hard)),
   };
 }
 
@@ -307,6 +313,10 @@ export function scheduleCost(combos: readonly Combo[], ctx: ScoreCtx, out?: Pena
       out ? `${overMax} gap${overMax === 1 ? "" : "s"} longer than ${ctx.maxGap} minutes` : "",
     );
   }
+  for (const r of ctx.softRules) {
+    const v = violations(r, dayBuf);
+    if (v > 0) push("preference", v * SOFT_RULE_COST, out ? `Misses your feedback "${r.rule.label}"${v > 1 ? ` (${v} times)` : ""}` : "");
+  }
   if (earlyMinutes > 0) {
     push("preference", (earlyMinutes / 60) * w.comfortPerHour, out ? `Classes start as early as ${fmtClock(earliest)} (you prefer ${fmtClock(ctx.comfortStart)} or later)` : "");
   }
@@ -314,6 +324,17 @@ export function scheduleCost(combos: readonly Combo[], ctx: ScoreCtx, out?: Pena
     push("preference", (lateMinutes / 60) * w.comfortPerHour, out ? `Classes end as late as ${fmtClock(latest)} (you prefer ${fmtClock(ctx.comfortEnd)} or earlier)` : "");
   }
   return total;
+}
+
+const hardBuf: Slot[][] = [[], [], [], [], [], [], []];
+/** True when the week breaks any hard schedule rule. */
+export function breaksHardRule(combos: readonly Combo[], ctx: ScoreCtx): boolean {
+  if (!ctx.hardRules.length) return false;
+  for (const d of hardBuf) d.length = 0;
+  for (const c of combos) for (const sl of c.slots) hardBuf[sl.day].push(sl);
+  for (const d of hardBuf) if (d.length > 1) d.sort((a, b) => a.s - b.s || a.e - b.e);
+  for (const r of ctx.hardRules) if (violations(r, hardBuf) > 0) return true;
+  return false;
 }
 
 function fmtHours(min: number): string {

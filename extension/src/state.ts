@@ -1,6 +1,7 @@
 /** App state: one serialisable object, persisted to localStorage between visits. */
 import { electiveInterestScore, selectedCategories } from "./lib/electiveInterests";
-import { refinementSectionIds, type Refinement } from "./lib/refinement";
+import { compileRefinements, migrateRefinements, type Refinement } from "./lib/refinement";
+import { canonicalCourseCode, normalizePins } from "./lib/sectionPins";
 import { DEFAULT_RESULT_LIMIT, MAX_RESULT_LIMIT } from "./lib/config";
 import type { Block, Day, Importance, InterviewHistoryItem, Preferences, ScheduleRequest, Shortlist } from "./lib/contract-types";
 import { geShort } from "./lib/schedule";
@@ -41,7 +42,8 @@ export interface AppState {
   termCode: string | null;
   importance: Importance;
   required: string[];
-  sectionPins: Record<string, string>;
+  /** Pinned section ids per required course: a lecture, linked components, or both. */
+  sectionPins: Record<string, string[]>;
   refinements: Refinement[];
   slots: SlotDef[];
   unitCap: number | null;
@@ -95,7 +97,7 @@ export function loadState(): AppState {
     const { minRmp: _legacyMinimum, ...parsed } = JSON.parse(raw) as Partial<AppState> & { minRmp?: unknown };
     if (parsed.version !== 2) return defaultState();
     const base = defaultState();
-    return friendlySlotLabels({ ...base, ...parsed, times: { ...base.times, ...parsed.times }, importance: { ...base.importance, ...parsed.importance }, limit: Math.min(MAX_RESULT_LIMIT, Math.max(1, parsed.limit ?? base.limit)) });
+    return friendlySlotLabels({ ...base, ...parsed, sectionPins: normalizePins(parsed.sectionPins), refinements: migrateRefinements(parsed.refinements), times: { ...base.times, ...parsed.times }, importance: { ...base.importance, ...parsed.importance }, limit: Math.min(MAX_RESULT_LIMIT, Math.max(1, parsed.limit ?? base.limit)) });
   } catch {
     return defaultState();
   }
@@ -162,12 +164,37 @@ export function allowedTimes(times: TimesState): Record<Day, Block[]> {
 }
 
 export function interviewSignature(state: Pick<AppState, "required" | "slots" | "termCode" | "sectionPins">): string {
-  return JSON.stringify([state.termCode, [...state.required].sort(), state.slots.map((s) => [s.label, s.kind, s.geCategory ?? ""]), Object.entries(state.sectionPins ?? {}).sort()]);
+  const pins = Object.entries(state.sectionPins ?? {}).map(([code, ids]) => [code, [...ids].sort()] as const).filter(([, ids]) => ids.length).sort((a, b) => a[0].localeCompare(b[0]));
+  return JSON.stringify([state.termCode, [...state.required].sort(), state.slots.map((s) => [s.label, s.kind, s.geCategory ?? ""]), pins]);
 }
 
 /** Shortlist rows aligned to the current slots (missing ones come back empty). */
 export function alignedShortlists(slots: SlotDef[], interview: InterviewResult | null): Shortlist[] {
   return slots.map((slot) => interview?.shortlists.find((s) => s.label === slot.label) ?? { label: slot.label, options: [] });
+}
+
+/**
+ * Saved or typed course codes in another format ("csci 201", a cross-listed alias) are
+ * rewritten to the term's own code, so the section picker and engine see the same course.
+ * Returns null when nothing changes.
+ */
+export function reconcileCourseCodes(state: AppState, data: import("./lib/contract-types").TermData): Partial<AppState> | null {
+  let changed = false;
+  const required: string[] = [];
+  const rename = new Map<string, string>();
+  for (const code of state.required) {
+    const canon = canonicalCourseCode(data, code) ?? code;
+    if (canon !== code) { changed = true; rename.set(code, canon); }
+    if (!required.includes(canon)) required.push(canon);
+    else changed = true;
+  }
+  const sectionPins: Record<string, string[]> = {};
+  for (const [code, ids] of Object.entries(state.sectionPins)) {
+    const canon = rename.get(code) ?? canonicalCourseCode(data, code) ?? code;
+    if (canon !== code) changed = true;
+    sectionPins[canon] = [...new Set([...(sectionPins[canon] ?? []), ...ids])];
+  }
+  return changed ? { required, sectionPins } : null;
 }
 
 export function buildRequest(state: AppState, data?: import("./lib/contract-types").TermData): ScheduleRequest {
@@ -180,12 +207,17 @@ export function buildRequest(state: AppState, data?: import("./lib/contract-type
       if (c) courseInterestScores[c.code] = electiveInterestScore(c, labels);
     }
   }
+  const flexSlots = alignedShortlists(state.slots, state.interview).map((s) => ({ label: s.label, options: s.options.map((o) => o.courseCode) }));
+  const compiled = compileRefinements(state.refinements, data, [...state.required, ...flexSlots.flatMap((f) => f.options)]);
+  const sectionPins = Object.fromEntries(Object.entries(state.sectionPins).filter(([, ids]) => ids.length));
   return {
     required: state.required,
-    sectionPins: state.sectionPins,
+    sectionPins,
     courseInterestScores,
-    excludedSectionIds: [...new Set(state.refinements.flatMap(r => refinementSectionIds(r, data)))],
-    flexSlots: alignedShortlists(state.slots, state.interview).map((s) => ({ label: s.label, options: s.options.map((o) => o.courseCode) })),
+    excludedSectionIds: compiled.excludedSectionIds,
+    ...(Object.keys(compiled.sectionCosts).length ? { sectionCosts: compiled.sectionCosts } : {}),
+    ...(compiled.scheduleRules.length ? { scheduleRules: compiled.scheduleRules } : {}),
+    flexSlots,
     allowedTimes: allowedTimes(state.times),
     unitCap: state.unitCap,
     importance: state.importance,

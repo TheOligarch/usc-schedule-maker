@@ -132,6 +132,13 @@ export function* computeBlockers(base: Base, baseProblem: Problem, baseCount: nu
     add("allowedTimes", r, (n) => `Removing all of your time restrictions would give ${n}.`);
   }
 
+  // --- whole-week rules from results-page feedback --------------------------
+  if (base.ctx.hardRules.length) {
+    const r = yield* count({ ignoreRules: true });
+    const labels = base.ctx.hardRules.map((c) => `"${c.rule.label}"`).join(", ");
+    add("scheduleRule", r, (n) => `Your schedule feedback ${labels} rules out ${fmtCount(gained(r), r.truncated)}; removing it would give ${n}.`);
+  }
+
   // --- unit cap --------------------------------------------------------------
   if (typeof req.unitCap === "number") {
     const r = yield* count({ noUnitCap: true });

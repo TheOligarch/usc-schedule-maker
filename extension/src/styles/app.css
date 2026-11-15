@@ -437,9 +437,20 @@ table.bin-table td:last-child { text-align: left; }
 .bin-message { margin-top: 2px; max-width: 46ch; }
 .bin-summary { color: var(--ink-2); }
 
-.section-pin { margin-top: 0.6rem; max-width: 100%; }
-.section-pin select { width: 100%; max-width: 36rem; }
+.section-pin { margin-top: 0.6rem; max-width: 100%; border: 0; padding: 0; min-width: 0; }
+.section-pin legend { font-size: 13px; font-weight: 600; padding: 0; margin-bottom: 4px; }
+.section-pin select { width: 100%; max-width: 36rem; min-width: 0; }
 .section-pin p { white-space: pre-wrap; }
+.pin-row { display: grid; grid-template-columns: minmax(5.5rem, auto) minmax(0, 1fr); gap: 4px 8px; align-items: center; margin-top: 4px; }
+.pin-row label { font-size: 12px; color: var(--ink-2); }
+.pin-row .pin-chip { grid-column: 2; justify-self: start; }
+/* Clearing a pin is a small inline chip, unlike the course's remove button at the card edge. */
+.pin-chip { display: inline-flex; align-items: center; gap: 4px; padding: 1px 2px 1px 8px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 12px; color: var(--ink-2); max-width: 100%; }
+.pin-chip-stale { border-color: var(--err); color: var(--err); margin-top: 4px; }
+.pin-chip-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pin-clear { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 999px; border: 0; background: var(--surface-2); color: var(--ink-2); cursor: pointer; flex: none; }
+.pin-clear:hover, .pin-clear:focus-visible { background: var(--cardinal-50); color: var(--cardinal); }
+.chip-btn { border: 1px dashed var(--line); border-radius: 999px; }
 #schedule-feedback { width: 100%; font: inherit; padding: 0.6rem; resize: vertical; }
 
 .quick-reply[aria-pressed="true"] { background: #fff0d7; border-color: #990000; color: #700000; }

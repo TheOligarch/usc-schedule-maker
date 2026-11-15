@@ -1,5 +1,5 @@
 import type { Problem } from "./prepare";
-import { type Combo, scheduleCost } from "./score";
+import { type Combo, breaksHardRule, scheduleCost } from "./score";
 
 /** How many DFS nodes to visit between cooperative yields. */
 export const YIELD_EVERY = 4096;
@@ -152,12 +152,13 @@ export function* search(p: Problem, opts: SearchOptions): Generator<void, Search
       continue;
     }
 
-    // leaf: a valid schedule
+    // leaf: a valid schedule unless it breaks a whole-week rule from feedback
+    distinct.length = 0;
+    for (let i = 0; i < n; i++) if (!shared[i]) distinct.push(levels[i].combos[pick[i]]);
+    if (breaksHardRule(distinct, p.ctx)) continue;
     result.count++;
     if (units < result.minUnits) result.minUnits = units;
     if (candidates) {
-      distinct.length = 0;
-      for (let i = 0; i < n; i++) if (!shared[i]) distinct.push(levels[i].combos[pick[i]]);
       const total = Math.round((baseAt[n] + scheduleCost(distinct, p.ctx)) * 1000) / 1000;
       const time = timetable(distinct);
       const id = scheduleId(distinct);
