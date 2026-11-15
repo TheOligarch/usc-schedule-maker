@@ -10,11 +10,13 @@
 
 import { highlightFromLocation } from "./sectionHighlight";
 import { pinUnselectedLook, selectOurTab, TAB_FOCUS_CSS } from "./tabHighlight";
+import { displaceOlderCopy, VERSION_ATTR } from "./takeover";
 
 const TAB_ID = "usm-tab";
 const PANEL_ID = "usm-panel";
 const LAUNCHER_ID = "usm-launcher";
 const HASH = "#schedule-maker";
+const VERSION = chrome.runtime.getManifest().version;
 const NAV_LINK_RE = /departments|coursebin|calendar|checkout|registration/i;
 
 let isOpen = false;
@@ -42,6 +44,7 @@ function panel(): HTMLElement {
   if (el) return el;
   el = document.createElement("div");
   el.id = PANEL_ID;
+  el.setAttribute(VERSION_ATTR, VERSION);
   el.setAttribute("role", "region");
   el.setAttribute("aria-label", "USC Schedule Maker");
   Object.assign(el.style, {
@@ -97,6 +100,7 @@ function injectTab(list: HTMLUListElement): void {
   if (document.getElementById(TAB_ID)) return;
   const li = document.createElement("li");
   li.id = TAB_ID;
+  li.setAttribute(VERSION_ATTR, VERSION);
   const template = list.querySelector(":scope > li:not(.dropdown):not(.active)") ?? list.querySelector(":scope > li");
   if (template) li.className = template.className.replace(/\b(active|dropdown|open)\b/g, "").trim();
   const a = document.createElement("a");
@@ -127,6 +131,7 @@ function injectTab(list: HTMLUListElement): void {
   // Look like an ordinary WebReg tab, without Bootstrap's grey :focus box or focus ring.
   const style = document.createElement("style");
   style.id = `${TAB_ID}-style`;
+  style.setAttribute(VERSION_ATTR, VERSION);
   style.textContent = TAB_FOCUS_CSS(TAB_ID);
   document.head.appendChild(style);
   pinUnselectedLook(li);
@@ -136,6 +141,7 @@ function injectLauncher(): void {
   if (document.getElementById(LAUNCHER_ID)) return;
   const btn = document.createElement("button");
   btn.id = LAUNCHER_ID;
+  btn.setAttribute(VERSION_ATTR, VERSION);
   btn.type = "button";
   btn.textContent = "Schedule Maker";
   Object.assign(btn.style, {
@@ -159,6 +165,8 @@ function injectLauncher(): void {
 function start(): void {
   let tries = 0;
   const attempt = () => {
+    // An older copy of this extension may already be in the page; a newer copy replaces it.
+    displaceOlderCopy(document, { tab: TAB_ID, panel: PANEL_ID, launcher: LAUNCHER_ID }, VERSION);
     const list = findNavList();
     if (list) {
       injectTab(list);
@@ -174,6 +182,7 @@ function start(): void {
     if (attempt()) window.clearInterval(timer);
     else if (tries >= 12) {
       window.clearInterval(timer);
+      displaceOlderCopy(document, { tab: TAB_ID, panel: PANEL_ID, launcher: LAUNCHER_ID }, VERSION);
       injectLauncher();
       if (location.hash === HASH) setOpen(true, null);
     }

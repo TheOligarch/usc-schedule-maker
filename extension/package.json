@@ -1,6 +1,6 @@
 {
   "name": "usc-schedule-maker-extension",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "USC Schedule Maker - Chrome extension UI (WebReg tab + standalone dev page)",
@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:mock": "VITE_USE_MOCKS=true vite",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build:app": "vite build",
