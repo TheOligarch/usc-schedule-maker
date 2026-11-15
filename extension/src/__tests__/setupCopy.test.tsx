@@ -21,6 +21,14 @@ describe("setup and interview guidance", () => {
     expect(html).toContain("Discover-Dornsife-Crafting-Your-Course-Plan.pdf#page=7");
     expect(html).not.toContain("min-rmp");
     expect(html).not.toContain("Minimum professor rating");
+    expect(html).not.toContain("Professor ratings");
+    expect(html).not.toContain("Set their importance on the next page");
+    expect(html).not.toContain('class="limits"');
+    expect(html).not.toContain(">Limits<");
+    expect(html).toContain('id="unit-cap"');
+    expect(html).toContain("No cap");
+    expect(html).toContain("When can you take classes?");
+    expect(html).not.toContain("Hard rule: every meeting must sit inside one of these blocks.");
   });
 
   it("offers rating priority and an editable shortlist without repeating setup controls", () => {

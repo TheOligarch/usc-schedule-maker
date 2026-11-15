@@ -127,50 +127,44 @@ export function Requirements({ data, state, onChange, header, onNext }: Props) {
         </Card>
       </div>
 
-      <Card title="Limits">
-        <div className="limits">
-          <div className="field">
-            <label htmlFor="unit-cap">Unit cap</label>
-            <div className="row gap-sm">
-              <input
-                id="unit-cap"
-                type="number"
-                min={1}
-                max={30}
-                step={1}
-                inputMode="numeric"
-                value={state.unitCap === null ? "" : capDraft}
-                disabled={state.unitCap === null}
-                onChange={(e) => {
-                  setCapDraft(e.target.value);
-                  const n = Math.round(Number(e.target.value));
-                  if (e.target.value !== "" && n >= 1 && n <= 30) onChange({ unitCap: n });
-                }}
-                onBlur={() => setCapDraft(String(state.unitCap ?? 18))}
-              />
-              <label className="check">
-                <input type="checkbox" checked={state.unitCap === null} onChange={(e) => {
-                    const next = e.target.checked ? null : Number(capDraft) || 18;
-                    onChange({ unitCap: next });
-                  }} />
-                No cap
-              </label>
-            </div>
-            <span className="muted small">Variable-unit courses count their minimum.</span>
-            <p className="muted small">
-              Standard undergraduate tuition covers 12–18 units; units over 18 generally cost extra. Program rules and exceptions may apply.{" "}
-              <a href="https://dornsife.usc.edu/advising/wp-content/uploads/sites/96/2026/04/Discover-Dornsife-Crafting-Your-Course-Plan.pdf#page=7" target="_blank" rel="noopener noreferrer">USC courseload policy</a>
-            </p>
-            {overCap && <span className="error-text small">Your required courses already add up to {requiredUnits} units.</span>}
+      <Card title="Unit cap">
+        <div className="field">
+          <label className="sr-only" htmlFor="unit-cap">Unit cap</label>
+          <div className="row gap-sm">
+            <input
+              id="unit-cap"
+              type="number"
+              min={1}
+              max={30}
+              step={1}
+              inputMode="numeric"
+              value={state.unitCap === null ? "" : capDraft}
+              disabled={state.unitCap === null}
+              onChange={(e) => {
+                setCapDraft(e.target.value);
+                const n = Math.round(Number(e.target.value));
+                if (e.target.value !== "" && n >= 1 && n <= 30) onChange({ unitCap: n });
+              }}
+              onBlur={() => setCapDraft(String(state.unitCap ?? 18))}
+            />
+            <label className="check">
+              <input type="checkbox" checked={state.unitCap === null} onChange={(e) => {
+                  const next = e.target.checked ? null : Number(capDraft) || 18;
+                  onChange({ unitCap: next });
+                }} />
+              No cap
+            </label>
           </div>
-          <div className="field">
-            <span className="field-label">Professor ratings</span>
-            <p className="muted small">Ratings affect ranking, never eligibility. Set their importance on the next page; lower-rated and unrated instructors remain options.</p>
-          </div>
+          <span className="muted small">Variable-unit courses count their minimum.</span>
+          <p className="muted small">
+            Standard undergraduate tuition covers 12–18 units; units over 18 generally cost extra. Program rules and exceptions may apply.{" "}
+            <a href="https://dornsife.usc.edu/advising/wp-content/uploads/sites/96/2026/04/Discover-Dornsife-Crafting-Your-Course-Plan.pdf#page=7" target="_blank" rel="noopener noreferrer">USC courseload policy</a>
+          </p>
+          {overCap && <span className="error-text small">Your required courses already add up to {requiredUnits} units.</span>}
         </div>
       </Card>
 
-      <Card title="When can you take classes?" subtitle="Hard rule: every meeting must sit inside one of these blocks.">
+      <Card title="When can you take classes?">
         <TimeGrid times={state.times} onChange={(times: TimesState) => onChange({ times })} />
         {!anyDay && <Notice tone="warn">Every day is blocked, so no schedule can fit. Drag on the calendar to allow some time.</Notice>}
       </Card>
