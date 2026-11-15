@@ -101,7 +101,10 @@ feedback) and nothing changes: the current schedules, earlier feedback and the t
 stay as they were. Applied constraints compile to hard section exclusions, soft section
 costs and engine whole-week rules, recompiled against newer catalogs. The refine box's
 placeholder and suggestion chips are built from the schedule on screen (a real course
-component and day, its earliest start, its lightest day).
+component and day, its earliest start, its lightest day). Each inferred suggestion is
+dry-run in the background with the same check, against the courses, pins, preferences and
+feedback in effect (cached per request), and only those that leave a schedule are shown;
+when none do, no chips appear and the placeholder carries no example.
 
 Elective slot questions show five subject categories with multiple selection and free text.
 The AI service retains its topic IDs; the client also uses chosen categories against the

@@ -6,7 +6,7 @@
 import { interpretFeedback } from "./ai";
 import type { RankedSchedule, RefineRequest, TermData } from "./contract-types";
 import { generateSchedules } from "./engine";
-import { compileRefinements, describe, interpretRefinement, violatingSections, type AiInterpreter, type ParseContext, type Refinement } from "./refinement";
+import { compileRefinements, describe, interpretRefinement, RefinementError, suggestRefinements, violatingSections, type AiInterpreter, type ParseContext, type Refinement } from "./refinement";
 import { displayString } from "./schedule";
 import { courseCombos, courseSections } from "./sectionPins";
 import { fmtMeeting } from "./time";
@@ -49,8 +49,7 @@ export type CheckResult = { ok: true; refinement: Refinement; count: number } | 
 export async function proposeRefinement(text: string, data: TermData, state: AppState, schedule: RankedSchedule | null, opts: { ai?: AiInterpreter | null; signal?: AbortSignal } = {}): Promise<CheckResult> {
   const ctx: ParseContext = { data, codes: requestCodes(state, data), schedule };
   const refinement = await interpretRefinement(text, ctx, opts.ai === undefined ? aiInterpreter(opts.signal) : opts.ai);
-  const next = { ...state, refinements: [...state.refinements, refinement] };
-  const run = await generateSchedules(data, buildRequest(next, data), { limit: 1, signal: opts.signal });
+  const run = await dryRun(data, state, refinement, { signal: opts.signal });
   if (run.result.totalValid > 0) return { ok: true, refinement, count: run.result.totalValid };
   const reasons = await conflictReasons(data, state, refinement, run.result.blockers.map((b) => b.message), opts.signal);
   return {
@@ -59,6 +58,57 @@ export async function proposeRefinement(text: string, data: TermData, state: App
     reasons,
     message: `Not applied: “${refinement.summary}” would leave no schedule that fits your required courses. Your current schedules and earlier feedback are unchanged.`,
   };
+}
+
+/** The engine run for the current rules plus one more refinement; the apply-time and suggestion check. */
+function dryRun(data: TermData, state: AppState, refinement: Refinement, opts: { signal?: AbortSignal; diagnostics?: boolean } = {}) {
+  const next = { ...state, refinements: [...state.refinements, refinement] };
+  return generateSchedules(data, buildRequest(next, data), { limit: 1, ...opts });
+}
+
+/** Feasibility of a suggestion, per term data, then request (requirements, pins, preferences, feedback) and text. */
+const suggestionCache = new WeakMap<TermData, Map<string, boolean>>();
+const CACHE_LIMIT = 500;
+
+async function suggestionFits(text: string, ctx: ParseContext, state: AppState, signal?: AbortSignal): Promise<boolean> {
+  let refinement: Refinement;
+  try {
+    refinement = await interpretRefinement(text, ctx, null);
+  } catch (err) {
+    if (err instanceof RefinementError) return false;
+    throw err;
+  }
+  const run = await dryRun(ctx.data, state, refinement, { signal, diagnostics: false });
+  return run.result.totalValid > 0;
+}
+
+/**
+ * The suggestions inferred from the schedule on screen that would still leave at least one
+ * schedule if applied, checked with the same dry run as applying typed feedback. Results are
+ * cached per request and text, so revisiting a schedule or state costs no engine runs.
+ */
+export async function feasibleSuggestions(data: TermData, state: AppState, schedule: RankedSchedule | null, opts: { signal?: AbortSignal; max?: number } = {}): Promise<string[]> {
+  const max = opts.max ?? 3;
+  const candidates = suggestRefinements(data, schedule, Infinity);
+  if (!candidates.length) return [];
+  const ctx: ParseContext = { data, codes: requestCodes(state, data), schedule };
+  const requestKey = JSON.stringify(buildRequest(state, data));
+  let cache = suggestionCache.get(data);
+  if (!cache) suggestionCache.set(data, (cache = new Map()));
+  const out: string[] = [];
+  for (const text of candidates) {
+    if (out.length >= max) break;
+    const key = `${requestKey}\u0000${text}`;
+    let ok = cache.get(key);
+    if (ok === undefined) {
+      ok = await suggestionFits(text, ctx, state, opts.signal);
+      if (opts.signal?.aborted) throw new DOMException("Aborted", "AbortError");
+      if (cache.size >= CACHE_LIMIT) cache.clear();
+      cache.set(key, ok);
+    }
+    if (ok) out.push(text);
+  }
+  return out;
 }
 
 async function conflictReasons(data: TermData, state: AppState, ref: Refinement, blockers: string[], signal?: AbortSignal): Promise<string[]> {

@@ -1,13 +1,38 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { RankedSchedule, TermData } from "../lib/contract-types";
-import { proposeRefinement } from "../lib/refineCheck";
-import { RefinementError, suggestRefinements } from "../lib/refinement";
-import type { AppState } from "../state";
+import { feasibleSuggestions, proposeRefinement } from "../lib/refineCheck";
+import { RefinementError } from "../lib/refinement";
+import { buildRequest, type AppState } from "../state";
 import { Card, Notice } from "./ui";
 
 interface Conflict {
   message: string;
   reasons: string[];
+}
+
+/** Shown while suggestions are checked or when none would leave a schedule: never a concrete example. */
+export const NEUTRAL_PLACEHOLDER = "Describe a day, time, gap, section or instructor to change";
+
+/**
+ * Suggestions inferred from the schedule on screen, kept only when a dry run with the rules in
+ * effect still finds a schedule. Checked in the background (async engine, cached per request)
+ * once the current generation has finished; nothing is offered until the check completes.
+ */
+function useFeasibleSuggestions(data: TermData, state: AppState, schedule: RankedSchedule | null, running: boolean): string[] {
+  const [checked, setChecked] = useState<{ key: string; list: string[] } | null>(null);
+  const requestKey = useMemo(() => JSON.stringify(buildRequest(state, data)), [state, data]);
+  const key = `${schedule?.id ?? ""}\u0000${requestKey}`;
+  const latest = useRef({ data, state, schedule });
+  latest.current = { data, state, schedule };
+  useEffect(() => {
+    const { data, state, schedule } = latest.current;
+    if (running || !schedule) return;
+    const ctrl = new AbortController();
+    const done = (list: string[]) => { if (!ctrl.signal.aborted) setChecked({ key, list }); };
+    feasibleSuggestions(data, state, schedule, { signal: ctrl.signal }).then(done, () => done([]));
+    return () => ctrl.abort();
+  }, [running, key]);
+  return !running && checked?.key === key ? checked.list : [];
 }
 
 export function ScheduleFeedback({ data, schedule, index, state, running, onChange }: {
@@ -21,7 +46,7 @@ export function ScheduleFeedback({ data, schedule, index, state, running, onChan
   const [checking, setChecking] = useState(false);
   const abort = useRef<AbortController | null>(null);
   useEffect(() => () => abort.current?.abort(), []);
-  const suggestions = useMemo(() => suggestRefinements(data, schedule), [data, schedule]);
+  const suggestions = useFeasibleSuggestions(data, state, schedule, running);
   const busy = running || checking;
 
   const submit = async () => {
@@ -48,7 +73,7 @@ export function ScheduleFeedback({ data, schedule, index, state, running, onChan
     <p className="small muted">Describe what to change: days, start or end times, gaps, a course’s lab or discussion, a section or an instructor. We’ll refresh alternatives with your existing courses, section pins and preferences, and only if at least one schedule still fits.</p>
     <form className="field" onSubmit={e => { e.preventDefault(); void submit(); }}>
       <label htmlFor="schedule-feedback">Schedule feedback</label>
-      <textarea id="schedule-feedback" maxLength={300} rows={2} value={text} onChange={e => { setText(e.target.value); setConflict(null); }} placeholder={suggestions[0] ? `e.g. ${suggestions[0]}` : "e.g. No classes before 10am"} disabled={busy} />
+      <textarea id="schedule-feedback" maxLength={300} rows={2} value={text} onChange={e => { setText(e.target.value); setConflict(null); }} placeholder={suggestions[0] ? `e.g. ${suggestions[0]}` : NEUTRAL_PLACEHOLDER} disabled={busy} />
       {suggestions.length > 0 && <div className="row gap-sm wrap" aria-label="Suggestions from this schedule">
         {suggestions.map(s => <button key={s} type="button" className="chip-btn btn btn-ghost btn-sm" disabled={busy} onClick={() => { setText(s); setConflict(null); setError(null); }}>{s}</button>)}
       </div>}

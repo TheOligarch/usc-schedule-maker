@@ -689,8 +689,11 @@ export async function interpretRefinement(text: string, ctx: ParseContext, ai?: 
 const LONG_DAY: Record<Day, string> = { Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday", Sat: "Saturday", Sun: "Sunday" };
 const COMPONENT_NOUN: Partial<Record<SectionType, string>> = { LAB: "lab", DIS: "discussion", QZ: "quiz", LEC: "lecture" };
 
-/** Up to three refinements phrased around the schedule on screen, most specific first. */
-export function suggestRefinements(data: TermData, schedule: RankedSchedule | null): string[] {
+/**
+ * Up to `max` refinements phrased around the schedule on screen, most specific first.
+ * These are only candidates: the refine box shows the ones a dry run keeps feasible.
+ */
+export function suggestRefinements(data: TermData, schedule: RankedSchedule | null, max = 3): string[] {
   if (!schedule) return [];
   const out: string[] = [];
   const meetings: { code: string; s: Section; day: Day; start: number; end: number }[] = [];
@@ -721,8 +724,8 @@ export function suggestRefinements(data: TermData, schedule: RankedSchedule | nu
   }
   // 4. an instructor on a lecture
   const prof = meetings.find((m) => m.s.type.startsWith("LEC") && m.s.instructors.length)?.s;
-  if (prof && out.length < 3) out.push(`Avoid Professor ${prof.instructors[0].last}`);
-  return [...new Set(out)].slice(0, 3);
+  if (prof) out.push(`Avoid Professor ${prof.instructors[0].last}`);
+  return [...new Set(out)].slice(0, max);
 }
 
 // ---------------------------------------------------------------------------

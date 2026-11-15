@@ -8,7 +8,10 @@ import { Interview } from "../screens/Interview";
 import { generateSchedules } from "../lib/engine";
 import { interviewTurn } from "../lib/ai";
 import { ELECTIVE_CATEGORIES, withElectiveInterests } from "../lib/electiveInterests";
-import { compileRefinements, interpretRefinement } from "../lib/refinement";
+import { compileRefinements, interpretRefinement, suggestRefinements } from "../lib/refinement";
+import { feasibleSuggestions, proposeRefinement } from "../lib/refineCheck";
+import { NEUTRAL_PLACEHOLDER } from "../components/ScheduleFeedback";
+import type { RankedSchedule } from "../lib/contract-types";
 import { buildRequest, defaultState, DEFAULT_PREFERENCES, interviewSignature, loadState, saveState, type AppState } from "../state";
 import { liveTerm } from "./fixtures/liveTerm";
 import { SAMPLE_TERM } from "../mocks/sampleTerm";
@@ -44,6 +47,13 @@ function Harness({ start, screen = "results" }: { start: AppState; screen?: stri
 }
 async function settle() { await act(async () => { await new Promise(r => setTimeout(r, 80)); }); }
 async function render(start: AppState, screen?: string) { await act(async () => root.render(<Harness start={start} screen={screen} />)); await settle(); }
+/** The last schedule generation (not a one-schedule dry run of a change or suggestion) and its result. */
+const lastGeneration = () => {
+  const m = vi.mocked(generateSchedules).mock;
+  let at = m.calls.length - 1;
+  while (at > 0 && m.calls[at][2]?.limit === 1) at--;
+  return { call: m.calls[at], result: m.results[at].value as ReturnType<typeof generateSchedules> };
+};
 const button = (text: string) => [...container.querySelectorAll<HTMLButtonElement>("button")].find(b => b.textContent?.includes(text))!;
 async function feedback(text: string) {
   const input = container.querySelector<HTMLTextAreaElement>("#schedule-feedback")!;
@@ -77,17 +87,17 @@ it("applies Caleb's exact example in place, reruns real generation, preserves st
   const before = vi.mocked(generateSchedules).mock.calls.length;
   await feedback("I dont want a bisc lab on friday");
   expect(vi.mocked(generateSchedules).mock.calls.length).toBeGreaterThan(before);
-  const call = vi.mocked(generateSchedules).mock.calls.at(-1)!;
+  const { call } = lastGeneration();
   expect(call[1].required).toEqual(["BISC-120"]); expect(call[1].sectionPins).toEqual({ "BISC-120": ["13003"] });
   expect(call[1].preferences.breaks).toBe("avoid");
   expect(call[1].excludedSectionIds).toEqual(expect.arrayContaining(["13005", "13008", "13010"]));
-  const result = (await vi.mocked(generateSchedules).mock.results.at(-1)!.value).result;
+  const result = (await lastGeneration().result).result;
   expect(result.schedules.length).toBeGreaterThan(0);
   for (const s of result.schedules) for (const id of s.courses[0].sectionIds) if (data.sections[id].type === "LAB") expect(data.sections[id].meetings.every(m => !m.days.includes("Fri"))).toBe(true);
   expect(current.step).toBe("results"); expect(current.refinements[0].scheduleId).toBeTruthy();
   await act(async () => button("Clear feedback and refresh").click()); await settle();
   expect(current.refinements).toEqual([]);
-  expect(vi.mocked(generateSchedules).mock.calls.at(-1)![1].excludedSectionIds).toEqual([]);
+  expect(lastGeneration().call[1].excludedSectionIds).toEqual([]);
 });
 
 it("warns and does not apply feedback that leaves no schedule, keeping schedules, pins and earlier feedback", async () => {
@@ -198,11 +208,16 @@ it("refinements saved by 0.1.4 keep working after the upgrade", () => {
   expect(buildRequest(state, data).excludedSectionIds).toEqual(["13005", "13008", "13010"]);
 });
 
+const LONG: Record<string, string> = { Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday" };
+const chips = () => [...container.querySelectorAll<HTMLButtonElement>('[aria-label="Suggestions from this schedule"] button')].map(b => b.textContent);
+const placeholder = () => container.querySelector<HTMLTextAreaElement>("#schedule-feedback")!.placeholder;
+const fits = async (text: string, state: AppState, schedule: RankedSchedule) => (await proposeRefinement(text, data, state, schedule, { ai: null })).ok;
+
 it("the refine box's suggested text comes from the displayed schedule and applies in place", async () => {
   await render(initial());
-  const result = (await vi.mocked(generateSchedules).mock.results.at(-1)!.value).result;
+  const result = (await lastGeneration().result).result;
   const lab = result.schedules[0].courses[0].sectionIds.map((id: string) => data.sections[id]).find((s: { type: string }) => s.type === "LAB")!;
-  const day = ({ Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday" } as Record<string, string>)[lab.meetings[0].days[0]];
+  const day = LONG[lab.meetings[0].days[0]];
   const input = container.querySelector<HTMLTextAreaElement>("#schedule-feedback")!;
   expect(input.placeholder).toBe(`e.g. No BISC-120 lab on ${day}`);
   await act(async () => button(`No BISC-120 lab on ${day}`).click());
@@ -210,10 +225,49 @@ it("the refine box's suggested text comes from the displayed schedule and applie
   await act(async () => button("Refresh schedules and rankings").click()); await settle();
   expect(current.refinements.map(r => r.summary)).toEqual([`No BISC-120 labs on ${lab.meetings[0].days[0]}`]);
   expect(container.textContent).toContain(`Applied “No BISC-120 labs on ${lab.meetings[0].days[0]}”`);
-  // the suggestion follows the schedule now on screen
-  const next = (await vi.mocked(generateSchedules).mock.results.at(-1)!.value).result.schedules[0];
-  const nextLab = next.courses[0].sectionIds.map((id: string) => data.sections[id]).find((s: { type: string }) => s.type === "LAB")!;
-  expect(container.querySelector<HTMLTextAreaElement>("#schedule-feedback")!.placeholder).toContain(({ Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday" } as Record<string, string>)[nextLab.meetings[0].days[0]]);
+  // the suggestions follow the schedule now on screen, checked against the feedback just applied
+  const next: RankedSchedule = (await lastGeneration().result).result.schedules[0];
+  expect(chips()).toEqual(await feasibleSuggestions(data, current, next));
+  expect(chips().length).toBeGreaterThan(0);
+  expect(placeholder()).toBe(`e.g. ${chips()[0]}`);
+});
+
+it("hides an inferred suggestion that would leave no schedule, keeping the feasible ones", async () => {
+  await render(initial());
+  await act(async () => button(chips().find(c => c!.startsWith("No BISC-120 lab on"))!).click());
+  await act(async () => button("Refresh schedules and rankings").click()); await settle();
+  // with that lab day gone, excluding the next lab day too leaves no BISC-120 combination
+  const next: RankedSchedule = (await lastGeneration().result).result.schedules[0];
+  const nextLab = next.courses[0].sectionIds.map(id => data.sections[id]).find(s => s.type === "LAB")!;
+  const infeasible = `No BISC-120 lab on ${LONG[nextLab.meetings[0].days[0]]}`;
+  expect(suggestRefinements(data, next, Infinity)).toContain(infeasible);
+  expect(await fits(infeasible, current, next)).toBe(false);
+  expect(chips()).not.toContain(infeasible);
+  expect(placeholder()).not.toContain(infeasible);
+  expect(chips().length).toBeGreaterThan(0);
+  for (const c of chips()) expect(await fits(c!, current, next)).toBe(true);
+  expect(placeholder()).toBe(`e.g. ${chips()[0]}`);
+  // typed text keeps the apply-time warning
+  await feedback(infeasible);
+  expect(container.textContent).toContain("Not applied");
+  expect(current.refinements).toHaveLength(1);
+});
+
+it("shows no suggestion chips and no example placeholder when every inferred suggestion would leave nothing", async () => {
+  await render(initial());
+  const shown: RankedSchedule = (await lastGeneration().result).result.schedules[0];
+  // pin every section on screen: any change to it leaves no schedule
+  const pinned = { ...initial(), sectionPins: { "BISC-120": shown.courses[0].sectionIds } };
+  await act(async () => root.unmount()); root = createRoot(container);
+  await render(pinned);
+  const schedule: RankedSchedule = (await lastGeneration().result).result.schedules[0];
+  const candidates = suggestRefinements(data, schedule, Infinity);
+  expect(candidates.length).toBeGreaterThan(0);
+  for (const c of candidates) expect(await fits(c, current, schedule)).toBe(false);
+  expect(container.querySelector("#schedule-feedback")).not.toBeNull();
+  expect(container.querySelector('[aria-label="Suggestions from this schedule"]')).toBeNull();
+  expect(placeholder()).toBe(NEUTRAL_PLACEHOLDER);
+  for (const c of candidates) expect(placeholder()).not.toContain(c);
 });
 
 it("the sections card shows the freshness of the data in use, never a refresh schedule", async () => {
@@ -245,3 +299,18 @@ it("when earlier feedback leaves nothing, lists only that feedback so it can be 
   expect(container.querySelector("#schedule-feedback")).not.toBeNull();
 });
 
+
+it("caches suggestion checks per schedule and request, so revisiting costs no engine runs", async () => {
+  const d = structuredClone(data); // a term the cache has not seen
+  const state = initial();
+  const schedule: RankedSchedule = (await generateSchedulesFor(state)).schedules[0];
+  const first = await feasibleSuggestions(d, state, schedule);
+  const runs = vi.mocked(generateSchedules).mock.calls.length;
+  expect(runs).toBeGreaterThan(1);
+  expect(await feasibleSuggestions(d, state, schedule)).toEqual(first);
+  expect(vi.mocked(generateSchedules).mock.calls).toHaveLength(runs);
+  // changed pins (or feedback, preferences, courses) are a new request: checked again
+  await feasibleSuggestions(d, { ...state, sectionPins: {} }, schedule);
+  expect(vi.mocked(generateSchedules).mock.calls.length).toBeGreaterThan(runs);
+});
+async function generateSchedulesFor(state: AppState) { return (await generateSchedules(data, buildRequest(state, data), { limit: 5 })).result; }
