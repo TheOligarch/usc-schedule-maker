@@ -42,6 +42,8 @@ export interface AppState {
   unitCap: number | null;
   times: TimesState;
   history: InterviewHistoryItem[];
+  /** Question ID of the last answered topic whose slider-only importance step is still open. */
+  importanceFollowup: string | null;
   interview: InterviewResult | null;
   /** Courses/slots the interview was run for; used to notice when it has gone stale. */
   interviewFor: string | null;
@@ -69,6 +71,7 @@ export function defaultState(): AppState {
     unitCap: 18,
     times: { global: [{ start: "08:00", end: "20:00" }], overrides: {}, weekends: false },
     history: [],
+    importanceFollowup: null,
     interview: null,
     interviewFor: null,
     limit: DEFAULT_RESULT_LIMIT,
