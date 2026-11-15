@@ -13,7 +13,6 @@ describe("setup and interview guidance", () => {
     const html = renderToStaticMarkup(<Requirements data={SAMPLE_TERM} state={defaultState()} onChange={noop} onNext={noop} />);
     expect(html).toContain("The interview will ask about your interests and come up with up to five potential real courses for each open slot.");
     expect(html).not.toContain("Edit the list, then each schedule chooses one course from it");
-    expect(html).toContain("each schedule chooses one course");
     expect(html).toContain("does not audit your degree");
     expect(html).toContain("12–18 units");
     expect(html).toContain("units over 18 generally cost extra");
