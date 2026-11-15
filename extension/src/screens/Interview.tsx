@@ -331,7 +331,7 @@ function InterviewSummary({
             <Icon name="sparkle" /> Here is what we learned
           </>
         }
-        subtitle="This information will help us rank your schedule. Feel free to edit or change anything"
+        subtitle="This information will help us come up with the best schedules for you. Feel free to edit or change any preferences"
         actions={
           <button type="button" className="btn btn-ghost btn-sm" onClick={onRedo}>
             <Icon name="refresh" size={14} /> Redo interview
