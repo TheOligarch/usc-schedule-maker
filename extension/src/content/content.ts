@@ -6,8 +6,12 @@
  * WebReg's markup is not under our control, so the tab bar is located by behaviour
  * (a Bootstrap `ul.nav` holding the Departments / myCourseBin / Calendar links) rather
  * than by one hard-coded selector, and a floating launcher is used if none is found.
+ *
+ * It also adds a schedule's sections to the student's myCourseBin when the app asks
+ * (content/courseBin.ts): only from this tab's own top frame, and only by adding.
  */
 
+import { createCourseBinService, handleCourseBinMessage } from "./courseBin";
 import { highlightFromLocation } from "./sectionHighlight";
 import { pinUnselectedLook, selectOurTab, TAB_FOCUS_CSS } from "./tabHighlight";
 import { displaceOlderCopy, VERSION_ATTR } from "./takeover";
@@ -203,4 +207,13 @@ if (window.top === window) {
   start();
   // Opened from a schedule's Register link: mark the sections that schedule picked.
   highlightFromLocation();
+  // "Add to myCourseBin" from the app's frame in this tab: WebReg's own add requests, same-origin.
+  const binService = createCourseBinService((url, init) => fetch(url, init));
+  const extension = { id: chrome.runtime.id, appUrl: chrome.runtime.getURL("index.html") };
+  chrome.runtime.onMessage.addListener((message: unknown, sender, sendResponse) => {
+    const reply = handleCourseBinMessage(binService, message, sender, extension);
+    if (!reply) return false;
+    reply.then(sendResponse, (err: unknown) => sendResponse({ ok: false, reason: "error", outcome: "failed", message: String(err) }));
+    return true; // async response
+  });
 }

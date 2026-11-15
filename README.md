@@ -14,7 +14,7 @@ To install, all you need is desktop Google Chrome.
 4. Open <https://webreg.usc.edu>, sign in, and refresh the page if it was already open.
 5. Click **myScheduleMaker**, immediately to the right of **myCalendar**.
 
-Updating from an older download? Chrome keeps running whatever folder it loaded, so a new ZIP changes nothing until you **Remove** the old USC Schedule Maker card in `chrome://extensions` (or click its reload icon after replacing that folder's contents). The card shows the version; the current release is 0.1.1.
+Updating from an older download? Chrome keeps running whatever folder it loaded, so a new ZIP changes nothing until you **Remove** the old USC Schedule Maker card in `chrome://extensions` (or click its reload icon after replacing that folder's contents). The card shows the version; the current release is 0.1.2.
 
 To open the app without signing into WebReg, open Chrome's Extensions menu and click **USC Schedule Maker**. Pin it for a toolbar shortcut.
 
@@ -25,7 +25,7 @@ To open the app without signing into WebReg, open Chrome's Extensions menu and c
 3. **Interview:** answer a few questions about your interests and week layout. Set the importance of week layout and breaks beside the matching questions, or edit those weights with your preferences in the summary. Review and edit the summary and up to five real courses per open slot; each generated schedule chooses one course per slot. The app does not audit your degree requirements.
 4. **Results:** compare ranked schedules in a weekly calendar, inspect warnings and explanations, and follow section links to USC's course pages. Results default to the top 10, with up to 100 available.
 
-Registration and adding sections to your course bin happen in WebReg.
+Signed in to WebReg, open Schedule Maker from its myScheduleMaker tab and use **Add all to myCourseBin** on a schedule to put every one of its sections (lectures, labs, discussions, quizzes) in your course bin in one step, after confirming the list. It only adds to the bin; registration still happens in WebReg.
 
 ## How it works
 
@@ -57,7 +57,6 @@ See [User Feedback](<User Feedback.md>) for the running feedback log and impleme
 ## Future work
 - Backup classes that fit the chosen schedule if a section fills.
 - Import the student's advised USC course plan.
-- One-click **add to course bin** in WebReg.
 - Seat-count history to show how quickly sections fill.
 - Room locations from authenticated WebReg pages.
 - Pre-2015 GE categories.

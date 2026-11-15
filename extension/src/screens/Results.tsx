@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { AiError, explainSchedules } from "../lib/ai";
-import { MAX_RESULT_LIMIT } from "../lib/config";
+import { MAX_RESULT_LIMIT, USE_MOCKS } from "../lib/config";
 import type { Blocker, PenaltyKind, RankedSchedule, TermData } from "../lib/contract-types";
+import { chromeBinTransport, courseBinAvailable, type BinTransport } from "../lib/courseBin";
 import { generateSchedules, type EngineRun } from "../lib/engine";
 import { displayString, geShort, instructorNames, isLectureType, scheduleStats, sectionRmp, SECTION_TYPE_LABEL, unitsLabel } from "../lib/schedule";
 import { fetchLiveSeats, liveSeatsAvailable, withLiveSeats, type LiveSeat } from "../lib/seats";
@@ -10,6 +11,8 @@ import { fmtDays, fmtMeeting, fmtTime, relativeTime } from "../lib/time";
 import { allowedTimes, buildRequest, type AppState, type StepId } from "../state";
 import { MiniWeek, WeekCalendar, courseColors } from "../components/WeekCalendar";
 import { Card, Icon, Notice, Spinner } from "../components/ui";
+import { CourseBinDialog } from "../components/CourseBinDialog";
+import { mockBinTransport } from "../mocks/mockCourseBin";
 
 const LIMIT_OPTIONS = [10, 20, 30, 50, 100];
 const SEAT_TTL_MS = 2 * 60 * 1000;
@@ -26,11 +29,19 @@ export const PENALTY_LABEL: Record<PenaltyKind, string> = {
 };
 const HEAVY: PenaltyKind[] = ["full", "waitlist", "dClearance", "onlineOrTba", "finalConflict", "ambiguousLink"];
 
+/** How the app reaches WebReg to add to myCourseBin: the WebReg tab's content script, a demo stand-in, or nothing. */
+function defaultBinTransport(): BinTransport | null {
+  if (USE_MOCKS) return mockBinTransport();
+  return courseBinAvailable() ? chromeBinTransport() : null;
+}
+
 interface Props {
   data: TermData;
   state: AppState;
   onChange: (patch: Partial<AppState>) => void;
   onEdit: (step: StepId) => void;
+  /** Overrides how sections are added to myCourseBin (tests). */
+  binTransport?: BinTransport | null;
 }
 
 interface SeatState {
@@ -40,7 +51,7 @@ interface SeatState {
   error: string | null;
 }
 
-export function Results({ data, state, onChange, onEdit }: Props) {
+export function Results({ data, state, onChange, onEdit, binTransport }: Props) {
   const request = useMemo(() => buildRequest(state), [state]);
   const requestKey = JSON.stringify(request);
   const [run, setRun] = useState<EngineRun | null>(null);
@@ -52,6 +63,8 @@ export function Results({ data, state, onChange, onEdit }: Props) {
   const [explainState, setExplainState] = useState<"idle" | "loading" | "error">("idle");
   const [seatState, setSeatState] = useState<SeatState>({ seats: {}, fetchedAt: {}, loading: false, error: null });
   const listRef = useRef<HTMLOListElement>(null);
+  const [binFor, setBinFor] = useState<{ schedule: RankedSchedule; index: number } | null>(null);
+  const transport = useMemo(() => (binTransport === undefined ? defaultBinTransport() : binTransport), [binTransport]);
 
   // Build schedules whenever the request or the limit changes.
   useEffect(() => {
@@ -222,6 +235,7 @@ export function Results({ data, state, onChange, onEdit }: Props) {
             onPrev={() => setSelectedId(schedules[selectedIndex - 1]?.id ?? null)}
             onNext={() => setSelectedId(schedules[selectedIndex + 1]?.id ?? null)}
             onEdit={onEdit}
+            onAddToBin={() => setBinFor({ schedule: selected, index: selectedIndex })}
           />
           <Explanation index={selectedIndex} text={explanations[selected.id]} state={explainState} onRetry={() => void explain()} />
           <Card className="cal-card">
@@ -237,11 +251,30 @@ export function Results({ data, state, onChange, onEdit }: Props) {
           />
         </section>
       )}
+      {binFor && <CourseBinDialog data={data} schedule={binFor.schedule} index={binFor.index} transport={transport} onClose={() => setBinFor(null)} />}
     </div>
   );
 }
 
-function ScheduleHeader({ data, schedule, index, count, onPrev, onNext, onEdit }: { data: TermData; schedule: RankedSchedule; index: number; count: number; onPrev: () => void; onNext: () => void; onEdit: (s: StepId) => void }) {
+function ScheduleHeader({
+  data,
+  schedule,
+  index,
+  count,
+  onPrev,
+  onNext,
+  onEdit,
+  onAddToBin,
+}: {
+  data: TermData;
+  schedule: RankedSchedule;
+  index: number;
+  count: number;
+  onPrev: () => void;
+  onNext: () => void;
+  onEdit: (s: StepId) => void;
+  onAddToBin: () => void;
+}) {
   const stats = scheduleStats(data, schedule);
   return (
     <header className="sched-head">
@@ -262,6 +295,9 @@ function ScheduleHeader({ data, schedule, index, count, onPrev, onNext, onEdit }
         </p>
       </div>
       <div className="row gap-sm">
+        <button type="button" className="btn btn-primary btn-sm" onClick={onAddToBin} title="Add every section of this schedule to your WebReg myCourseBin">
+          <Icon name="plus" size={14} /> Add all to myCourseBin
+        </button>
         <button type="button" className="btn btn-ghost btn-sm" onClick={() => onEdit("requirements")}>
           Edit requirements
         </button>
