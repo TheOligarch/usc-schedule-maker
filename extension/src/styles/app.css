@@ -170,7 +170,7 @@ textarea { width: 100%; resize: vertical; }
 .spinner-row { display: flex; align-items: center; gap: 10px; color: var(--muted); padding: 8px 0; }
 .spinner { width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid var(--cardinal-100); border-top-color: var(--cardinal); animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.4s; } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.4s; } .pin-chevron { transition: none; } }
 
 .segmented { display: inline-flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; background: var(--surface); }
 .segmented button { white-space: nowrap; border: 0; background: none; padding: 7px 11px; cursor: pointer; font-size: 13px; border-right: 1px solid var(--line); }
@@ -223,16 +223,18 @@ textarea { width: 100%; resize: vertical; }
 .search-results .meta { display: flex; align-items: center; gap: 4px; color: var(--muted); font-size: 12px; white-space: nowrap; }
 .search-empty { color: var(--muted); cursor: default !important; grid-template-columns: 1fr !important; }
 .chip-list { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.course-chip { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 8px 8px 12px; border: 1px solid var(--line); border-left: 4px solid var(--cardinal); border-radius: 8px; background: var(--surface-2); }
-.course-chip > div:first-child { display: flex; flex-direction: column; min-width: 0; }
+/* Body on the left; the corner (units + remove X) is a fixed top-right column that never wraps or re-centres as the body grows. */
+.course-chip { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; column-gap: 10px; padding: 8px 8px 8px 12px; border: 1px solid var(--line); border-left: 4px solid var(--cardinal); border-radius: 8px; background: var(--surface-2); }
+.chip-body { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; min-width: 0; }
+.chip-corner { grid-column: 2; grid-row: 1; align-self: start; justify-self: end; display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; white-space: nowrap; }
+.chip-corner .units { color: var(--muted); font-size: 12.5px; }
+.chip-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
 .course-chip .code { font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
 .course-chip .title { color: var(--ink-2); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .course-chip.missing { border-left-color: var(--err); }
 .course-chip.missing .title { color: var(--err); }
 .slot-chip { border-left-color: var(--gold); }
 .slot-chip .code .icon { color: var(--gold-ink); }
-.chip-meta { display: flex; align-items: center; gap: 6px; flex: none; }
-.chip-meta .units { color: var(--muted); font-size: 12.5px; }
 .slot-adders select { max-width: 280px; }
 .limits { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
 .limits input[type="number"] { width: 90px; }
@@ -436,3 +438,27 @@ table.bin-table td:last-child { text-align: left; }
 .bin-adding { color: var(--warn); }
 .bin-message { margin-top: 2px; max-width: 46ch; }
 .bin-summary { color: var(--ink-2); }
+
+.section-pin { margin-top: 0.6rem; max-width: 100%; border: 0; padding: 0; min-width: 0; }
+.pin-head { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; min-width: 0; }
+.pin-toggle { display: inline-flex; align-items: center; gap: 4px; padding: 2px 4px 2px 0; border: 0; background: none; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; border-radius: 4px; }
+.pin-toggle:focus-visible { outline: 2px solid var(--cardinal); outline-offset: 2px; }
+.pin-chevron { display: inline-grid; place-items: center; transform: rotate(-90deg); transition: transform 0.15s ease; }
+.pin-chevron.open { transform: none; }
+.pin-summary { color: var(--ink-2); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pin-panel[hidden] { display: none; }
+.section-pin select { width: 100%; max-width: 36rem; min-width: 0; }
+.section-pin p { white-space: pre-wrap; }
+.pin-row { display: grid; grid-template-columns: minmax(5.5rem, auto) minmax(0, 1fr); gap: 4px 8px; align-items: center; margin-top: 4px; }
+.pin-row label { font-size: 12px; color: var(--ink-2); }
+.pin-row .pin-chip { grid-column: 2; justify-self: start; }
+/* Clearing a pin is a small inline chip, unlike the course's remove button at the card edge. */
+.pin-chip { display: inline-flex; align-items: center; gap: 4px; padding: 1px 2px 1px 8px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: 12px; color: var(--ink-2); max-width: 100%; }
+.pin-chip-stale { border-color: var(--err); color: var(--err); margin-top: 4px; }
+.pin-chip-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pin-clear { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 999px; border: 0; background: var(--surface-2); color: var(--ink-2); cursor: pointer; flex: none; }
+.pin-clear:hover, .pin-clear:focus-visible { background: var(--cardinal-50); color: var(--cardinal); }
+.chip-btn { border: 1px dashed var(--line); border-radius: 999px; }
+#schedule-feedback { width: 100%; font: inherit; padding: 0.6rem; resize: vertical; }
+
+.quick-reply[aria-pressed="true"] { background: #fff0d7; border-color: #990000; color: #700000; }

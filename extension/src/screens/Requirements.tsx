@@ -1,6 +1,8 @@
 import { useMemo, useState, type ReactNode } from "react";
 import type { TermData } from "../lib/contract-types";
 import { geCategories, geLabel, geShort, unitsLabel } from "../lib/schedule";
+import { canonicalCourseCode } from "../lib/sectionPins";
+import { SectionPinPicker } from "../components/SectionPinPicker";
 import { allowedTimes, newSlotId, type AppState, type SlotDef, type TimesState } from "../state";
 import { CourseSearch } from "../components/CourseSearch";
 import { TimeGrid } from "../components/TimeGrid";
@@ -57,21 +59,31 @@ export function Requirements({ data, state, onChange, header, onNext }: Props) {
           ) : (
             <ul className="chip-list">
               {state.required.map((code) => {
-                const c = data.courses[code];
+                const c = data.courses[canonicalCourseCode(data, code) ?? code];
                 return (
                   <li key={code} className={`course-chip ${c ? "" : "missing"}`}>
-                    <div>
+                    <div className="chip-body">
                       <span className="code">{code}</span>
                       <span className="title">{c ? c.title : "Not offered this term"}</span>
-                    </div>
-                    <div className="chip-meta">
-                      {c?.ge.map((g) => (
-                        <span key={g} className="tag tag-gold">
-                          {geShort(g)}
+                      {c && c.ge.length > 0 && (
+                        <span className="chip-tags">
+                          {c.ge.map((g) => (
+                            <span key={g} className="tag tag-gold">
+                              {geShort(g)}
+                            </span>
+                          ))}
                         </span>
-                      ))}
+                      )}
+                      {c && <SectionPinPicker data={data} code={c.code} pins={state.sectionPins[code] ?? []} onPins={(ids) => {
+                        const sectionPins = { ...state.sectionPins };
+                        if (ids.length) sectionPins[code] = ids; else delete sectionPins[code];
+                        onChange({ sectionPins });
+                      }} />}
+                    </div>
+                    {/* Units and the remove-course X stay pinned top-right however tall the card gets. */}
+                    <div className="chip-corner">
                       {c && <span className="units">{unitsLabel(c.units)} u</span>}
-                      <button type="button" className="icon-btn" aria-label={`Remove ${code}`} onClick={() => onChange({ required: state.required.filter((x) => x !== code) })}>
+                      <button type="button" className="icon-btn course-remove" aria-label={`Remove course ${code}`} title={`Remove ${code} from required courses`} onClick={() => onChange({ required: state.required.filter((x) => x !== code), sectionPins: Object.fromEntries(Object.entries(state.sectionPins).filter(([key]) => key !== code)) })}>
                         <Icon name="x" size={14} />
                       </button>
                     </div>
@@ -111,15 +123,17 @@ export function Requirements({ data, state, onChange, header, onNext }: Props) {
             <ul className="chip-list">
               {state.slots.map((slot) => (
                 <li key={slot.id} className="course-chip slot-chip">
-                  <div>
+                  <div className="chip-body">
                     <span className="code">
                       <Icon name="sparkle" size={14} /> {slot.label}
                     </span>
                     <span className="title">{slot.kind === "GE" ? geLabel(slot.geCategory ?? "") : "Any course that fits your interests"}</span>
                   </div>
-                  <button type="button" className="icon-btn" aria-label={`Remove ${slot.label}`} onClick={() => onChange({ slots: state.slots.filter((s) => s.id !== slot.id) })}>
-                    <Icon name="x" size={14} />
-                  </button>
+                  <div className="chip-corner">
+                    <button type="button" className="icon-btn" aria-label={`Remove ${slot.label}`} onClick={() => onChange({ slots: state.slots.filter((s) => s.id !== slot.id) })}>
+                      <Icon name="x" size={14} />
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>

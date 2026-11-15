@@ -7,10 +7,11 @@ import { generateSchedules, type EngineRun } from "../lib/engine";
 import { displayString, geShort, instructorNames, isLectureType, scheduleStats, sectionRmp, SECTION_TYPE_LABEL, unitsLabel } from "../lib/schedule";
 import { fetchLiveSeats, liveSeatsAvailable, withLiveSeats, type LiveSeat } from "../lib/seats";
 import { webregRegisterUrl } from "../lib/webreg";
-import { fmtDays, fmtMeeting, fmtTime, relativeTime } from "../lib/time";
+import { fmtDays, fmtMeeting, fmtTime, freshnessLine } from "../lib/time";
 import { allowedTimes, buildRequest, type AppState, type StepId } from "../state";
 import { MiniWeek, WeekCalendar, courseColors } from "../components/WeekCalendar";
 import { Card, Icon, Notice, Spinner } from "../components/ui";
+import { AppliedFeedback, ScheduleFeedback } from "../components/ScheduleFeedback";
 import { CourseBinDialog } from "../components/CourseBinDialog";
 import { mockBinTransport } from "../mocks/mockCourseBin";
 
@@ -42,6 +43,8 @@ interface Props {
   onEdit: (step: StepId) => void;
   /** Overrides how sections are added to myCourseBin (tests). */
   binTransport?: BinTransport | null;
+  /** The bundled sample term is shown (no live data published). */
+  sample?: boolean;
 }
 
 interface SeatState {
@@ -51,11 +54,12 @@ interface SeatState {
   error: string | null;
 }
 
-export function Results({ data, state, onChange, onEdit, binTransport }: Props) {
-  const request = useMemo(() => buildRequest(state), [state]);
+export function Results({ data, state, onChange, onEdit, binTransport, sample }: Props) {
+  const request = useMemo(() => buildRequest(state, data), [state, data]);
   const requestKey = JSON.stringify(request);
   const [run, setRun] = useState<EngineRun | null>(null);
   const [running, setRunning] = useState(true);
+  const [retry, setRetry] = useState(0);
   const [engineError, setEngineError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [highlight, setHighlight] = useState<string | null>(null);
@@ -82,7 +86,7 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
         if (!ctrl.signal.aborted) setRunning(false);
       });
     return () => ctrl.abort();
-  }, [data, requestKey, state.limit]);
+  }, [data, requestKey, state.limit, retry]);
 
   const schedules = run?.result.schedules ?? [];
   const selectedIndex = Math.max(0, schedules.findIndex((s) => s.id === selectedId));
@@ -142,10 +146,15 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
   const allowed = allowedTimes(state.times);
   const total = run?.result.totalValid ?? 0;
 
+  // The refine box needs schedules to refine; when nothing fits only the feedback already in effect is listed, so it can be removed.
+  const applied = state.refinements.length > 0 && <Card title="Schedule feedback in effect"><AppliedFeedback state={state} disabled={running} onChange={onChange} /></Card>;
+
   if (engineError) {
     return (
       <div className="screen">
         <Notice tone="error">The schedule builder failed: {engineError}</Notice>
+        <button type="button" className="btn btn-secondary" onClick={() => setRetry(n => n + 1)}>Retry schedule builder</button>
+        {applied}
       </div>
     );
   }
@@ -158,7 +167,9 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
       </div>
     );
   }
-  if (total === 0) return <NoResults blockers={run.result.blockers} onEdit={onEdit} />;
+  if (total === 0) return <div className="screen">{running && <Spinner label="Refreshing schedules…" />}
+    {applied && <Notice tone="warn">No feasible alternatives fit your current rules. Remove feedback here to refresh; your requirements and pins are preserved.</Notice>}
+    {applied}<NoResults blockers={run.result.blockers} onEdit={onEdit} /></div>;
 
   return (
     <div className="results">
@@ -169,13 +180,13 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
               {total.toLocaleString()}
               {run.truncated ? "+" : ""}
             </strong>{" "}
-            schedule{total === 1 ? "" : "s"} fit
+            section combination{total === 1 ? "" : "s"} fit
             <div className="muted small">
-              {run.isMock ? "demo engine · " : ""}built in {run.elapsedMs} ms
+              {run.isMock ? "demo data · " : ""}{run.result.totalDistinct ?? schedules.length} distinct timetable{run.result.totalDistinct === 1 ? "" : "s"}{run.truncated ? "+" : ""} · built in {run.elapsedMs} ms
             </div>
           </div>
           <label className="limit-select">
-            <span className="small muted">Show top</span>
+            <span className="small muted">Show up to</span>
             <select value={state.limit} onChange={(e) => onChange({ limit: Number(e.target.value) })} aria-label="Number of schedules to show">
               {LIMIT_OPTIONS.map((n) => (
                 <option key={n} value={n}>
@@ -226,7 +237,7 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
       </aside>
 
       {selected && (
-        <section className="sched-main" aria-label={`Schedule ${selectedIndex + 1}`}>
+        <section className="sched-main" aria-busy={running} aria-label={`Schedule ${selectedIndex + 1}`}>
           <ScheduleHeader
             data={data}
             schedule={selected}
@@ -235,13 +246,17 @@ export function Results({ data, state, onChange, onEdit, binTransport }: Props) 
             onPrev={() => setSelectedId(schedules[selectedIndex - 1]?.id ?? null)}
             onNext={() => setSelectedId(schedules[selectedIndex + 1]?.id ?? null)}
             onEdit={onEdit}
-            onAddToBin={() => setBinFor({ schedule: selected, index: selectedIndex })}
+            busy={running}
+            onAddToBin={() => { if (!running) setBinFor({ schedule: selected, index: selectedIndex }); }}
           />
+          {Object.values(state.sectionPins).some((ids) => ids.length) && <p className="small">Required sections: {Object.entries(state.sectionPins).filter(([, ids]) => ids.length).map(([c, ids]) => `${c} ${ids.join(" + ")}`).join(", ")}</p>}
+          <ScheduleFeedback data={data} schedule={selected} index={selectedIndex} state={state} running={running} onChange={onChange} />
           <Explanation index={selectedIndex} text={explanations[selected.id]} state={explainState} onRetry={() => void explain()} />
           <Card className="cal-card">
             <WeekCalendar data={data} schedule={selected} allowed={allowed} highlight={highlight} onHighlight={setHighlight} />
           </Card>
           <SectionDetails
+            sample={sample ?? false}
             data={data}
             schedule={selected}
             seats={seatState}
@@ -265,6 +280,7 @@ function ScheduleHeader({
   onNext,
   onEdit,
   onAddToBin,
+  busy,
 }: {
   data: TermData;
   schedule: RankedSchedule;
@@ -274,6 +290,7 @@ function ScheduleHeader({
   onNext: () => void;
   onEdit: (s: StepId) => void;
   onAddToBin: () => void;
+  busy: boolean;
 }) {
   const stats = scheduleStats(data, schedule);
   return (
@@ -295,7 +312,7 @@ function ScheduleHeader({
         </p>
       </div>
       <div className="row gap-sm">
-        <button type="button" className="btn btn-primary btn-sm" onClick={onAddToBin} title="Add every section of this schedule to your WebReg myCourseBin">
+        <button type="button" className="btn btn-primary btn-sm" disabled={busy} onClick={onAddToBin} title="Add every section of this schedule to your WebReg myCourseBin">
           <Icon name="plus" size={14} /> Add all to myCourseBin
         </button>
         <button type="button" className="btn btn-ghost btn-sm" onClick={() => onEdit("requirements")}>
@@ -343,6 +360,7 @@ function Explanation({ index, text, state, onRetry }: { index: number; text: str
 }
 
 function SectionDetails({
+  sample,
   data,
   schedule,
   seats,
@@ -350,6 +368,7 @@ function SectionDetails({
   highlight,
   onHighlight,
 }: {
+  sample: boolean;
   data: TermData;
   schedule: RankedSchedule;
   seats: SeatState;
@@ -359,18 +378,13 @@ function SectionDetails({
 }) {
   const colors = courseColors(schedule);
   const live = liveSeatsAvailable();
-  const fetched = schedule.courses.map((c) => seats.fetchedAt[c.courseCode]).filter(Boolean);
-  const lastFetch = fetched.length ? Math.min(...fetched) : null;
+  // The oldest data on screen: live fetches where every course has one, else the term file.
+  const fetched = schedule.courses.map((c) => seats.fetchedAt[c.courseCode]);
+  const updatedAt = fetched.length && fetched.every(Boolean) ? Math.min(...fetched) : data.term.scrapedAt;
   return (
     <Card
       title="Sections"
-      subtitle={
-        live
-          ? lastFetch
-            ? `Live seat counts from classes.usc.edu, updated ${relativeTime(new Date(lastFetch).toISOString())}.`
-            : "Seat counts from the nightly snapshot."
-          : `Seat counts from the nightly snapshot (${relativeTime(data.term.scrapedAt)}). Install the extension for live counts.`
-      }
+      subtitle={`${freshnessLine(updatedAt, { sample })}.${live || sample ? "" : " Install the extension to refresh seat counts."}`}
       actions={
         live && (
           <button type="button" className="btn btn-ghost btn-sm" onClick={onRefreshSeats} disabled={seats.loading}>
@@ -379,7 +393,7 @@ function SectionDetails({
         )
       }
     >
-      {seats.error && <Notice tone="warn">{seats.error} Showing nightly numbers instead.</Notice>}
+      {seats.error && <Notice tone="warn">{seats.error} Showing the last downloaded numbers instead.</Notice>}
       <div className="course-details">
         {schedule.courses.map((c) => {
           const course = data.courses[c.courseCode];

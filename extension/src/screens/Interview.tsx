@@ -1,3 +1,4 @@
+import { isElectiveQuestion } from "../lib/electiveInterests";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AI_IS_MOCK, AiError, interviewTurn, type AiSource } from "../lib/ai";
 import { MAX_INTERVIEW_QUESTIONS, MAX_SHORTLIST } from "../lib/config";
@@ -25,6 +26,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [offline, setOffline] = useState(sampleData);
+  const [categoryChoices, setCategoryChoices] = useState<string[]>([]);
   const [freeText, setFreeText] = useState("");
   const [source, setSource] = useState<AiSource | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -51,6 +53,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
           {
             termCode: data.term.code,
             required: state.required,
+            sectionPins: state.sectionPins,
             slots: state.slots.map((s) => ({ label: s.label, kind: s.kind, ...(s.geCategory ? { geCategory: s.geCategory } : {}) })),
             history,
             ...(hardHours ? { hardHours } : {}),
@@ -64,6 +67,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
           setQuestion(null);
           onChange({ history, interview: { preferences: res.preferences, shortlists: res.shortlists, summary: res.summary }, interviewFor: sig });
         } else {
+          setCategoryChoices([]);
           setQuestion(res.question);
         }
       } catch (err) {
@@ -189,13 +193,14 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
                   <span className="q-num">{state.history.length + 1}</span>
                   {question.text}
                 </div>
-                <div className="quick-replies" role="group" aria-label="Quick replies">
+                <div className="quick-replies" role="group" aria-label={isElectiveQuestion(question) ? "Elective interest categories" : "Quick replies"}>
                   {question.options.map((opt) => (
-                    <button key={opt} type="button" className="quick-reply" onClick={() => answer(opt, freeText)}>
+                    <button key={opt} type="button" className={`quick-reply ${categoryChoices.includes(opt) ? "on" : ""}`} aria-pressed={isElectiveQuestion(question) ? categoryChoices.includes(opt) : undefined} onClick={() => isElectiveQuestion(question) ? setCategoryChoices(choices => choices.includes(opt) ? choices.filter(c => c !== opt) : [...choices, opt]) : answer(opt, freeText)}>
                       {opt}
                     </button>
                   ))}
                 </div>
+                {isElectiveQuestion(question) && <button type="button" className="btn btn-secondary btn-sm" disabled={!categoryChoices.length} onClick={() => answer(categoryChoices.join("; "), freeText)}>Use selected interests</button>}
                 <form
                   className="free-text"
                   onSubmit={(e) => {

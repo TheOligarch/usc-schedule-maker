@@ -98,6 +98,16 @@ export interface Importance {
 }
 
 export interface ScheduleRequest {
+  /** Optional hard section choices per required course (lecture and/or linked components). */
+  sectionPins?: Record<string, string | string[]>;
+  /** Relevance 0..1 for shortlisted electives, from selected interest categories. */
+  courseInterestScores?: Record<string, number>;
+  /** Hard exclusions compiled from results-page feedback. */
+  excludedSectionIds?: string[];
+  /** Soft per-section costs compiled from results-page feedback. */
+  sectionCosts?: Record<string, { amount: number; message: string }>;
+  /** Whole-week limits compiled from results-page feedback. */
+  scheduleRules?: ScheduleRule[];
   required: string[]; // course codes that must all appear
   flexSlots: { label: string; options: string[] }[]; // exactly one of up to 5 interchangeable courses per slot
   allowedTimes: Record<Day, Block[]>; // every meeting must sit inside a block; [] = day off
@@ -105,6 +115,15 @@ export interface ScheduleRequest {
   minRmp?: number | null; // deprecated and ignored; use importance.rmp for soft ranking
   importance: Importance; // 1-10 each
   preferences: Preferences;
+}
+
+/** A whole-week limit: minutes for maxGap/minBreak/maxMinutesPerDay, a count for maxDays/maxPerDay. */
+export interface ScheduleRule {
+  kind: "maxGap" | "minBreak" | "maxDays" | "maxPerDay" | "maxMinutesPerDay";
+  value: number;
+  days?: Day[];
+  hard: boolean;
+  label: string;
 }
 
 export interface Preferences {
@@ -150,6 +169,8 @@ export interface Blocker {
 }
 
 export interface GenerateResult {
+  /** Equivalent meeting days/times counted once, among enumerated leaves. */
+  totalDistinct?: number;
   totalValid: number;
   schedules: RankedSchedule[]; // sorted best-first, length <= limit
   blockers: Blocker[]; // ranked most-eliminating first (always filled when totalValid === 0)
@@ -157,6 +178,7 @@ export interface GenerateResult {
 
 export interface GenerateOptions {
   limit?: number; // default 10, max 100
+  diagnostics?: boolean; // compute blockers (default true)
 }
 
 export type GenerateSchedulesFn = (data: TermData, req: ScheduleRequest, opts?: GenerateOptions) => GenerateResult;
@@ -177,6 +199,7 @@ export interface InterviewHistoryItem {
 }
 
 export interface InterviewRequest {
+  sectionPins?: Record<string, string[]>;
   termCode: string;
   required: string[];
   slots: InterviewSlot[];
@@ -219,4 +242,19 @@ export interface AiHealth {
   keyPresent: boolean;
   model: string;
   modelOk: boolean;
+}
+
+/** POST refine: free-text schedule feedback -> structured constraints (see lib/refinement.ts). */
+export interface RefineRequest {
+  text: string;
+  /** the courses being scheduled, with their published sections (trimmed) */
+  courses: { code: string; title: string; sections: { id: string; type: SectionType; meetings: string[]; instructors: string[] }[] }[];
+  /** the schedule the student is looking at, as display text */
+  schedule: string | null;
+}
+
+export interface RefineResponse {
+  constraints: unknown[];
+  /** the part of the text the model could not express as a constraint, if any */
+  unparsed: string | null;
 }

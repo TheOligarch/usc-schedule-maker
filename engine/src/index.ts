@@ -1,5 +1,6 @@
 import { computeBlockers } from "./blockers";
-import { type Problem, buildBase, buildProblem } from "./prepare";
+import { linkCombos } from "./linkage";
+import { CourseIndex, type Problem, buildBase, buildProblem, pinList } from "./prepare";
 import { type Combo, scheduleCost } from "./score";
 import { type Found, drain, search } from "./search";
 import type { AsyncGenerateOptions, GenerateOptions, GenerateResult, Penalty, RankedSchedule, ScheduleRequest, TermData } from "./types";
@@ -8,6 +9,7 @@ import { DEFAULT_WEIGHTS, scaleWeights } from "./weights";
 export * from "./types";
 export { DEFAULT_WEIGHTS, IMPORTANCE_KEY, importanceFactor, type Weights } from "./weights";
 export { linkCombos } from "./linkage";
+export { pinList } from "./prepare";
 
 export const DEFAULT_LIMIT = 10;
 export const MAX_LIMIT = 100;
@@ -61,6 +63,20 @@ function toRanked(p: Problem, f: Found, scoreScale: number): RankedSchedule {
  * wrapper can give the event loop a turn. The sync API simply drains it.
  */
 export function* generateSteps(data: TermData, req: ScheduleRequest, opts: GenerateOptions = {}): Generator<void, GenerateResult, void> {
+  const index = new CourseIndex(data, Object.keys(req.sectionPins ?? {}));
+  for (const [code, pin] of Object.entries(req.sectionPins ?? {})) {
+    const ids = pinList(pin);
+    if (!ids.length) continue;
+    const sections = index.resolve(code)?.sections ?? [];
+    const bad = ids.filter((id) => !sections.some((s) => s.id === id));
+    if (!req.required.includes(code) || bad.length) {
+      const what = bad.length ? `Pinned section${bad.length > 1 ? "s" : ""} ${bad.join(", ")}` : `Pinned section ${ids.join(", ")}`;
+      return { totalValid: 0, schedules: [], blockers: [{ constraint: "sectionPin", eliminated: 0, message: `${what} ${bad.length > 1 ? "are" : "is"} unavailable for required course ${code}. Clear or change the pin.` }] };
+    }
+    if (ids.length > 1 && !linkCombos(index.resolve(code)!.course, sections).combos.some((c) => ids.every((id) => c.some((s) => s.id === id)))) {
+      return { totalValid: 0, schedules: [], blockers: [{ constraint: "sectionPin", eliminated: 0, message: `Pinned sections ${ids.join(" and ")} of ${code} are not a registrable linked combination. Clear one of the pins.` }] };
+    }
+  }
   const limit = clampLimit(opts.limit);
   const maxEnumerate = Math.max(1, Math.floor(opts.maxEnumerate ?? DEFAULT_MAX_ENUMERATE));
   const weights = { ...DEFAULT_WEIGHTS, ...(opts.weights ?? {}) };
@@ -77,7 +93,7 @@ export function* generateSteps(data: TermData, req: ScheduleRequest, opts: Gener
     if (!res.truncated && res.count < DIAGNOSTIC_CAP) blockers = yield* computeBlockers(base, problem, res.count, DIAGNOSTIC_CAP);
   }
 
-  const result: GenerateResult = { totalValid: res.count, schedules, blockers };
+  const result: GenerateResult = { totalValid: res.count, totalDistinct: res.distinctCount, schedules, blockers };
   if (res.truncated) result.truncated = true;
   return result;
 }

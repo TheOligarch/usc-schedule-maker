@@ -6,8 +6,9 @@
  * anon key. `offline: true` forces the built-in mock for one call, which the UI offers
  * when the AI service is unreachable.
  */
+import { withElectiveInterests } from "./electiveInterests";
 import { FUNCTIONS_BASE, SUPABASE_ANON_KEY, USE_MOCKS } from "./config";
-import type { AiHealth, ExplainRequest, ExplainResponse, InterviewRequest, InterviewResponse, TermData } from "./contract-types";
+import type { AiHealth, ExplainRequest, ExplainResponse, InterviewRequest, InterviewResponse, RefineRequest, RefineResponse, TermData } from "./contract-types";
 import { mockExplain, mockInterview } from "../mocks/mockAi";
 import { normalizeClockTimes } from "../../../supabase/functions/_shared/clock";
 
@@ -74,9 +75,9 @@ function withClockTimes(res: InterviewResponse): InterviewResponse {
 
 /** One stateless interview turn: send the whole history, get the next question or the conclusions. */
 export async function interviewTurn(req: InterviewRequest, termData: TermData, opts: AiCallOptions = {}): Promise<{ res: InterviewResponse; source: AiSource }> {
-  if (USE_MOCKS || opts.offline) return { res: await mockInterview(req, termData), source: "mock" };
+  if (USE_MOCKS || opts.offline) return { res: withElectiveInterests(req, await mockInterview(req, termData), termData), source: "mock" };
   const { body, source } = await callFunction<InterviewResponse>("interview", "POST", req, opts.signal);
-  return { res: checkInterview(body), source };
+  return { res: withElectiveInterests(req, checkInterview(body), termData), source };
 }
 
 /** 1-2 sentence explanations for the top (<= 10) schedules. */
@@ -87,6 +88,19 @@ export async function explainSchedules(req: ExplainRequest, opts: AiCallOptions 
   const { body } = await callFunction<ExplainResponse>("explain", "POST", trimmed, opts.signal);
   if (!body || !Array.isArray(body.explanations)) throw new AiError("The AI service returned an unexpected explanation response.");
   return { explanations: body.explanations.map((e) => (e && typeof e.text === "string" ? { ...e, text: normalizeClockTimes(e.text) } : e)) };
+}
+
+/**
+ * Free-text schedule feedback the local parser could not fully account for. Throws AiError
+ * when the service is unavailable (demo mode, no key, network, or the function's own fallback),
+ * so the caller reports the text as not understood instead of guessing.
+ */
+export async function interpretFeedback(req: RefineRequest, opts: AiCallOptions = {}): Promise<RefineResponse> {
+  if (USE_MOCKS || opts.offline) throw new AiError("The AI interpreter is not available in demo mode.");
+  const { body, source } = await callFunction<RefineResponse>("refine", "POST", req, opts.signal);
+  if (source === "fallback") throw new AiError("The AI interpreter is unavailable right now.");
+  if (!body || !Array.isArray(body.constraints)) throw new AiError("The AI service returned an unexpected refinement response.");
+  return { constraints: body.constraints, unparsed: typeof body.unparsed === "string" ? body.unparsed : null };
 }
 
 export async function aiHealth(): Promise<AiHealth> {

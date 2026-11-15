@@ -36,6 +36,8 @@ export interface Relax {
   ignoreConflicts?: boolean;
   /** requirement index left out entirely */
   drop?: number;
+  /** skip the hard whole-week rules from results-page feedback */
+  ignoreRules?: boolean;
 }
 
 export interface Problem {
@@ -258,7 +260,26 @@ export function buildBase(data: TermData, req: ScheduleRequest, w: ScaledWeights
         unknown.push(code);
         continue;
       }
-      const cs = buildCombos(code, r, data, w, slotCache);
+      const pins = kind === "required" ? pinList(req.sectionPins?.[code]) : [];
+      const excluded = new Set(req.excludedSectionIds ?? []);
+      const cs = buildCombos(code, r, data, w, slotCache).filter(c =>
+        pins.every(id => c.sectionIds.includes(id)) && !c.sectionIds.some(id => excluded.has(id)));
+      for (const c of cs) {
+        for (const id of c.sectionIds) {
+          const cost = req.sectionCosts?.[id];
+          if (!cost || !Number.isFinite(cost.amount) || cost.amount <= 0) continue;
+          c.base += cost.amount;
+          c.penalties.push({ kind: "preference", sectionId: id, amount: cost.amount, message: cost.message });
+        }
+      }
+      const interest = req.courseInterestScores?.[code];
+      if (kind === "flex" && typeof interest === "number" && Number.isFinite(interest)) {
+        const amount = (1 - Math.max(0, Math.min(1, interest))) * 8;
+        for (const c of cs) {
+          c.base += amount;
+          if (amount) c.penalties.push({ kind: "preference", amount, message: `${code}: a weaker match for your selected elective interests.` });
+        }
+      }
       if (!cs.length) noLink.push(code);
       structural.push(...cs);
     }
@@ -270,6 +291,12 @@ export function buildBase(data: TermData, req: ScheduleRequest, w: ScaledWeights
   for (const f of flex) make("flex", f.label, f.options);
 
   return { data, req, w, ctx: buildScoreCtx(req, w), reqs };
+}
+
+/** Pinned ids for one course, whichever shape the request used. */
+export function pinList(pin: string | string[] | undefined | null): string[] {
+  if (typeof pin === "string") return pin ? [pin] : [];
+  return Array.isArray(pin) ? [...new Set(pin.filter((id) => typeof id === "string" && id))] : [];
 }
 
 /** Applies hard filters (optionally relaxed) and builds the search problem. */
@@ -346,6 +373,6 @@ export function buildProblem(base: Base, relax: Relax = {}): Problem {
     compat,
     minUnits,
     unitCap: typeof cap === "number" && Number.isFinite(cap) ? cap : null,
-    ctx: base.ctx,
+    ctx: relax.ignoreRules ? { ...base.ctx, hardRules: [] } : base.ctx,
   };
 }

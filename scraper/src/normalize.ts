@@ -181,7 +181,7 @@ export function prereqTextOf(c: RawCourse): string | null {
  * coded     = at least one section has a linkCode (same letter = taken together, null = any one of that type)
  * single    = all codes null and at most one lecture, or only one component type (nothing to pair)
  * ambiguous = all codes null, several lectures, and other component types to pair them with;
- *             the engine falls back to the section-order guess and warns.
+ *             the engine blocks unverifiable associations rather than guessing.
  */
 export function classifyLinkage(sections: Pick<Section, "type" | "linkCode">[]): Course["linkage"] {
   if (sections.some((s) => s.linkCode !== null)) return "coded";
@@ -251,7 +251,7 @@ export function normalize(dump: RawTermDump, term: { code: string; name: string 
     }
   }
 
-  // Sections, in the order the API lists them (the ambiguous-linkage guess depends on it).
+  // Preserve API order for display; the engine never infers associations from this order.
   const sections: Record<string, Section> = {};
   const sectionOrder = new Map<string, string[]>(); // course code -> section ids in source order
   let tba = 0;

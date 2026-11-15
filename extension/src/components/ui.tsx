@@ -15,6 +15,7 @@ const ICON_PATHS = {
   calendar: "M4 9h16M8 3v4M16 3v4M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z",
   undo: "M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3",
   info: "M12 11v6M12 7.5v.5M12 21a9 9 0 100-18 9 9 0 000 18z",
+  chevronDown: "M6 9l6 6 6-6",
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;

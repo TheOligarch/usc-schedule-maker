@@ -14,6 +14,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "types": ["vite/client", "chrome"]
   },
   "include": ["src", "vite.config.ts", "vite.scripts.config.ts"]

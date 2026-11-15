@@ -3,11 +3,10 @@
  *
  * With VITE_USE_MOCKS=false the real engine from `engine/` (usm-engine) runs, using its
  * async variant so the page keeps painting while it searches. With mocks on, the
- * stand-in in src/mocks/mockEngine.ts answers instead.
+ * same engine runs on demo data.
  */
 import { USE_MOCKS } from "./config";
 import type { GenerateOptions, GenerateResult, ScheduleRequest, TermData } from "./contract-types";
-import { mockGenerateSchedules } from "../mocks/mockEngine";
 
 type EngineFn = (data: TermData, req: ScheduleRequest, opts: GenerateOptions & { signal?: AbortSignal }) => Promise<GenerateResult & { truncated?: boolean }>;
 
@@ -17,9 +16,10 @@ async function loadRealEngine(): Promise<EngineFn> {
 }
 
 const mockEngine: EngineFn = async (data, req, opts) => {
-  // Let the "Building schedules" state paint before the synchronous mock run.
+  // Let the loading state paint, then use the same cancellable async engine in demo mode.
   await new Promise((resolve) => setTimeout(resolve, 40));
-  return mockGenerateSchedules(data, req, opts);
+  const fn = await loadRealEngine();
+  return fn(data, req, opts);
 };
 
 let cached: Promise<{ fn: EngineFn; isMock: boolean }> | null = null;

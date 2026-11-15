@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
@@ -15,4 +16,6 @@ export default defineConfig({
   },
   // Import the schedule engine and the pure course-interest helpers from source.
   server: { port: 5173, fs: { allow: [".", "../engine", "../supabase/functions/_shared"] } },
+  // Tests read the app stylesheet as text (layout rules); other CSS stays unprocessed.
+  test: { css: { include: [/app\.css/] } },
 });

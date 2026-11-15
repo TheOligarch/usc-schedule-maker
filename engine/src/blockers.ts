@@ -53,7 +53,7 @@ export function* computeBlockers(base: Base, baseProblem: Problem, baseCount: nu
       structural.push({ reqIndex: r.index, constraint: "unknownCourse", eliminated: 0, message: `${code} is not offered in ${base.data.term?.name ?? "this term"}.` });
     }
     for (const code of r.noLink) {
-      structural.push({ reqIndex: r.index, constraint: "noValidLinkCombo", eliminated: 0, message: `${code} has no valid lecture/discussion/lab combination this term.` });
+      structural.push({ reqIndex: r.index, constraint: "noValidLinkCombo", eliminated: 0, message: `${code} has no verifiable complete lecture/discussion/lab combination under your section pins and feedback. USC may not publish the association; check its section details or change your choices.` });
     }
     if (r.kind === "flex" && !r.codes.length) {
       structural.push({ reqIndex: r.index, constraint: "flexSlot", eliminated: 0, message: `The slot "${r.label}" has no course options.` });
@@ -130,6 +130,13 @@ export function* computeBlockers(base: Base, baseProblem: Problem, baseCount: nu
     for (const d of DAYS) all[d] = [{ start: "00:00", end: "24:00" }];
     const r = yield* count({ allowedTimes: all });
     add("allowedTimes", r, (n) => `Removing all of your time restrictions would give ${n}.`);
+  }
+
+  // --- whole-week rules from results-page feedback --------------------------
+  if (base.ctx.hardRules.length) {
+    const r = yield* count({ ignoreRules: true });
+    const labels = base.ctx.hardRules.map((c) => `"${c.rule.label}"`).join(", ");
+    add("scheduleRule", r, (n) => `Your schedule feedback ${labels} rules out ${fmtCount(gained(r), r.truncated)}; removing it would give ${n}.`);
   }
 
   // --- unit cap --------------------------------------------------------------

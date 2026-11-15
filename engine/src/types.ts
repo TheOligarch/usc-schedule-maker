@@ -108,6 +108,20 @@ export interface Importance {
 }
 
 export interface ScheduleRequest {
+  /**
+   * Optional hard section choices per required course: a lecture, a linked lab/discussion/quiz,
+   * or several of them. Every pinned id must be in the chosen combination; the rest of the
+   * linked components are still required. A single string is accepted for older callers.
+   */
+  sectionPins?: Record<string, string | string[]>;
+  /** Relevance 0..1 for shortlisted electives, from selected interest categories. */
+  courseInterestScores?: Record<string, number>;
+  /** Hard exclusions compiled from results-page feedback. */
+  excludedSectionIds?: string[];
+  /** Engine extension: soft per-section costs compiled from results-page feedback. */
+  sectionCosts?: Record<string, { amount: number; message: string }>;
+  /** Engine extension: whole-week limits compiled from results-page feedback. */
+  scheduleRules?: ScheduleRule[];
   /** course codes that must all appear */
   required: string[];
   /** each slot: exactly one of up to 5 interchangeable courses (AI shortlist) */
@@ -121,6 +135,21 @@ export interface ScheduleRequest {
   /** 1-10 each */
   importance: Importance;
   preferences: Preferences;
+}
+
+/**
+ * Engine extension: a limit over the whole week. `value` is minutes for maxGap, minBreak and
+ * maxMinutesPerDay, and a count for maxDays and maxPerDay (meetings per day). Hard rules
+ * exclude schedules; soft ones add a "preference" penalty per violation.
+ */
+export interface ScheduleRule {
+  kind: "maxGap" | "minBreak" | "maxDays" | "maxPerDay" | "maxMinutesPerDay";
+  value: number;
+  /** limit per-day rules (or the counted days, for maxDays) to these days; all days when omitted */
+  days?: Day[];
+  hard: boolean;
+  /** student-facing description, used in penalties and blockers */
+  label: string;
 }
 
 export interface Preferences {
@@ -174,6 +203,8 @@ export interface Blocker {
 }
 
 export interface GenerateResult {
+  /** Equivalent meeting days/times counted once, among enumerated leaves. */
+  totalDistinct?: number;
   /** number of valid schedules found (a lower bound when `truncated`) */
   totalValid: number;
   /** sorted best-first, length <= limit */

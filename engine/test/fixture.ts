@@ -2,7 +2,7 @@
  * Hand-written term data matching contract section 1, covering:
  *  - CSCI-201  coded linkage (A/B letters plus a null-coded quiz any combo takes)
  *  - MATH-226  single linkage (one lecture, any discussion; one discussion full)
- *  - WRIT-150  ambiguous linkage (all-null codes, two lectures, order-based guess)
+ *  - WRIT-150  coded linkage (two lectures, explicit discussion groups)
  *  - AME-101   cross-listed with ISE-101 (ISE-101 exists only on the section)
  *  - GESM-110  online with TBA meetings
  *  - PHIL-140  D-clearance
@@ -74,12 +74,12 @@ const sections: Section[] = [
   sec({ code: "MATH-226", id: "31001", type: "LEC", days: ["Tue", "Thu"], start: "08:00", end: "09:20", instructors: [eve], final: { date: "2027-05-07", start: "11:00", end: "13:00" } }),
   sec({ code: "MATH-226", id: "31002", type: "DIS", days: ["Tue"], start: "10:00", end: "10:50" }),
   sec({ code: "MATH-226", id: "31003", type: "DIS", days: ["Wed"], start: "12:00", end: "12:50", isFull: true, seats: { registered: 30, total: 30 } }),
-  // WRIT-150 ambiguous (section order: LEC, DIS, LEC, DIS, DIS)
-  sec({ code: "WRIT-150", id: "32001", type: "LEC", days: ["Mon", "Wed"], start: "12:00", end: "13:20" }),
-  sec({ code: "WRIT-150", id: "32002", type: "DIS", days: ["Fri"], start: "09:00", end: "09:50" }),
-  sec({ code: "WRIT-150", id: "32003", type: "LEC", days: ["Tue", "Thu"], start: "12:30", end: "13:50", instructors: [cy] }),
-  sec({ code: "WRIT-150", id: "32004", type: "DIS", days: ["Fri"], start: "11:00", end: "11:50" }),
-  sec({ code: "WRIT-150", id: "32005", type: "DIS", days: ["Fri"], start: "13:00", end: "13:50" }),
+  // WRIT-150 synthetic coded groups, independent of section order
+  sec({ code: "WRIT-150", id: "32001", linkCode: "A", type: "LEC", days: ["Mon", "Wed"], start: "12:00", end: "13:20" }),
+  sec({ code: "WRIT-150", id: "32002", linkCode: "A", type: "DIS", days: ["Fri"], start: "09:00", end: "09:50" }),
+  sec({ code: "WRIT-150", id: "32003", linkCode: "B", type: "LEC", days: ["Tue", "Thu"], start: "12:30", end: "13:50", instructors: [cy] }),
+  sec({ code: "WRIT-150", id: "32004", linkCode: "B", type: "DIS", days: ["Fri"], start: "11:00", end: "11:50" }),
+  sec({ code: "WRIT-150", id: "32005", linkCode: "B", type: "DIS", days: ["Fri"], start: "13:00", end: "13:50" }),
   // AME-101 / ISE-101 cross-listed
   sec({ code: "AME-101", id: "33001", type: "LEC", courseCodes: ["AME-101", "ISE-101"], days: ["Tue", "Thu"], start: "16:00", end: "17:20", instructors: [dee], units: { min: 3, max: 3 } }),
   // GE options
@@ -98,7 +98,7 @@ export const fixture: TermData = {
     [
       course({ code: "CSCI-201", linkage: "coded", prereqText: "Prerequisite: CSCI 104", sectionIds: ["30001", "30002", "30003", "30004", "30005", "30006"] }),
       course({ code: "MATH-226", linkage: "single", sectionIds: ["31001", "31002", "31003"] }),
-      course({ code: "WRIT-150", linkage: "ambiguous", sectionIds: ["32001", "32002", "32003", "32004", "32005"] }),
+      course({ code: "WRIT-150", linkage: "coded", sectionIds: ["32001", "32002", "32003", "32004", "32005"] }),
       course({ code: "AME-101", linkage: "single", units: { min: 3, max: 3 }, crossListedWith: ["ISE-101"], sectionIds: ["33001"] }),
       course({ code: "ARLT-100", linkage: "single", ge: ["GE-B"], sectionIds: ["34001"] }),
       course({ code: "GESM-110", linkage: "single", ge: ["GE-B"], sectionIds: ["35001"] }),

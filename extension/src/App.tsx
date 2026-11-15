@@ -3,8 +3,8 @@ import { AI_IS_MOCK } from "./lib/ai";
 import { USE_MOCKS } from "./lib/config";
 import type { TermData } from "./lib/contract-types";
 import { loadTermData, loadTermIndex, type DataSource, type LoadedIndex } from "./lib/termData";
-import { relativeTime } from "./lib/time";
-import { defaultState, loadState, saveState, STEPS, type AppState, type StepId } from "./state";
+import { freshnessLine } from "./lib/time";
+import { defaultState, loadState, reconcileCourseCodes, saveState, STEPS, type AppState, type StepId } from "./state";
 import { Icon, Notice, Spinner, Stepper } from "./components/ui";
 import { TermPicker } from "./components/TermPicker";
 import { Priorities } from "./screens/Priorities";
@@ -61,6 +61,14 @@ export function App({ embedded }: { embedded: boolean }) {
   }, [index, state.termCode]);
 
   const data = term && term.code === state.termCode ? term.data : null;
+  // Saved or older-format course codes are matched to this term's own codes once data loads.
+  useEffect(() => {
+    if (!data) return;
+    setState((s) => {
+      const patch = reconcileCourseCodes(s, data);
+      return patch ? { ...s, ...patch } : s;
+    });
+  }, [data]);
   const hasCourses = state.required.length + state.slots.length > 0;
   const canVisit = (id: StepId): boolean => {
     if (id === "requirements") return true;
@@ -78,7 +86,7 @@ export function App({ embedded }: { embedded: boolean }) {
   const changeTerm = (code: string) => {
     if (code === state.termCode) return;
     // Courses differ by term, so a term switch starts the course choices over.
-    update({ termCode: code, required: [], slots: [], history: [], importanceFollowup: null, interview: null, interviewFor: null });
+    update({ termCode: code, required: [], sectionPins: {}, refinements: [], slots: [], history: [], importanceFollowup: null, interview: null, interviewFor: null });
   };
 
   const startOver = () => {
@@ -104,7 +112,7 @@ export function App({ embedded }: { embedded: boolean }) {
           {data && (
             <span className={`data-badge data-${source}`} title={source === "sample" ? "Live data is not published yet" : `Scraped ${data.term.scrapedAt}`}>
               <span className="dot" aria-hidden="true" />
-              {data.term.name} · {source === "sample" ? "sample data" : `${source === "cached" ? "saved copy, " : ""}updated ${relativeTime(data.term.scrapedAt)}`}
+              {data.term.name} · {freshnessLine(data.term.scrapedAt, { sample: source === "sample" })}{source === "cached" ? " (saved copy)" : ""}
             </span>
           )}
           {(USE_MOCKS || AI_IS_MOCK) && <span className="data-badge data-demo">demo mode</span>}
@@ -146,7 +154,7 @@ export function App({ embedded }: { embedded: boolean }) {
           })()}
         {data && step === "priorities" && <Priorities importance={state.importance} onImportance={(importance) => update({ importance })} onBack={() => go("requirements")} onNext={() => go("interview")} />}
         {data && step === "interview" && <Interview data={data} sampleData={term?.source === "sample"} state={state} onChange={update} onBack={() => go("priorities")} onNext={() => go("results")} />}
-        {data && step === "results" && <Results data={data} state={state} onChange={update} onEdit={go} />}
+        {data && step === "results" && <Results data={data} state={state} onChange={update} onEdit={go} sample={term?.source === "sample"} />}
         {index && !data && step !== "requirements" && !termError && <Spinner label="Loading course data..." />}
       </main>
 

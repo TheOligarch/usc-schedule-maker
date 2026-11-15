@@ -81,15 +81,27 @@ export function fmtBlocks(blocks: Block[]): string {
   return blocks.map((b) => fmtRange(b.start, b.end, true)).join(", ");
 }
 
-export function relativeTime(iso: string, now = Date.now()): string {
-  const then = Date.parse(iso);
-  if (Number.isNaN(then)) return "unknown";
-  const mins = Math.round((now - then) / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins} min ago`;
-  const hours = Math.round(mins / 60);
-  if (hours < 48) return `${hours} hr ago`;
-  return `${Math.round(hours / 24)} days ago`;
+/** "just now", "5 minutes ago", "3 hours ago", "2 days ago"; null when the timestamp is missing or unreadable. */
+export function relativeTime(iso: string | number | null | undefined, now = Date.now()): string | null {
+  const then = typeof iso === "number" ? iso : typeof iso === "string" ? Date.parse(iso) : NaN;
+  if (!Number.isFinite(then)) return null;
+  const plural = (n: number, unit: string) => `${n} ${unit}${n === 1 ? "" : "s"} ago`;
+  const mins = Math.floor((now - then) / 60000);
+  if (mins < 1) return "just now"; // includes a slightly-ahead clock
+  if (mins < 60) return plural(mins, "minute");
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return plural(hours, "hour");
+  return plural(Math.floor(hours / 24), "day");
+}
+
+/**
+ * The one data-freshness line shown everywhere: when the seat/course data in use was
+ * last updated. Sample data and a missing timestamp get truthful wording instead.
+ */
+export function freshnessLine(updatedAt: string | number | null | undefined, opts: { sample?: boolean; now?: number } = {}): string {
+  if (opts.sample) return "Sample seat counts, not from classes.usc.edu";
+  const rel = relativeTime(updatedAt, opts.now);
+  return rel ? `Live seat counts from classes.usc.edu, updated ${rel}` : "Live seat counts from classes.usc.edu; last update time unavailable";
 }
 
 /** Remove [start,end) from every block, splitting blocks that straddle it. */

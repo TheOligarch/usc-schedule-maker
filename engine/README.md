@@ -13,7 +13,7 @@ const result2 = await generateSchedulesAsync(termData, request, { limit: 10, sig
 ```
 
 `result.schedules` is best-first (length <= limit, default 10, max 100);
-`result.totalValid` counts every valid schedule; `result.blockers` explains
+`result.totalValid` counts every valid section combination; `result.totalDistinct` counts unique meeting timetables among the enumerated combinations; `result.blockers` explains
 what is keeping schedules out (always filled when `totalValid === 0`).
 
 The sources use extensionless relative imports, so consume `src/` through a
@@ -21,26 +21,39 @@ bundler (Vite, esbuild, ...) or the `dist/` output of `npm run build`.
 
 ## Rules
 
-- **Linkage** (contract section 4): same non-null `linkCode` across types is
-  taken together; a null-coded type is "any one section of that type". An
-  `ambiguous` course pairs each lecture with the following non-lecture
-  sections (a lecture with none of a type may take any of that type) and gets
-  the `ambiguousLink` penalty plus a warning.
+- **Linkage**: use USC's `linkCode` and `session`, preserving each section's own instructor list.
+  Each bundle contains one lecture and every offered component type, with combined
+  lecture/lab or lecture/discussion sections satisfying their own component. Null
+  codes are unrestricted within a session but cannot mix two non-null codes.
+  All-null, multi-lecture/component data is unverifiable and blocked; section order
+  and matching instructor names do not establish an association. This conservative
+  policy can exclude registrable combinations USC's public data cannot prove.
 - **Cross-listing**: a requested code is satisfied by any section listed
   under it. Two required codes for the same class share one section (units
   counted once); a flex slot can never be filled by a class already chosen.
 - **Hard constraints**: every meeting inside one of that day's allowed blocks
   (`[]` = day off; TBA meetings never violate), no overlaps (including within a
   course's own sections), and `unitCap` on `units.min`. Exactly one course per flex slot.
+  `sectionPins` maps each required course to one mandatory section ID or a list of
+  them (a lecture and/or linked components); every pinned ID must be in the chosen
+  combination. Missing pins, or a list that is not one registrable linked combination,
+  block results. `excludedSectionIds` from feedback are hard exclusions. None of these is
+  relaxed by diagnostics or to fill a result limit.
+- **Feedback extensions**: `sectionCosts` adds a soft per-section cost (with its message)
+  to every combination using that section. `scheduleRules` are whole-week limits checked
+  at each leaf: `maxGap`, `minBreak` and `maxMinutesPerDay` in minutes, `maxDays` and
+  `maxPerDay` (meetings per day) as counts, optionally limited to `days`. Hard rules exclude
+  schedules (reported by the `scheduleRule` blocker); soft rules add a "preference" penalty
+  per violation.
   Professor ratings never exclude a schedule; legacy `minRmp` requests are accepted but ignored.
   An instructor with fewer than `rmpMinRatings` ratings, no RMP match, or a lecture with no
   instructor counts as unrated: a small `noRmp` penalty, never excluded.
 - **Soft scoring**: every weight is in `src/weights.ts` (one documented table)
   and is multiplied by `importance[key] / 5` for its importance knob. Heavy:
-  full, waitlist, D-clearance, online/TBA/HSC, final-exam conflict, ambiguous
-  link. Small: no RMP rating, plus a per-point RMP quality tie-breaker.
+  full, waitlist, D-clearance, online/TBA/HSC, final-exam conflict. Small: no RMP rating, plus a per-point RMP quality tie-breaker.
   Preference fit: day spread, gaps / back-to-back classes, `maxGapMinutes`,
-  preferred days off, comfort start/end. `score = 100 * S / (S + totalPenalty)`.
+  preferred days off, comfort start/end, and `courseInterestScores` (0..1 relevance
+  for shortlisted electives; up to 8 penalty points for weaker interest matches). `score = 100 * S / (S + totalPenalty)`.
   Pass `opts.weights` to override any weight per call.
 - **Blockers**: each single constraint (earlier start, later end, gaps between
   blocks, each day off, a course whose every section is outside your times,
@@ -54,11 +67,19 @@ bundler (Vite, esbuild, ...) or the `dist/` output of `npm run build`.
 Requirements are searched fewest-options-first with iterative backtracking;
 pairwise compatibility (time overlap / same class) is precomputed into
 matrices, units are pruned against the cap with a lower bound for the
-remaining courses, and the best `limit` schedules are kept in a bounded heap.
-Enumeration stops at `maxEnumerate` (default 100,000; `truncated: true`), and
-blocker counts stop at 20,000 (shown as "N+"). On a synthetic full-size term
-(~10,000 sections, 5 courses x 36 combos + a 5-option slot) a request takes
-~0.2s in Node; a dense request that hits the 100k cap stays under ~1s.
+remaining courses. Equivalent exact meeting timetables keep their lowest-cost
+representative, regardless of section IDs or course labels. From the best 2,000
+unique candidates (or `limit * 20`), selection keeps the best fit, then greedily
+balances half-hour occupancy distance (65%) and relative fit (35%), before sorting
+selected alternatives by score. Nearby starts have less diversity than changed
+days; fewer distinct timetables produce fewer results. Limits can change which
+alternatives are selected, while the best fit stays first.
+
+Enumeration stops at `maxEnumerate` (default 100,000; `truncated: true`); counts
+and diversity are limited to enumerated leaves. Blocker counts stop at 20,000.
+The synthetic full-size-term benchmark (about 10,000 sections, five required
+courses plus an elective slot, 20,439 valid combinations) runs under the existing
+2-second test budget; async generation yields to the event loop.
 
 ## Contract compatibility
 
@@ -68,7 +89,7 @@ blocker counts stop at 20,000 (shown as "N+"). On a synthetic full-size term
   `maxEnumerate`, `weights`, `diagnostics`; the async variant also takes
   `signal` and `sliceMs`.
 - Extra blocker `constraint` values: `unknownCourse`, `requiredCourse`,
-  `flexSlot`, `combination`.
+  `flexSlot`, `combination`, `sectionPin`, `scheduleRule`.
 
 ## Scripts
 
