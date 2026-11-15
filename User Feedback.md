@@ -4,7 +4,7 @@ Distinct users: **2**
 
 Keep one numbered record per distinct user. Add follow-up suggestions to that user's record rather than increasing the count.
 
-## 1. Yared Benitez — 2026-11-14
+## 1. User #1 — 2026-11-14
 
 Implementation: [https://github.com/TheOligarch/usc-schedule-maker/pull/11](https://github.com/TheOligarch/usc-schedule-maker/pull/11) (ready for review; not merged).
 
@@ -17,7 +17,7 @@ Implementation: [https://github.com/TheOligarch/usc-schedule-maker/pull/11](http
 
 Rollout: backend changes require deploying the `interview` Edge Function. Extension changes require a new build/release; the committed release ZIP is unchanged. Section-topic ranking for WRIT-150/GESM is not implemented.
 
-## 2. Caleb — 2026-11-14
+## 2. User #2 — 2026-11-14
 
 Supplied feedback:
 
@@ -25,9 +25,9 @@ Supplied feedback:
 
 | Request | Status |
 | --- | --- |
-| Verify lecture/discussion/lab pairing and professor correctness. | Implemented complete bundles using published link codes and sessions, retaining each component’s own instructors. Reject missing required components and unverifiable all-null multi-lecture associations. Live USC fixtures and a one-field counterfactual reproduce a missing-lab bug; Caleb’s exact observed pairing is unspecified. [Evidence and data limitations](extension/src/__tests__/fixtures/README.md). |
+| Verify lecture/discussion/lab pairing and professor correctness. | Implemented complete bundles using published link codes and sessions, retaining each component’s own instructors. Reject missing required components and unverifiable all-null multi-lecture associations. Live USC fixtures and a one-field counterfactual reproduce a missing-lab bug; User #2’s exact observed pairing is unspecified. [Evidence and data limitations](extension/src/__tests__/fixtures/README.md). |
 | Offer schedules that differ meaningfully by meeting days/times. | Implemented exact timetable deduplication, best-fit representative selection, and diversity sampling before final score ordering. Fewer distinct feasible timetables produce fewer alternatives. Enumeration and diversity candidate bounds are documented in the engine guide. |
-| Enter feedback on a viewed Step 4 schedule and refresh in place. | Implemented local text exclusions, including Caleb’s BISC-Friday-lab example. Existing requirements, pins and preferences persist. Loading, interpretation errors, search retry, no-feasible-alternatives recovery and removing feedback work on Step 4. Supported day/time/component forms are shown in the UI; unsupported text is rejected explicitly. |
+| Enter feedback on a viewed Step 4 schedule and refresh in place. | Implemented local text exclusions, including User #2’s BISC-Friday-lab example. Existing requirements, pins and preferences persist. Loading, interpretation errors, search retry, no-feasible-alternatives recovery and removing feedback work on Step 4. Supported day/time/component forms are shown in the UI; unsupported text is rejected explicitly. |
 | Optionally require a particular section for each course. | Implemented optional per-course section selectors in Step 1 with ID, component, meetings, instructors and available notes/themes. Pins survive interview, save/resume, generation, refinement and ranking; missing/incompatible pins block results and can be cleared. This CORE-112 snapshot has no published per-section themes. |
 | Follow-up: ask elective areas of interest, with selectable categories rather than only relation to the major. | Implemented five subject categories with multiple selection and free text, for live-service and offline interviews. Selected categories choose actual catalog candidates and provide relevance scores to schedule ranking. |
 | Review follow-up: Step 4 refinement must handle general constraints, warn instead of applying when nothing fits, and suggest text from the actual schedule. | Implemented a local parser plus the new `refine` AI fallback, producing validated constraints: days off, days per course/component, earliest start/latest end, free windows, avoid/require instructors, keep/drop a section, gap, break, days-per-week and per-day limits, hard or preferred. Each change is dry-run through the engine first; a conflict names the pinned section, course or earlier feedback and changes nothing. The placeholder and suggestion chips come from the displayed schedule. Text that is not understood is reported. |

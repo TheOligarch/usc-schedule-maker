@@ -18,7 +18,7 @@ the original code returns a valid complete combination. Changing only lab
 13140's `linkCode` from W to X incorrectly returns lecture+quiz with no lab.
 The regression fails before the linkage fix and passes afterward. This is a
 proven engine failure on a live-data-shaped counterfactual, not evidence that
-USC actually published this inconsistent BISC pairing or that it caused Caleb's
+USC actually published this inconsistent BISC pairing or that it caused User #2's
 unspecified observed professor mismatch.
 
 Trigger: an offered required component has no matching/free code for a lecture.

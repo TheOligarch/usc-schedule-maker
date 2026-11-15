@@ -82,7 +82,7 @@ it("pins and clears a themed section in Requirements and carries it through save
   expect(buildRequest(current).sectionPins).toEqual({});
 });
 
-it("applies Caleb's exact example in place, reruns real generation, preserves state and restores alternatives on undo", async () => {
+it("applies User #2's exact example in place, reruns real generation, preserves state and restores alternatives on undo", async () => {
   await render(initial());
   const before = vi.mocked(generateSchedules).mock.calls.length;
   await feedback("I dont want a bisc lab on friday");
