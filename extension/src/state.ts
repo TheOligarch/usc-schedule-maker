@@ -4,11 +4,11 @@ import type { Block, Day, Importance, InterviewHistoryItem, Preferences, Schedul
 import { DAYS, normalizeBlocks } from "./lib/time";
 
 export type StepId = "requirements" | "priorities" | "interview" | "results";
-export const STEPS: { id: StepId; label: string; hint: string }[] = [
-  { id: "requirements", label: "Requirements", hint: "Courses and times" },
-  { id: "priorities", label: "Priorities", hint: "What matters to you" },
-  { id: "interview", label: "Interview", hint: "A few quick questions" },
-  { id: "results", label: "Schedules", hint: "Ranked for you" },
+export const STEPS: { id: StepId; label: string }[] = [
+  { id: "requirements", label: "Requirements" },
+  { id: "priorities", label: "Priorities" },
+  { id: "interview", label: "Interview" },
+  { id: "results", label: "Schedules" },
 ];
 
 export interface SlotDef {
