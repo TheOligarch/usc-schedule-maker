@@ -9,6 +9,7 @@
 import { FUNCTIONS_BASE, SUPABASE_ANON_KEY, USE_MOCKS } from "./config";
 import type { AiHealth, ExplainRequest, ExplainResponse, InterviewRequest, InterviewResponse, TermData } from "./contract-types";
 import { mockExplain, mockInterview } from "../mocks/mockAi";
+import { normalizeClockTimes } from "../../../supabase/functions/_shared/clock";
 
 export class AiError extends Error {}
 
@@ -57,7 +58,18 @@ function checkInterview(res: InterviewResponse): InterviewResponse {
       ? typeof res.question?.id === "string" && typeof res.question?.text === "string" && Array.isArray(res.question?.options)
       : res.done === true && typeof res.preferences === "object" && Array.isArray(res.shortlists) && Array.isArray(res.summary));
   if (!ok) throw new AiError("The AI service returned an unexpected interview response.");
-  return res;
+  return withClockTimes(res);
+}
+
+/** Model text is shown to the student as-is, so rewrite any 24-hour time it slipped in. */
+function withClockTimes(res: InterviewResponse): InterviewResponse {
+  if (res.done === false) return res;
+  const notes = res.preferences.notes;
+  return {
+    ...res,
+    preferences: { ...res.preferences, notes: typeof notes === "string" ? normalizeClockTimes(notes) : notes },
+    summary: res.summary.map((s) => (typeof s === "string" ? normalizeClockTimes(s) : s)),
+  };
 }
 
 /** One stateless interview turn: send the whole history, get the next question or the conclusions. */
@@ -74,7 +86,7 @@ export async function explainSchedules(req: ExplainRequest, opts: AiCallOptions 
   if (USE_MOCKS || opts.offline) return mockExplain(trimmed);
   const { body } = await callFunction<ExplainResponse>("explain", "POST", trimmed, opts.signal);
   if (!body || !Array.isArray(body.explanations)) throw new AiError("The AI service returned an unexpected explanation response.");
-  return body;
+  return { explanations: body.explanations.map((e) => (e && typeof e.text === "string" ? { ...e, text: normalizeClockTimes(e.text) } : e)) };
 }
 
 export async function aiHealth(): Promise<AiHealth> {

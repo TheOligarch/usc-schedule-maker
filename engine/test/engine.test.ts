@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_WEIGHTS, generateSchedules, generateSchedulesAsync, linkCombos } from "../src/index";
 import type { GenerateResult, RankedSchedule, Section } from "../src/types";
+import { fmtClock } from "../src/time";
 import { allowAll, fixture, request } from "./fixture";
 
 const sectionsOf = (code: string): Section[] => fixture.courses[code].sectionIds.map((id) => fixture.sections[id]);
@@ -230,7 +231,7 @@ describe("ranking", () => {
     );
     expect(r.schedules[0].courses[1].courseCode).toBe("ARLT-100");
     const ahis = r.schedules.find((s) => s.courses[1].courseCode === "AHIS-120")!;
-    expect(ahis.penalties.some((p) => p.kind === "preference" && p.message.includes("08:00"))).toBe(true);
+    expect(ahis.penalties.some((p) => p.kind === "preference" && p.message === "Classes start as early as 8:00 AM (you prefer 9:00 AM or later)")).toBe(true);
   });
 
   it("daySpread compact prefers fewer class days", () => {
@@ -296,6 +297,16 @@ describe("ranking", () => {
   });
 });
 
+describe("fmtClock", () => {
+  it("writes 12-hour times for students", () => {
+    expect(fmtClock(20 * 60)).toBe("8:00 PM");
+    expect(fmtClock(12 * 60)).toBe("12:00 PM");
+    expect(fmtClock(9 * 60 + 30)).toBe("9:30 AM");
+    expect(fmtClock(0)).toBe("12:00 AM");
+    expect(fmtClock(24 * 60)).toBe("12:00 AM");
+  });
+});
+
 describe("blockers", () => {
   it("names the time restriction that is killing the schedules", () => {
     const allowed = allowAll("11:00", "22:00");
@@ -305,7 +316,17 @@ describe("blockers", () => {
     expect(r.totalValid).toBe(0);
     expect(r.blockers[0].constraint).toBe("allowedTimes");
     expect(r.blockers[0].eliminated).toBe(3);
-    expect(r.blockers[0].message).toBe("Allowing classes before 11:00 on Mon/Wed/Fri and before 15:00 on Tue/Thu would give 3 schedules.");
+    expect(r.blockers[0].message).toBe("Allowing classes before 11:00 AM on Mon/Wed/Fri and before 3:00 PM on Tue/Thu would give 3 schedules.");
+  });
+
+  it("names a late cutoff in 12-hour time, never 24-hour", () => {
+    const allowed = allowAll("08:00", "15:00");
+    allowed.Thu = [{ start: "08:00", end: "16:00" }];
+    const r = generateSchedules(fixture, request({ required: ["AME-101"], allowedTimes: allowed }));
+    expect(r.totalValid).toBe(0);
+    const late = r.blockers.find((b) => b.message.includes(" after "))!;
+    expect(late.message).toBe("Allowing classes after 3:00 PM on Tue and after 4:00 PM on Thu would give 1 schedule.");
+    for (const b of r.blockers) expect(b.message).not.toMatch(/\b(1[3-9]|2[0-4]):\d\d\b/);
   });
 
   it("names a day off", () => {

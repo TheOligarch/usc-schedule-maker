@@ -1,5 +1,5 @@
 import { isLecture } from "./linkage";
-import { DAYS, WEEKDAYS, dayIndex, fmtDays, fmtMinutes, toMinutes } from "./time";
+import { DAYS, WEEKDAYS, dayIndex, fmtClock, fmtDays, toMinutes } from "./time";
 import type { Course, Day, Penalty, RmpTeacher, ScheduleRequest, Section } from "./types";
 import type { ScaledWeights } from "./weights";
 
@@ -308,10 +308,10 @@ export function scheduleCost(combos: readonly Combo[], ctx: ScoreCtx, out?: Pena
     );
   }
   if (earlyMinutes > 0) {
-    push("preference", (earlyMinutes / 60) * w.comfortPerHour, out ? `Classes start as early as ${fmtMinutes(earliest)} (you prefer ${fmtMinutes(ctx.comfortStart)} or later)` : "");
+    push("preference", (earlyMinutes / 60) * w.comfortPerHour, out ? `Classes start as early as ${fmtClock(earliest)} (you prefer ${fmtClock(ctx.comfortStart)} or later)` : "");
   }
   if (lateMinutes > 0) {
-    push("preference", (lateMinutes / 60) * w.comfortPerHour, out ? `Classes end as late as ${fmtMinutes(latest)} (you prefer ${fmtMinutes(ctx.comfortEnd)} or earlier)` : "");
+    push("preference", (lateMinutes / 60) * w.comfortPerHour, out ? `Classes end as late as ${fmtClock(latest)} (you prefer ${fmtClock(ctx.comfortEnd)} or earlier)` : "");
   }
   return total;
 }

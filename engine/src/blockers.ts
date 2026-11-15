@@ -1,6 +1,6 @@
 import { type Base, type Problem, type Relax, buildProblem } from "./prepare";
 import { type SearchResult, search } from "./search";
-import { DAYS, fmtDays, fmtMinutes, toMinutes } from "./time";
+import { DAYS, fmtClock, fmtDays, fmtMinutes, toMinutes } from "./time";
 import type { Block, Blocker, Day } from "./types";
 
 function fmtCount(n: number, capped: boolean): string {
@@ -8,7 +8,7 @@ function fmtCount(n: number, capped: boolean): string {
   return `${s}${capped ? "+" : ""} schedule${n === 1 && !capped ? "" : "s"}`;
 }
 
-/** Days grouped by the same threshold: "before 10:00 on Mon/Wed and before 11:00 on Tue/Thu". */
+/** Days grouped by the same threshold: "before 10:00 AM on Mon/Wed and before 11:00 AM on Tue/Thu". */
 function groupedByTime(byDay: Map<number, number>, word: string): string {
   const byTime = new Map<number, number[]>();
   for (const [d, t] of byDay) {
@@ -18,7 +18,7 @@ function groupedByTime(byDay: Map<number, number>, word: string): string {
   }
   return [...byTime.entries()]
     .sort((a, b) => Math.min(...a[1]) - Math.min(...b[1]))
-    .map(([t, ds]) => `${word} ${fmtMinutes(t)} on ${fmtDays(ds)}`)
+    .map(([t, ds]) => `${word} ${fmtClock(t)} on ${fmtDays(ds)}`)
     .join(" and ");
 }
 

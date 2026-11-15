@@ -86,12 +86,6 @@ export function fromMinutes(mins: number): HHMM {
   return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
 }
 
-export function to12h(t: HHMM): string {
-  const mins = toMinutes(t);
-  const h = Math.floor(mins / 60);
-  return `${h % 12 === 0 ? 12 : h % 12}:${String(mins % 60).padStart(2, "0")} ${h < 12 ? "AM" : "PM"}`;
-}
-
 /** Finds clock times written like "10:00 AM", "9am", "noon" or "14:30", in order. */
 export function parseTimes(text: string): HHMM[] {
   const out: HHMM[] = [];
