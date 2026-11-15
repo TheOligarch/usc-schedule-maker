@@ -8,11 +8,6 @@ function fmtCount(n: number, capped: boolean): string {
   return `${s}${capped ? "+" : ""} schedule${n === 1 && !capped ? "" : "s"}`;
 }
 
-function listCodes(codes: string[]): string {
-  if (codes.length <= 1) return codes.join("");
-  return `${codes.slice(0, -1).join(", ")} and ${codes[codes.length - 1]}`;
-}
-
 /** Days grouped by the same threshold: "before 10:00 on Mon/Wed and before 11:00 on Tue/Thu". */
 function groupedByTime(byDay: Map<number, number>, word: string): string {
   const byTime = new Map<number, number[]>();
@@ -142,14 +137,6 @@ export function* computeBlockers(base: Base, baseProblem: Problem, baseCount: nu
     const r = yield* count({ noUnitCap: true });
     const smallest = Number.isFinite(r.minUnits) ? ` (the smallest is ${r.minUnits} units)` : "";
     add("unitCap", r, (n) => `Removing your ${req.unitCap}-unit cap would give ${n}${smallest}.`);
-  }
-
-  // --- minimum RMP -------------------------------------------------------------
-  if (typeof req.minRmp === "number") {
-    const r = yield* count({ noMinRmp: true });
-    const wiped = reqs.filter((x) => !x.combos.length && x.rmpFails > 0).map((x) => x.label);
-    const extra = wiped.length ? `; it rules out every section of ${listCodes(wiped)}` : "";
-    add("minRmp", r, (n) => `Removing your minimum RateMyProfessor rating of ${req.minRmp} would give ${n}${extra}.`);
   }
 
   // --- time conflicts ------------------------------------------------------

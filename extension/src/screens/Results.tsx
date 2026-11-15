@@ -529,7 +529,6 @@ function SectionDetails({
 const BLOCKER_STEP: Record<string, { step: StepId; label: string }> = {
   allowedTimes: { step: "requirements", label: "Widen allowed times" },
   unitCap: { step: "requirements", label: "Raise the unit cap" },
-  minRmp: { step: "requirements", label: "Lower the minimum rating" },
   timeConflict: { step: "requirements", label: "Change courses" },
   noValidLinkCombo: { step: "requirements", label: "Change courses" },
   flexSlot: { step: "interview", label: "Edit shortlists" },

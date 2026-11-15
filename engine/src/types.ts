@@ -116,8 +116,8 @@ export interface ScheduleRequest {
   allowedTimes: Record<Day, Block[]>;
   /** counts each course's units.min */
   unitCap: number | null;
-  /** lecture instructor RMP avg below this -> excluded; unrated -> small penalty, not excluded */
-  minRmp: number | null;
+  /** @deprecated Ignored. Professor ratings rank schedules via importance.rmp; they never exclude one. */
+  minRmp?: number | null;
   /** 1-10 each */
   importance: Importance;
   preferences: Preferences;
@@ -164,7 +164,7 @@ export interface RankedSchedule {
 }
 
 /**
- * constraint is one of "allowedTimes", "unitCap", "minRmp", "timeConflict",
+ * constraint is one of "allowedTimes", "unitCap", "timeConflict",
  * "noValidLinkCombo", "unknownCourse", "requiredCourse", "flexSlot", "combination".
  */
 export interface Blocker {

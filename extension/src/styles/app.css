@@ -196,6 +196,8 @@ textarea { width: 100%; resize: vertical; }
 .sliders { display: flex; flex-direction: column; gap: 4px; }
 .slider-row { display: grid; grid-template-columns: minmax(200px, 1.1fr) minmax(200px, 1fr) 44px; gap: 18px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .slider-row:last-child { border-bottom: 0; }
+.slider-contextual { grid-template-columns: minmax(0, 1fr) 44px; }
+.slider-contextual .slider-label { grid-column: 1 / -1; }
 .slider-label { display: flex; flex-direction: column; gap: 2px; }
 .slider-label label { font-weight: 600; }
 .slider-control input[type="range"] {

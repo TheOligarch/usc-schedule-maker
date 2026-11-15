@@ -4,7 +4,6 @@
  * loaded term data. The real functions replace it through src/lib/ai.ts.
  */
 import type {
-  Day,
   ExplainRequest,
   ExplainResponse,
   InterviewHistoryItem,
@@ -15,6 +14,7 @@ import type {
   Shortlist,
   TermData,
 } from "../lib/contract-types";
+import { courseInterestNotes, courseInterestTopics, isSeminarSlot, withCourseInterestNotes } from "../../../supabase/functions/_shared/course-interests";
 import { MAX_SHORTLIST } from "../lib/config";
 import { geShort, isLectureType, sectionRmp } from "../lib/schedule";
 
@@ -36,10 +36,8 @@ const SCRIPT: Scripted[] = [
   { id: "workload", text: "How difficult should those open-slot classes be?", options: ["Easy", "Moderate", "Challenging"], allowFreeText: true, needsSlots: true },
   { id: "format", text: "What kind of class do you learn best in?", options: ["Big lectures are fine", "Small and discussion-based", "Hands-on labs and projects", "No preference"], allowFreeText: true, needsSlots: true },
   { id: "daySpread", text: "How do you like your week laid out?", options: ["Stack classes on as few days as possible", "Spread them evenly across the week", "No strong preference"], allowFreeText: true },
-  { id: "dayOff", text: "If you could keep one day free of classes, which would it be?", options: ["Friday", "Monday", "Any day works", "I don't need a day off"], allowFreeText: true },
   { id: "breaks", text: "On a class day, do you want classes back-to-back or with breathing room?", options: ["Back-to-back, get it done", "Short breaks between classes", "Long gaps are fine", "No preference"], allowFreeText: true },
   { id: "maxGap", text: "What is the longest gap between two classes you would tolerate?", options: ["1 hour", "2 hours", "3 hours", "Doesn't matter"], allowFreeText: true },
-  { id: "anythingElse", text: "Last one: anything else the ranking should favor?", options: ["Great professors above all", "Open seats - I register late", "A free lunch hour", "Nope, that's everything"], allowFreeText: true },
 ];
 
 function answerOf(history: InterviewHistoryItem[], id: string): string {
@@ -51,17 +49,15 @@ function derivePreferences(history: InterviewHistoryItem[]): Preferences {
   const spread = answerOf(history, "daySpread");
   const breaks = answerOf(history, "breaks");
   const gap = answerOf(history, "maxGap");
-  const off = answerOf(history, "dayOff");
   const notes = history
     .map((h) => h.freeText?.trim())
     .filter((x): x is string => Boolean(x))
     .join(" ");
-  const preferredDaysOff: Day[] = off.startsWith("Friday") ? ["Fri"] : off.startsWith("Monday") ? ["Mon"] : [];
   return {
     daySpread: spread.startsWith("Stack") ? "compact" : spread.startsWith("Spread") ? "spread" : "neutral",
     breaks: breaks.startsWith("Back") ? "avoid" : breaks.startsWith("Short") || breaks.startsWith("Long") ? "prefer" : "neutral",
     maxGapMinutes: gap.startsWith("1") ? 60 : gap.startsWith("2") ? 120 : gap.startsWith("3") ? 180 : null,
-    preferredDaysOff,
+    preferredDaysOff: [],
     // Start and end times come from the allowed-times calendar, so the interview does not ask.
     comfortStart: null,
     comfortEnd: null,
@@ -70,19 +66,20 @@ function derivePreferences(history: InterviewHistoryItem[]): Preferences {
 }
 
 function buildShortlists(req: InterviewRequest, data: TermData): Shortlist[] {
-  const interest = answerOf(req.history, "interests");
-  const keywords = Object.entries(INTERESTS)
-    .filter(([label]) => interest.includes(label))
-    .flatMap(([, words]) => words);
-  const freeWords = interest
-    .toLowerCase()
-    .split(/[^a-z]+/)
-    .filter((wd) => wd.length > 4);
+  const genericInterest = answerOf(req.history, "interests");
   const workload = answerOf(req.history, "workload");
   const format = answerOf(req.history, "format");
   const taken = new Set(req.required);
 
   return req.slots.map((slot) => {
+    const interest = isSeminarSlot(slot) ? answerOf(req.history, "seminar-interests") : genericInterest;
+    const keywords = Object.entries(INTERESTS)
+      .filter(([label]) => interest.includes(label))
+      .flatMap(([, words]) => words);
+    const freeWords = interest
+      .toLowerCase()
+      .split(/[^a-z]+/)
+      .filter((wd) => wd.length > 4);
     const pool = Object.values(data.courses).filter((c) => {
       if (taken.has(c.code) || c.crossListedWith.some((x) => taken.has(x))) return false;
       if (c.sectionIds.length === 0) return false;
@@ -149,12 +146,18 @@ export async function mockInterview(req: InterviewRequest, data: TermData): Prom
   await delay(350);
   const hasSlots = req.slots.length > 0;
   const asked = new Set(req.history.map((h) => h.questionId));
-  const next = SCRIPT.find((q) => !asked.has(q.id) && (hasSlots || !q.needsSlots));
+  const topics = courseInterestTopics(req.required, req.slots);
+  const hasGenericSlots = req.slots.some((slot) => !isSeminarSlot(slot));
+  const script = [...topics, ...SCRIPT.filter((q) => !q.needsSlots || (q.id === "interests" ? hasGenericSlots : hasSlots))];
+  const next = script.find((q) => !asked.has(q.id));
   if (next && req.history.length < 10) {
     return { done: false, question: { id: next.id, text: next.text, options: next.options, allowFreeText: true } };
   }
-  const preferences = derivePreferences(req.history);
-  return { done: true, preferences, shortlists: buildShortlists(req, data), summary: buildSummary(preferences, req.history, hasSlots) };
+  const interests = courseInterestNotes(topics, req.history);
+  const preferences = derivePreferences(req.history.filter((h) => !topics.some((t) => t.id === h.questionId)));
+  const summary = [...interests, ...buildSummary(preferences, req.history, hasGenericSlots)];
+  preferences.notes = withCourseInterestNotes(preferences.notes, interests);
+  return { done: true, preferences, shortlists: buildShortlists(req, data), summary };
 }
 
 export async function mockExplain(req: ExplainRequest): Promise<ExplainResponse> {

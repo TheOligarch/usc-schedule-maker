@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AI_IS_MOCK, AiError, interviewTurn, type AiSource } from "../lib/ai";
 import { MAX_INTERVIEW_QUESTIONS, MAX_SHORTLIST } from "../lib/config";
-import type { Course, Day, InterviewHistoryItem, InterviewQuestion, Preferences, Shortlist, TermData } from "../lib/contract-types";
+import type { Course, Importance, InterviewHistoryItem, InterviewQuestion, Preferences, Shortlist, TermData } from "../lib/contract-types";
 import { geLabel, geShort, unitsLabel } from "../lib/schedule";
-import { DAY_LONG, WEEKDAYS, fmtTime, toHHMM, toMin } from "../lib/time";
+import { toHHMM, toMin } from "../lib/time";
 import { alignedShortlists, allowedTimes, interviewSignature, type AppState, type InterviewResult, type SlotDef } from "../state";
+import { InterviewImportance } from "../components/InterviewImportance";
 import { CourseSearch } from "../components/CourseSearch";
 import { Card, Icon, Notice, Segmented, Spinner, StepFooter } from "../components/ui";
 
@@ -123,7 +124,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
               <Icon name="sparkle" /> Quick interview
             </>
           }
-          subtitle={`Up to ${MAX_INTERVIEW_QUESTIONS} questions about your open slots and how you like your week. Tap an answer, or add a detail in your own words.`}
+          subtitle={`A few questions (up to ${MAX_INTERVIEW_QUESTIONS}) about your interests and week layout. For each open requirement, we suggest up to five real courses. Edit the list before building schedules; each schedule chooses one course per slot.`}
           actions={
             AI_IS_MOCK || offline || source === "mock" ? (
               <span className="pill pill-muted">Offline demo interview</span>
@@ -160,6 +161,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
                   <span className="q-num">{state.history.length + 1}</span>
                   {question.text}
                 </div>
+                <InterviewImportance questionId={question.id} importance={state.importance} onImportance={(importance) => onChange({ importance })} />
                 <div className="quick-replies" role="group" aria-label="Quick replies">
                   {question.options.map((opt) => (
                     <button key={opt} type="button" className="quick-reply" onClick={() => answer(opt, freeText)}>
@@ -242,7 +244,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
               Your courses or slots changed after the interview. The shortlists below may not match; redo the interview or edit them.
             </Notice>
           )}
-          <InterviewSummary data={data} slots={state.slots} required={state.required} result={state.interview} onChange={(interview) => onChange({ interview })} onRedo={redo} />
+          <InterviewSummary data={data} slots={state.slots} required={state.required} result={state.interview} importance={state.importance} onImportance={(importance) => onChange({ importance })} onChange={(interview) => onChange({ interview })} onRedo={redo} />
         </>
       )}
 
@@ -269,14 +271,14 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
 }
 
 const GAP_OPTIONS: (number | null)[] = [null, 30, 60, 90, 120, 180];
-const START_OPTIONS = [null, "09:00", "10:00", "11:00", "12:00"];
-const END_OPTIONS = [null, "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"];
 
 function InterviewSummary({
   data,
   slots,
   required,
   result,
+  importance,
+  onImportance,
   onChange,
   onRedo,
 }: {
@@ -284,6 +286,8 @@ function InterviewSummary({
   slots: SlotDef[];
   required: string[];
   result: InterviewResult;
+  importance: Importance;
+  onImportance: (importance: Importance) => void;
   onChange: (r: InterviewResult) => void;
   onRedo: () => void;
 }) {
@@ -291,7 +295,6 @@ function InterviewSummary({
   const setPrefs = (patch: Partial<Preferences>) => onChange({ ...result, preferences: { ...prefs, ...patch } });
   const shortlists = alignedShortlists(slots, result);
   const setShortlist = (label: string, next: Shortlist) => onChange({ ...result, shortlists: [...shortlists.filter((s) => s.label !== label), next].sort((a, b) => shortlists.findIndex((x) => x.label === a.label) - shortlists.findIndex((x) => x.label === b.label)) });
-  const toggleDay = (d: Day) => setPrefs({ preferredDaysOff: prefs.preferredDaysOff.includes(d) ? prefs.preferredDaysOff.filter((x) => x !== d) : [...prefs.preferredDaysOff, d] });
 
   return (
     <>
@@ -325,6 +328,7 @@ function InterviewSummary({
                 { value: "spread", label: "Spread out" },
               ]}
             />
+            <InterviewImportance questionId="day-spread" importance={importance} onImportance={onImportance} />
           </div>
           <div className="field">
             <span className="field-label">Between classes</span>
@@ -338,6 +342,7 @@ function InterviewSummary({
                 { value: "prefer", label: "Breaks" },
               ]}
             />
+            <InterviewImportance questionId="breaks" importance={importance} onImportance={onImportance} />
           </div>
           <div className="field">
             <label htmlFor="pref-gap">Longest gap you'd like</label>
@@ -345,36 +350,6 @@ function InterviewSummary({
               {GAP_OPTIONS.map((g) => (
                 <option key={String(g)} value={g ?? ""}>
                   {g === null ? "Any length" : g < 60 ? `${g} minutes` : `${g / 60} hour${g === 60 ? "" : "s"}`}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="field">
-            <span className="field-label">Days you'd like off (soft)</span>
-            <div className="day-toggles" role="group" aria-label="Preferred days off">
-              {WEEKDAYS.map((d) => (
-                <button key={d} type="button" aria-pressed={prefs.preferredDaysOff.includes(d)} className={`day-toggle ${prefs.preferredDaysOff.includes(d) ? "on" : ""}`} onClick={() => toggleDay(d)} title={DAY_LONG[d]}>
-                  {d}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="field">
-            <label htmlFor="pref-start">Ideally start no earlier than</label>
-            <select id="pref-start" value={prefs.comfortStart ?? ""} onChange={(e) => setPrefs({ comfortStart: e.target.value || null })}>
-              {START_OPTIONS.map((t) => (
-                <option key={String(t)} value={t ?? ""}>
-                  {t ? fmtTime(t) : "Any time"}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="field">
-            <label htmlFor="pref-end">Ideally finish by</label>
-            <select id="pref-end" value={prefs.comfortEnd ?? ""} onChange={(e) => setPrefs({ comfortEnd: e.target.value || null })}>
-              {END_OPTIONS.map((t) => (
-                <option key={String(t)} value={t ?? ""}>
-                  {t ? fmtTime(t) : "Any time"}
                 </option>
               ))}
             </select>
@@ -387,7 +362,7 @@ function InterviewSummary({
       </Card>
 
       {slots.length > 0 && (
-        <Card title="Shortlists for your open slots" subtitle={`Up to ${MAX_SHORTLIST} interchangeable courses per slot. The builder tries every option and keeps the best fits.`}>
+        <Card title="Shortlists for your open slots" subtitle={`These lists reflect your interests for the open requirements you added. Edit up to ${MAX_SHORTLIST} real courses per slot; each schedule chooses one from each list. Check your course plan to confirm what counts toward your degree.`}>
           <div className="shortlists">
             {slots.map((slot) => (
               <ShortlistEditor key={slot.id} data={data} slot={slot} required={required} shortlist={shortlists.find((s) => s.label === slot.label)!} onChange={(next) => setShortlist(slot.label, next)} />

@@ -35,10 +35,7 @@ export interface Combo {
   final: FinalExam | null;
   /** hard-filter flags */
   timeOk: boolean;
-  rmpOk: boolean;
   selfOverlap: boolean;
-  /** lecture rated below minRmp */
-  rmpBelowMin: boolean;
 }
 
 export interface ScoreCtx {
@@ -105,7 +102,6 @@ export interface ComboCostInput {
   sections: Section[];
   ambiguous: boolean;
   rmp: Record<string, RmpTeacher>;
-  minRmp: number | null;
   w: ScaledWeights;
 }
 
@@ -113,7 +109,6 @@ export interface ComboCost {
   base: number;
   penalties: Penalty[];
   warnings: string[];
-  rmpBelowMin: boolean;
 }
 
 export function comboCost(inp: ComboCostInput): ComboCost {
@@ -159,7 +154,6 @@ export function comboCost(inp: ComboCostInput): ComboCost {
   }
 
   // RMP: lecture instructors only
-  let rmpBelowMin = false;
   for (const lec of primary) {
     const rated: { name: string; avg: number }[] = [];
     let reason = lec.instructors?.length ? "has no RateMyProfessor rating" : "has no instructor listed";
@@ -181,7 +175,6 @@ export function comboCost(inp: ComboCostInput): ComboCost {
       continue;
     }
     const worst = rated.reduce((a, b) => (b.avg < a.avg ? b : a));
-    if (inp.minRmp != null && worst.avg < inp.minRmp) rmpBelowMin = true;
     const q = (5 - Math.min(5, Math.max(0, worst.avg))) * w.rmpQualityPerPoint;
     add({ kind: "preference", sectionId: lec.id, amount: q, message: `${code} lecture instructor ${worst.name} is rated ${worst.avg.toFixed(1)}/5` });
   }
@@ -193,7 +186,7 @@ export function comboCost(inp: ComboCostInput): ComboCost {
 
   let base = 0;
   for (const p of penalties) base += p.amount;
-  return { base, penalties, warnings, rmpBelowMin };
+  return { base, penalties, warnings };
 }
 
 // ---------------------------------------------------------------------------

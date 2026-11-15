@@ -7,7 +7,7 @@ export type StepId = "requirements" | "priorities" | "interview" | "results";
 export const STEPS: { id: StepId; label: string; hint: string }[] = [
   { id: "requirements", label: "Requirements", hint: "Courses and times" },
   { id: "priorities", label: "Priorities", hint: "What matters to you" },
-  { id: "interview", label: "Interview", hint: "10 quick questions" },
+  { id: "interview", label: "Interview", hint: "A few quick questions" },
   { id: "results", label: "Schedules", hint: "Ranked for you" },
 ];
 
@@ -40,7 +40,6 @@ export interface AppState {
   required: string[];
   slots: SlotDef[];
   unitCap: number | null;
-  minRmp: number | null;
   times: TimesState;
   history: InterviewHistoryItem[];
   interview: InterviewResult | null;
@@ -68,7 +67,6 @@ export function defaultState(): AppState {
     required: [],
     slots: [],
     unitCap: 18,
-    minRmp: null,
     times: { global: [{ start: "08:00", end: "20:00" }], overrides: {}, weekends: false },
     history: [],
     interview: null,
@@ -83,7 +81,8 @@ export function loadState(): AppState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultState();
-    const parsed = JSON.parse(raw) as Partial<AppState>;
+    // Drop the old hard rating minimum while retaining the student's ranking weights.
+    const { minRmp: _legacyMinimum, ...parsed } = JSON.parse(raw) as Partial<AppState> & { minRmp?: unknown };
     if (parsed.version !== 2) return defaultState();
     const base = defaultState();
     return { ...base, ...parsed, times: { ...base.times, ...parsed.times }, importance: { ...base.importance, ...parsed.importance }, limit: Math.min(MAX_RESULT_LIMIT, Math.max(1, parsed.limit ?? base.limit)) };
@@ -133,7 +132,6 @@ export function buildRequest(state: AppState): ScheduleRequest {
     flexSlots: alignedShortlists(state.slots, state.interview).map((s) => ({ label: s.label, options: s.options.map((o) => o.courseCode) })),
     allowedTimes: allowedTimes(state.times),
     unitCap: state.unitCap,
-    minRmp: state.minRmp,
     importance: state.importance,
     preferences: state.interview?.preferences ?? DEFAULT_PREFERENCES,
   };

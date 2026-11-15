@@ -11,8 +11,9 @@ URL: `https://mmdvgvpckweiklkbuxvy.supabase.co/functions/v1/`. CORS is open.
 
 Request and response shapes are in `_shared/types.ts` and follow section 5 of the shared build contract. `interview` also accepts an optional
 `hardHours: { earliestStart, latestEnd }` (24h `HH:MM`) so any times it mentions stay inside the student's hard window; it never asks about start or end times
-and always returns null comfort hours. Every response carries an `x-usm-ai-source: ai | fallback` header: when the model is unavailable, the functions still
-answer from built-in questions and rules instead of failing.
+and always returns null comfort hours. Days off, available times, unit cap and professor-rating settings are not asked again; the model question is rejected if
+it drifts into these settings. Every response carries an `x-usm-ai-source: ai | fallback` header: when the model is unavailable, the functions still answer from
+built-in questions and rules instead of failing.
 
 ## Changing the model
 
@@ -25,6 +26,18 @@ or `off` for models that reject the effort parameter) overrides the per-call eff
 `interview` reads the `courses` table (owned by `scraper/` and `supabase/migrations/`) with the anon key. GE slots are filtered by `geCategory`; elective slots
 are searched by interest in title and description. The model may only pick codes from those candidates. If the table is empty or missing for the term, the
 shortlists come back empty with a note in `summary`, never invented codes.
+
+## Course-aware interests
+
+Required WRIT-150 adds a writing-interest question; GESM course codes (including suffixed variants such as GESM-120g) add a seminar-topic question. GE slots
+identified as GESM or General Education Seminar share the seminar question instead of receiving a duplicate generic interest question. Both topics fit inside
+the ten-question budget, alongside the existing GE/elective questions. The extension's offline interview uses the same course-interest definitions.
+
+Answers appear in the editable summary and preference notes in both AI and fallback modes. Seminar-slot answers also feed the existing course shortlist
+selection. Required-course interests are retained as context; individual WRIT-150/GESM sections are not ranked by topic. Backend changes require deploying the
+`interview` function; bundled offline changes require a new extension build.
+
+The interview asks only about interests, day spread and gaps between classes. It finishes when these topics are covered, without padding to ten questions.
 
 ## Checks
 
