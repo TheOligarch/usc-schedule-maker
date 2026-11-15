@@ -158,7 +158,7 @@ export function Requirements({ data, state, onChange, header, onNext }: Props) {
           <span className="muted small">Variable-unit courses count their minimum.</span>
           <p className="muted small">
             Standard undergraduate tuition covers 12–18 units; units over 18 generally cost extra. Program rules and exceptions may apply.{" "}
-            <a href="https://dornsife.usc.edu/advising/wp-content/uploads/sites/96/2026/04/Discover-Dornsife-Crafting-Your-Course-Plan.pdf#page=7" target="_blank" rel="noopener noreferrer">USC courseload policy</a>
+            <a href="https://dornsife.usc.edu/advising/wp-content/uploads/sites/96/2026/04/Discover-Dornsife-Crafting-Your-Course-Plan.pdf#page=7" target="_blank" rel="noopener noreferrer">USC Courseload Policy</a>
           </p>
           {overCap && <span className="error-text small">Your required courses already add up to {requiredUnits} units.</span>}
         </div>
