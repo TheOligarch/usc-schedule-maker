@@ -5,7 +5,8 @@ import type { Course, Importance, InterviewHistoryItem, InterviewQuestion, Prefe
 import { geLabel, geShort, unitsLabel } from "../lib/schedule";
 import { toHHMM, toMin } from "../lib/time";
 import { alignedShortlists, allowedTimes, interviewSignature, type AppState, type InterviewResult, type SlotDef } from "../state";
-import { InterviewImportance } from "../components/InterviewImportance";
+import { INTERVIEW_CONFIRMATION, isInterviewConfirmation } from "../../../supabase/functions/_shared/interview-summary";
+import { importanceFactor, importanceFollowupIndexes, importancePrompt, InterviewImportance } from "../components/InterviewImportance";
 import { CourseSearch } from "../components/CourseSearch";
 import { Card, Icon, Notice, Segmented, Spinner, StepFooter } from "../components/ui";
 
@@ -28,6 +29,11 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
   const [source, setSource] = useState<AiSource | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const sig = interviewSignature(state);
+  // The slider-only importance step for the last answered topic, when still open. It lives
+  // in saved state (not the interview history) so it resumes once without using the AI's
+  // question budget, and is ignored if the history no longer ends with that topic.
+  const followupId = !state.interview && state.importanceFollowup && state.history.at(-1)?.questionId === state.importanceFollowup ? state.importanceFollowup : null;
+  const followupFactor = followupId ? importanceFactor(followupId) : undefined;
 
   const ask = useCallback(
     async (history: InterviewHistoryItem[], forceOffline = offline) => {
@@ -73,7 +79,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
   // Ask for the next question on arrival; abort it if the screen goes away (StrictMode
   // mounts twice in dev, so the second mount re-asks after the first one is aborted).
   useEffect(() => {
-    if (!state.interview) void ask(state.history);
+    if (!state.interview && !followupId) void ask(state.history);
     return () => abortRef.current?.abort();
     // Runs once per visit, not per answer: answers call ask() themselves.
   }, []);
@@ -85,14 +91,24 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
     const history = [...state.history, item];
     setQuestion(null);
     setFreeText("");
-    onChange({ history });
+    // A week-layout or breaks topic is followed by its own importance step before the next question.
+    if (importanceFollowupIndexes(history.map((h) => h.questionId)).includes(history.length - 1)) {
+      onChange({ history, importanceFollowup: item.questionId });
+      return;
+    }
+    onChange({ history, importanceFollowup: null });
     void ask(history);
+  };
+
+  const continueFromFollowup = () => {
+    onChange({ importanceFollowup: null });
+    void ask(state.history);
   };
 
   const rewind = (index: number) => {
     const history = state.history.slice(0, index);
     setQuestion(null);
-    onChange({ history, interview: null, interviewFor: null });
+    onChange({ history, importanceFollowup: null, interview: null, interviewFor: null });
     void ask(history);
   };
 
@@ -102,6 +118,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
     setLoading(false);
     setQuestion(null);
     onChange({
+      importanceFollowup: null,
       interview: {
         preferences: { daySpread: "neutral", breaks: "neutral", maxGapMinutes: null, preferredDaysOff: [], comfortStart: null, comfortEnd: null, notes: null },
         shortlists: state.slots.map((s) => ({ label: s.label, options: [] })),
@@ -155,13 +172,23 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
                 </div>
               </div>
             ))}
-            {question && (
+            {followupId && followupFactor && (
+              <div className="turn current importance-followup">
+                <div className="bubble bubble-ai">{importancePrompt(followupFactor)}</div>
+                <InterviewImportance questionId={followupId} importance={state.importance} onImportance={(importance) => onChange({ importance })} showHelp={false} />
+                <div className="row">
+                  <button type="button" className="btn btn-primary btn-sm" onClick={continueFromFollowup}>
+                    Continue <Icon name="arrowRight" size={14} />
+                  </button>
+                </div>
+              </div>
+            )}
+            {!followupId && question && (
               <div className="turn current">
                 <div className="bubble bubble-ai">
                   <span className="q-num">{state.history.length + 1}</span>
                   {question.text}
                 </div>
-                <InterviewImportance questionId={question.id} importance={state.importance} onImportance={(importance) => onChange({ importance })} />
                 <div className="quick-replies" role="group" aria-label="Quick replies">
                   {question.options.map((opt) => (
                     <button key={opt} type="button" className="quick-reply" onClick={() => answer(opt, freeText)}>
@@ -304,14 +331,15 @@ function InterviewSummary({
             <Icon name="sparkle" /> Here is what we learned
           </>
         }
-        subtitle="Everything below is editable. These soft preferences rank your schedules; your hard requirements never change."
+        subtitle="This information will help us rank your schedule. Feel free to edit or change anything"
         actions={
           <button type="button" className="btn btn-ghost btn-sm" onClick={onRedo}>
             <Icon name="refresh" size={14} /> Redo interview
           </button>
         }
       >
-        <SummaryBullets bullets={result.summary} onChange={(summary) => onChange({ ...result, summary })} />
+        <p className="muted small">{INTERVIEW_CONFIRMATION}</p>
+        <SummaryBullets bullets={result.summary.filter((point) => !isInterviewConfirmation(point))} onChange={(summary) => onChange({ ...result, summary })} />
 
         <div className="pref-grid">
           <div className="field">

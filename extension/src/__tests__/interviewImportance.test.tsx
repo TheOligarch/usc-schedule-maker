@@ -32,7 +32,7 @@ it("maps only stable backend/offline question IDs, independently of visible word
   }
 });
 
-describe("contextual importance in the interview", () => {
+describe("importance follow-up steps in the interview", () => {
   let root: Root;
   let container: HTMLDivElement;
   let current: AppState;
@@ -75,58 +75,125 @@ describe("contextual importance in the interview", () => {
     });
   };
 
+  const ranges = () => container.querySelectorAll('input[type="range"]').length;
+  const quickReplies = () => container.querySelectorAll(".quick-reply").length;
+  const followupText = () => container.querySelector(".importance-followup .bubble-ai")?.textContent ?? null;
+  const asked = () => vi.mocked(interviewTurn).mock.calls.map(([req]) => req.history.map((h) => h.questionId));
+  const continueButton = '.importance-followup .btn-primary';
+
+  /** The current step is the slider-only importance follow-up for one factor. */
+  const expectFollowup = (factor: "daySpread" | "breaks") => {
+    expect(followupText()).toBe(factor === "daySpread" ? "How important is matching your week layout?" : "How important is matching your breaks and longest-gap preferences?");
+    expect(ranges()).toBe(1);
+    expect(slider(factor)).not.toBeNull();
+    expect(quickReplies()).toBe(0);
+    expect(container.querySelector("#free-text")).toBeNull();
+  };
+  /** The current step is an ordinary topic question with no slider. */
+  const expectTopic = () => {
+    expect(followupText()).toBeNull();
+    expect(ranges()).toBe(0);
+    expect(quickReplies()).toBeGreaterThan(0);
+  };
+
   for (const source of ["ai", "fallback", "mock"] as const) {
-    it(`${source}: edits context weights separately from answers, retains navigation/session state, and sends them to scoring`, async () => {
+    it(`${source}: asks each weighted topic, then a slider-only importance step, and keeps answers and weights separate through navigation, resume and scoring`, async () => {
       const ids = source === "mock" ? ["daySpread", "breaks", "maxGap", "interests"]
         : source === "fallback" ? ["day-spread", "breaks-and-gap", "seminar-interests"]
         : ["day-spread", "breaks", "max-gap", "writing-interests"];
       const preferences = { ...DEFAULT_PREFERENCES, daySpread: "compact" as const, breaks: "avoid" as const, maxGapMinutes: 30 };
       vi.mocked(interviewTurn).mockImplementation(async (req) => {
         const id = ids[req.history.length];
-        // Identical wording proves that contextual binding comes from IDs.
+        // Identical wording proves that the follow-up binding comes from IDs.
         return { source, res: id
           ? { done: false, question: { id, text: "Choose your preference?", options: ["Choice A", "Choice B", "No preference"], allowFreeText: true } }
-          : { done: true, preferences, shortlists: [], summary: [] } };
+          : { done: true, preferences, shortlists: [], summary: ["You prefer fewer campus days.", "  • Please confirm these preferences or change any of them before you continue.  ", "You prefer to confirm project topics before class."] } };
       });
       const initial = defaultState();
       initial.step = "interview";
       initial.required = ["CSCI-201", "MATH-226"];
       await act(async () => root.render(<Harness initial={initial} />));
-      expect(container.querySelectorAll('input[type="range"]').length).toBe(1);
-      expect(slider("breaks")).toBeNull();
-      await setInput(slider("daySpread"), "9");
-      expect(slider("daySpread").getAttribute("aria-valuetext")).toBe("9 of 10");
+
+      // Week layout: the topic question first, without a slider.
+      expectTopic();
       await setInput(container.querySelector<HTMLInputElement>("#free-text")!, "Campus days matter");
       await click(".quick-reply");
+      expect(current.history).toEqual([{ questionId: ids[0], question: "Choose your preference?", answer: "Choice A", freeText: "Campus days matter" }]);
+      expect(current.importanceFollowup).toBe(ids[0]);
+      // Then its importance as a separate slider-only step; the next topic is not requested yet.
+      expectFollowup("daySpread");
+      expect(asked()).toEqual([[]]);
+      await setInput(slider("daySpread"), "9");
+      expect(slider("daySpread").getAttribute("aria-valuetext")).toBe("9 of 10");
       expect(current.importance.daySpread).toBe(9);
-      expect(current.history[0].answer).toBe("Choice A");
-      expect(current.history[0].freeText).toBe("Campus days matter");
       expect(current.history[0]).not.toHaveProperty("importance");
-      expect(slider("daySpread")).toBeNull();
-      expect(container.querySelectorAll('input[type="range"]').length).toBe(1);
+
+      // A saved session resumes on the open follow-up without re-asking the topic.
+      await act(async () => root.unmount());
+      root = createRoot(container);
+      await act(async () => root.render(<Harness initial={loadState()} />));
+      expectFollowup("daySpread");
+      expect(slider("daySpread").value).toBe("9");
+      expect(asked()).toEqual([[]]);
+
+      // Back and forward keep the follow-up open with its value.
+      await click(".step-footer .btn-ghost");
+      expect(ranges()).toBe(3);
+      await click(".step-footer .btn-primary");
+      expectFollowup("daySpread");
+      expect(slider("daySpread").value).toBe("9");
+
+      // Continue moves on to the breaks topic, again without a slider.
+      await click(continueButton);
+      expect(current.importanceFollowup).toBeNull();
+      expectTopic();
+      expect(asked()).toEqual([[], [ids[0]]]);
+
+      // Changing the week-layout answer re-asks that topic once, then its follow-up keeps the weight.
+      await click('[aria-label="Change your answer to question 1"]');
+      expectTopic();
+      expect(current.history).toEqual([]);
+      await click(".quick-reply");
+      expectFollowup("daySpread");
+      expect(slider("daySpread").value).toBe("9");
+      await click(continueButton);
+      expectTopic();
+
+      // Breaks: topic, then slider-only follow-up, then the next question.
+      await click(".quick-reply");
+      expect(current.history.map((h) => h.questionId)).toEqual(ids.slice(0, 2));
+      expectFollowup("breaks");
       await setInput(slider("breaks"), "8");
       expect(current.importance.breaks).toBe(8);
-
-      // Back and forward remount Interview without losing values or answers.
-      await click(".step-footer .btn-ghost");
-      expect(container.querySelectorAll('input[type="range"]').length).toBe(3);
-      expect(slider("breaks")).toBeNull();
-      expect(container.querySelector("#imp-daySpread")).toBeNull();
-      expect(container.querySelector("#imp-breaks")).toBeNull();
-      await click(".step-footer .btn-primary");
-      expect(slider("breaks").value).toBe("8");
-      await click(".quick-reply");
+      await click(continueButton);
+      expectTopic();
       if (source !== "fallback") {
-        expect(slider("breaks").value).toBe("8"); // max-gap shares the same saved weight
+        // The longest-gap topic shares the breaks weight, which was already asked: no repeat step.
         await click(".quick-reply");
+        expectTopic();
       }
-      // Interest questions receive neither slider.
-      expect(container.querySelectorAll('input[type="range"]').length).toBe(0);
+      // Interest questions get no follow-up; answering the last one finishes the interview.
       await click(".quick-reply");
+      expect(followupText()).toBeNull();
       expect(current.history.map((h) => h.questionId)).toEqual(ids);
+      expect(current.history.every((h) => !("importance" in h))).toBe(true);
       expect(current.history.length).toBeLessThanOrEqual(10);
+      // Follow-ups never reach the model's history or question budget.
+      for (const history of asked()) expect(history).toEqual(ids.slice(0, history.length));
+      expect(current.importance).toEqual({ ...initial.importance, daySpread: 9, breaks: 8 });
       expect(slider("daySpread").value).toBe("9");
       expect(slider("breaks").value).toBe("8");
+
+      // Review guidance is fixed text for every source; real conclusions stay editable.
+      const instruction = "Please confirm these preferences or change any of them before you continue.";
+      expect(container.querySelector(".summary")!.textContent).not.toContain(instruction);
+      expect(Array.from(container.querySelectorAll("p")).filter((p) => p.textContent === instruction)).toHaveLength(1);
+      const summaryInputs = () => Array.from(container.querySelectorAll<HTMLInputElement>(".summary input"));
+      expect(summaryInputs().map((input) => input.value)).toEqual(["You prefer fewer campus days.", "You prefer to confirm project topics before class."]);
+      await setInput(summaryInputs()[0], "You prefer classes spread out.");
+      expect(current.interview!.summary).toEqual(["You prefer classes spread out.", "You prefer to confirm project topics before class."]);
+      await click('[aria-label="Remove summary point 2"]');
+      expect(summaryInputs().map((input) => input.value)).toEqual(["You prefer classes spread out."]);
 
       // Summary editing and a persisted-session remount use the same weights.
       await setInput(slider("daySpread"), "6");
@@ -138,6 +205,8 @@ describe("contextual importance in the interview", () => {
       await act(async () => root.render(<Harness initial={restored} />));
       expect(slider("daySpread").value).toBe("6");
       expect(slider("breaks").value).toBe("8");
+      expect(summaryInputs().map((input) => input.value)).toEqual(["You prefer classes spread out."]);
+      expect(container.textContent!.split(instruction)).toHaveLength(2);
       const req = buildRequest(current);
       expect(req.importance.daySpread).toBe(6);
       expect(req.importance.breaks).toBe(8);
