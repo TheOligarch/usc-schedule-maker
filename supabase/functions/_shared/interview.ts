@@ -14,6 +14,7 @@ import {
   slotInterest,
   Topic,
 } from "./interview-plan.ts";
+import { isInterviewConfirmation } from "./interview-summary.ts";
 import { ModelClient } from "./model.ts";
 import { InterviewRequest, InterviewResponse, MAX_QUESTIONS, MAX_SHORTLIST, Question, Shortlist } from "./types.ts";
 
@@ -161,7 +162,7 @@ Preferences. Infer them only from the answers; when the student did not express 
 
 Shortlists. Return one entry for every slot, using its slotIndex. Pick up to 5 courses from that slot's candidates only, choosing the ones that best match the interests the student gave for that slot. Copy each courseCode exactly as listed; a code that is not in that slot's candidates is an error. Prefer some variety over five near-identical courses, prefer courses an undergraduate could plausibly take for that slot, do not repeat a course across slots, and never pick a required course. Fewer than 5 is fine when fewer fit, and a slot with no candidates gets an empty list. Each reason is one line under 20 words that ties the course to what the student said.
 
-Summary. Write 3 to 7 short bullets in the second person, each stating one conclusion the student can confirm or change, including one per slot naming the interest you used. Plain text, without bullet characters or markdown.
+Summary. Write 3 to 7 short bullets in the second person, each stating one conclusion the student can confirm or change, including one per slot naming the interest you used. Plain text, without bullet characters or markdown. Include only conclusions about the student, never instructions to confirm, review, edit, or continue; the UI displays that guidance separately.
 
 ${DATA_RULE}`;
 
@@ -317,7 +318,7 @@ async function finalize(req: InterviewRequest, plan: Topic[], deps: InterviewDep
         })),
       }),
     });
-    const summary = out.summary.map((s) => s.replace(/^[\s\-*•]+/, "").replace(/\s+/g, " ").trim().slice(0, 300)).filter(Boolean).slice(0, 8);
+    const summary = out.summary.map((s) => s.replace(/^[\s\-*•]+/, "").replace(/\s+/g, " ").trim().slice(0, 300)).filter((s) => s && !isInterviewConfirmation(s)).slice(0, 8);
     return {
       source: "ai",
       body: {

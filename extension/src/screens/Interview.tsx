@@ -5,6 +5,7 @@ import type { Course, Importance, InterviewHistoryItem, InterviewQuestion, Prefe
 import { geLabel, geShort, unitsLabel } from "../lib/schedule";
 import { toHHMM, toMin } from "../lib/time";
 import { alignedShortlists, allowedTimes, interviewSignature, type AppState, type InterviewResult, type SlotDef } from "../state";
+import { INTERVIEW_CONFIRMATION, isInterviewConfirmation } from "../../../supabase/functions/_shared/interview-summary";
 import { InterviewImportance } from "../components/InterviewImportance";
 import { CourseSearch } from "../components/CourseSearch";
 import { Card, Icon, Notice, Segmented, Spinner, StepFooter } from "../components/ui";
@@ -304,14 +305,15 @@ function InterviewSummary({
             <Icon name="sparkle" /> Here is what we learned
           </>
         }
-        subtitle="Everything below is editable. These soft preferences rank your schedules; your hard requirements never change."
+        subtitle="This information will help us rank your schedule. Feel free to edit or change anything"
         actions={
           <button type="button" className="btn btn-ghost btn-sm" onClick={onRedo}>
             <Icon name="refresh" size={14} /> Redo interview
           </button>
         }
       >
-        <SummaryBullets bullets={result.summary} onChange={(summary) => onChange({ ...result, summary })} />
+        <p className="muted small">{INTERVIEW_CONFIRMATION}</p>
+        <SummaryBullets bullets={result.summary.filter((point) => !isInterviewConfirmation(point))} onChange={(summary) => onChange({ ...result, summary })} />
 
         <div className="pref-grid">
           <div className="field">

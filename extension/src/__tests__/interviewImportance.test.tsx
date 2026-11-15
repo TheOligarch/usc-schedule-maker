@@ -86,7 +86,7 @@ describe("contextual importance in the interview", () => {
         // Identical wording proves that contextual binding comes from IDs.
         return { source, res: id
           ? { done: false, question: { id, text: "Choose your preference?", options: ["Choice A", "Choice B", "No preference"], allowFreeText: true } }
-          : { done: true, preferences, shortlists: [], summary: [] } };
+          : { done: true, preferences, shortlists: [], summary: ["You prefer fewer campus days.", "  • Please confirm these preferences or change any of them before you continue.  ", "You prefer to confirm project topics before class."] } };
       });
       const initial = defaultState();
       initial.step = "interview";
@@ -128,6 +128,17 @@ describe("contextual importance in the interview", () => {
       expect(slider("daySpread").value).toBe("9");
       expect(slider("breaks").value).toBe("8");
 
+      // Review guidance is fixed text for every source; real conclusions stay editable.
+      const instruction = "Please confirm these preferences or change any of them before you continue.";
+      expect(container.querySelector(".summary")!.textContent).not.toContain(instruction);
+      expect(Array.from(container.querySelectorAll("p")).filter((p) => p.textContent === instruction)).toHaveLength(1);
+      const summaryInputs = () => Array.from(container.querySelectorAll<HTMLInputElement>(".summary input"));
+      expect(summaryInputs().map((input) => input.value)).toEqual(["You prefer fewer campus days.", "You prefer to confirm project topics before class."]);
+      await setInput(summaryInputs()[0], "You prefer classes spread out.");
+      expect(current.interview!.summary).toEqual(["You prefer classes spread out.", "You prefer to confirm project topics before class."]);
+      await click('[aria-label="Remove summary point 2"]');
+      expect(summaryInputs().map((input) => input.value)).toEqual(["You prefer classes spread out."]);
+
       // Summary editing and a persisted-session remount use the same weights.
       await setInput(slider("daySpread"), "6");
       const restored = loadState();
@@ -138,6 +149,8 @@ describe("contextual importance in the interview", () => {
       await act(async () => root.render(<Harness initial={restored} />));
       expect(slider("daySpread").value).toBe("6");
       expect(slider("breaks").value).toBe("8");
+      expect(summaryInputs().map((input) => input.value)).toEqual(["You prefer classes spread out."]);
+      expect(container.textContent!.split(instruction)).toHaveLength(2);
       const req = buildRequest(current);
       expect(req.importance.daySpread).toBe(6);
       expect(req.importance.breaks).toBe(8);

@@ -195,7 +195,7 @@ Deno.test("final shortlists keep only real candidate codes, capped and de-duplic
           },
           { slotIndex: 1, options: ["PSYC-155", "CTCS-190", "CSCI-201", "PSYC-100"].map((courseCode) => ({ courseCode, reason: "psychology" })) },
         ],
-        summary: ["- You prefer few days.", "  ", "You want Fridays off."],
+        summary: ["- You prefer few days.", "  ", "• Please confirm these preferences or change any of them before you continue.", "You want Fridays off."],
       };
     },
   });
