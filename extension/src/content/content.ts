@@ -8,6 +8,7 @@
  * than by one hard-coded selector, and a floating launcher is used if none is found.
  */
 
+import { highlightFromLocation } from "./sectionHighlight";
 import { pinUnselectedLook, selectOurTab, TAB_FOCUS_CSS } from "./tabHighlight";
 
 const TAB_ID = "usm-tab";
@@ -189,4 +190,8 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && isOpen) setOpen(false, document.getElementById(TAB_ID));
 });
 
-if (window.top === window) start();
+if (window.top === window) {
+  start();
+  // Opened from a schedule's Register link: mark the sections that schedule picked.
+  highlightFromLocation();
+}
