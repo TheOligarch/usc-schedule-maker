@@ -183,7 +183,7 @@ Deno.test("final shortlists keep only real candidate codes, capped and de-duplic
           preferredDaysOff: ["Fri"],
           comfortStart: "10:00",
           comfortEnd: "17:00",
-          notes: null,
+          notes: "Keep Thursdays clear after 18:30.",
         },
         shortlists: [
           {
@@ -195,7 +195,13 @@ Deno.test("final shortlists keep only real candidate codes, capped and de-duplic
           },
           { slotIndex: 1, options: ["PSYC-155", "CTCS-190", "CSCI-201", "PSYC-100"].map((courseCode) => ({ courseCode, reason: "psychology" })) },
         ],
-        summary: ["- You prefer few days.", "  ", "• Please confirm these preferences or change any of them before you continue.", "You want Fridays off."],
+        summary: [
+          "- You prefer few days.",
+          "  ",
+          "• Please confirm these preferences or change any of them before you continue.",
+          "You want Fridays off.",
+          "You are fine with Monday classes after 20:00.",
+        ],
       };
     },
   });
@@ -205,7 +211,9 @@ Deno.test("final shortlists keep only real candidate codes, capped and de-duplic
   assertEquals(body.shortlists[0].options.map((o) => o.courseCode), ["CTCS-190", "AHIS-120", "MUSC-115", "THTR-125", "DANC-212"]);
   // CTCS-190 already used by slot 0, CSCI-201 is required.
   assertEquals(body.shortlists[1].options.map((o) => o.courseCode), ["PSYC-155", "PSYC-100"]);
-  assertEquals(body.summary, ["You prefer few days.", "You want Fridays off."]);
+  // Model slips into 24-hour time are rewritten before the student sees them.
+  assertEquals(body.summary, ["You prefer few days.", "You want Fridays off.", "You are fine with Monday classes after 8:00 PM."]);
+  assertEquals(body.preferences.notes, "Keep Thursdays clear after 6:30 PM.");
   // The model returned comfort hours anyway; they are dropped.
   assertEquals([body.preferences.comfortStart, body.preferences.comfortEnd], [null, null]);
 });

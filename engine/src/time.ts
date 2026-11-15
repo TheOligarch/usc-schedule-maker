@@ -21,11 +21,19 @@ export function toMinutes(t: string | null | undefined): number {
   return h * 60 + min;
 }
 
-/** minutes -> "HH:MM" */
+/** minutes -> "HH:MM" (internal data only; use fmtClock for messages) */
 export function fmtMinutes(min: number): string {
   const h = Math.floor(min / 60);
   const m = min % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
+/** minutes -> "8:00 PM", the 12-hour form every student-facing message uses (0 and 1440 are "12:00 AM"). */
+export function fmtClock(min: number): string {
+  const h24 = Math.floor(min / 60) % 24;
+  const m = min % 60;
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+  return `${h12}:${String(m).padStart(2, "0")} ${h24 >= 12 ? "PM" : "AM"}`;
 }
 
 /** "Mon/Wed" style list in week order. */

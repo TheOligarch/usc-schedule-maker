@@ -68,3 +68,11 @@ Deno.test("fallback explanation leads with the largest deductions", () => {
   );
   assertEquals(text, "Ranked #3; its largest deductions are: Two finals overlap; One section is full.");
 });
+
+Deno.test("explanations never show a 24-hour time, from the model or the fallback", async () => {
+  const late = { kind: "preference", amount: 6, message: "Classes end as late as 20:00 (you prefer 17:00 or earlier)." };
+  const model = stubModel({ explain: () => ({ explanations: [{ id: "s1", text: "Ranks first, but Monday runs until 20:00." }] }) });
+  const { body } = await runExplain({ preferences, schedules: [schedule("s1"), schedule("s2", [late])] }, model);
+  assertEquals(body.explanations[0].text, "Ranks first, but Monday runs until 8:00 PM.");
+  assertEquals(body.explanations[1].text, "Ranked #2; its largest deductions are: Classes end as late as 8:00 PM (you prefer 5:00 PM or earlier).");
+});
