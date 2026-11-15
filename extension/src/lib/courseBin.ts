@@ -186,7 +186,10 @@ export function responseMessage(body: string): string | null {
  * What WebReg's answer to an add means for that section. WebReg's own page decides the same way
  * (its `handleAddCourseBin`, read from the live site bundle): HTTP 200 is "placed in your Course
  * Bin", any other status is "Error adding", and the body is not read. A real successful add
- * answers 200 with an empty body (__tests__/fixtures/webreg-add-200-success.json). On top of that, a message
+ * answers 200 with an empty body (__tests__/fixtures/webreg-add-200-success.json), and so does a
+ * repeat add of a section already in the bin (webreg-add-200-repeat.json), so "already in bin"
+ * cannot come from this answer; the content script reads it from the course page before posting
+ * (content/courseBin.ts `isAlreadyInBin`). On top of that, a message
  * saying "already" is reported as already in the bin, and a redirect, 401/403 or the sign-in page
  * stops the run, since every later add would be refused the same way.
  */

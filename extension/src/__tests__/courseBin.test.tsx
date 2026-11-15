@@ -4,10 +4,12 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import csci103Html from "./fixtures/webreg-course-CSCI-103.html?raw";
 import phys151Html from "./fixtures/webreg-course-PHYS-151.html?raw";
+import csci103InBinHtml from "./fixtures/webreg-course-CSCI-103-in-bin.html?raw";
+import addRepeat from "./fixtures/webreg-add-200-repeat.json";
 import missingCsrf from "./fixtures/webreg-add-401-missing-csrf.json";
 import addSuccess from "./fixtures/webreg-add-200-success.json";
 import { CourseBinDialog } from "../components/CourseBinDialog";
-import { createCourseBinService, findAddForm, guardedFetcher, handleCourseBinMessage, pageActiveTerm, type Fetcher } from "../content/courseBin";
+import { createCourseBinService, findAddForm, guardedFetcher, handleCourseBinMessage, isAlreadyInBin, pageActiveTerm, type Fetcher } from "../content/courseBin";
 import {
   ADD_TYPE,
   PREPARE_TYPE,
@@ -86,6 +88,9 @@ const realSuccess = () => new Response(addSuccess.response.body, { status: addSu
 /** WebReg's real answer to an add sent without its X-CSRF header (fixtures/webreg-add-401-missing-csrf.json). */
 const realRefusal = () => new Response(missingCsrf.response.body, { status: missingCsrf.response.status, statusText: missingCsrf.response.statusText });
 
+/** The real CSCI-103 page while 29966, 29904 and 29900 were in the bin, served like the others. */
+const inBinPage = (code: string) => (code === "CSCI-103" ? new Response(csci103InBinHtml.replaceAll('value="SCRUBBED"', `value="token-${code}"`), { status: 200 }) : null);
+
 const opaqueRedirect = () => ({ type: "opaqueredirect", status: 0, ok: false, text: async () => "" }) as unknown as Response;
 
 /** Every request the extension made must be a course-page read or an add, nothing else. */
@@ -106,6 +111,19 @@ describe("WebReg's add form, as the saved pages render it", () => {
     expect(pageActiveTerm(page)).toBe("20271");
     expect(findAddForm(page, "20271", "29966")).toEqual({ path: "/api/section/20271/29966/add", token: "SCRUBBED" });
     expect(findAddForm(doc(phys151Html), "20271", "50390")).toEqual({ path: "/api/section/20271/50390/add", token: "SCRUBBED" });
+  });
+
+  it("reads WebReg's 'Already in Course Bin' mark, which replaces the add form", () => {
+    const inBin = doc(csci103InBinHtml);
+    expect(pageActiveTerm(inBin)).toBe("20271");
+    for (const id of ["29966", "29904", "29900"]) {
+      expect(isAlreadyInBin(inBin, id)).toBe(true);
+      expect(findAddForm(inBin, "20271", id)).toBeNull();
+    }
+    expect(isAlreadyInBin(inBin, "29903")).toBe(false);
+    expect(findAddForm(inBin, "20271", "29903")).toEqual({ path: "/api/section/20271/29903/add", token: "SCRUBBED" });
+    for (const id of ["29966", "29904", "29900", "29903"]) expect(isAlreadyInBin(doc(csci103Html), id)).toBe(false);
+    expect(isAlreadyInBin(inBin, '"] , label')).toBe(false);
   });
 
   it("finds nothing for another term, an unlisted section, or a form without a token", () => {
@@ -207,6 +225,13 @@ describe("WebReg's answer to an add", () => {
     expect(classifyAddResponse({ status: addSuccess.response.status, body: addSuccess.response.body })).toEqual({ outcome: "added", message: null });
   });
 
+  it("cannot tell a repeat add from a first one: WebReg answers both 200 with an empty body", () => {
+    expect(addRepeat.request).toEqual(addSuccess.request);
+    expect(addRepeat.response.status).toBe(addSuccess.response.status);
+    expect(addRepeat.response.body).toBe(addSuccess.response.body);
+    expect(classifyAddResponse({ status: addRepeat.response.status, body: addRepeat.response.body })).toEqual({ outcome: "added", message: null });
+  });
+
   it("stops on WebReg's real refusal of an add without its X-CSRF header, showing WebReg's message", () => {
     expect(missingCsrf.request.headers).not.toHaveProperty("X-CSRF");
     expect(classifyAddResponse({ status: missingCsrf.response.status, body: missingCsrf.response.body })).toEqual({
@@ -254,6 +279,18 @@ describe("content script service", () => {
     expect(posts.map((s) => s.url)).toEqual(ALL_IDS.map((id) => `https://webreg.usc.edu/api/section/20271/${id}/add`));
     expect(posts.every((s) => new Headers(s.init.headers).get("X-CSRF") === "1")).toBe(true);
     expect(posts.map((s) => new URLSearchParams(s.init.body as string).get("__RequestVerificationToken"))).toEqual(["token-CSCI-103", "token-CSCI-103", "token-CSCI-103", "token-PHYS-151", "token-PHYS-151", "token-PHYS-151"]);
+    expectOnlyReadsAndAdds(web.seen);
+  });
+
+  it("reports sections WebReg marks as already in the bin without posting them", async () => {
+    const web = fakeWebReg({ page: inBinPage });
+    const service = createCourseBinService(web.fetcher);
+    expect(await service.prepare({ type: PREPARE_TYPE, termCode: "20271", courseCodes: ["CSCI-103", "PHYS-151"] })).toEqual({ ok: true, activeTerm: "20271" });
+    const outcomes: Record<string, BinAddResponse> = {};
+    for (const item of binItems(DATA, SCHEDULE)) outcomes[item.sectionId] = await service.add({ type: ADD_TYPE, termCode: "20271", courseCode: item.courseCode, sectionId: item.sectionId });
+    expect(Object.fromEntries(Object.entries(outcomes).map(([id, r]) => [id, r.outcome]))).toEqual({ "29966": "already", "29903": "added", "29900": "already", "50381": "added", "50383": "added", "50390": "added" });
+    expect(outcomes["29966"].message).toBe("WebReg shows this section as already in your Course Bin; nothing was sent.");
+    expect(web.posts().map((s) => s.url)).toEqual(["29903", "50381", "50383", "50390"].map((id) => `https://webreg.usc.edu/api/section/20271/${id}/add`));
     expectOnlyReadsAndAdds(web.seen);
   });
 
@@ -405,6 +442,18 @@ describe("Add all to myCourseBin dialog", () => {
     expect(host.textContent).toMatch(/Added 4, 1 already in your bin, 1 failed\./);
     expect(web.posts()).toHaveLength(6);
     expectOnlyReadsAndAdds(web.seen);
+  });
+
+  it("shows sections already in the bin as 'Already in bin' and posts only the others", async () => {
+    const web = fakeWebReg({ page: inBinPage });
+    render(createCourseBinService(web.fetcher));
+    await act(async () => button(/Add 6 sections/).click());
+    await settle();
+
+    const already = "Already in bin: WebReg shows this section as already in your Course Bin; nothing was sent.";
+    expect(results()).toEqual([already, "Added", already, "Added", "Added", "Added"]);
+    expect(host.textContent).toMatch(/Added 4, 2 already in your bin\./);
+    expect(web.posts()).toHaveLength(4);
   });
 
   it("refuses a term mismatch with the term-switch link and adds nothing", async () => {

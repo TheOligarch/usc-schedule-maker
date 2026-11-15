@@ -6,6 +6,11 @@
  * `#ActiveTerm`, and for each section uses the "Add to myCourseBin" form WebReg rendered for
  * that section: its data-ajax-url and its anti-forgery token. Every request goes through
  * `isAllowedBinRequest`, so the only things it can do are read a course page and add a section.
+ *
+ * A section already in the student's bin is not posted. WebReg's course page replaces its add form
+ * with an "Already in Course Bin" label (`label.alrdyinmycb`, see
+ * __tests__/fixtures/webreg-course-CSCI-103-in-bin.html), and that is the only reliable signal:
+ * WebReg answers a repeat add exactly like a new one (HTTP 200, empty body).
  */
 
 import {
@@ -46,6 +51,12 @@ export function guardedFetcher(fetcher: Fetcher): Fetcher {
 export function pageActiveTerm(doc: ParentNode): string | null {
   const value = doc.querySelector<HTMLInputElement>("input#ActiveTerm")?.value?.trim() ?? "";
   return TERM_RE.test(value) ? value : null;
+}
+
+/** True when WebReg's course page marks `sectionId` "Already in Course Bin". */
+export function isAlreadyInBin(doc: ParentNode, sectionId: string): boolean {
+  if (!SECTION_RE.test(sectionId)) return false;
+  return Boolean(doc.querySelector(`[id="section_${sectionId}"] label.alrdyinmycb`));
 }
 
 /**
@@ -122,6 +133,7 @@ export function createCourseBinService(fetcher: Fetcher, parse: (html: string) =
       }
       const term = pageActiveTerm(doc);
       if (term !== req.termCode) return { outcome: "term-mismatch", message: `WebReg is showing ${term ? termName(term) : "another term"}, not ${termName(req.termCode)}. Nothing more was added.` };
+      if (isAlreadyInBin(doc, req.sectionId)) return { outcome: "already", message: "WebReg shows this section as already in your Course Bin; nothing was sent." };
       const form = findAddForm(doc, req.termCode, req.sectionId);
       if (!form) return { outcome: "failed", message: `WebReg's ${req.courseCode} page has no "Add to myCourseBin" button for section ${req.sectionId}.` };
       const built = buildAddRequest(form);
