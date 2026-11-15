@@ -116,7 +116,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .card-head h2 .icon { color: var(--cardinal); }
 .card-head p { margin-top: 3px; font-size: 13px; max-width: 70ch; }
 .card-actions { display: flex; gap: 8px; align-items: center; flex: none; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
 
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
