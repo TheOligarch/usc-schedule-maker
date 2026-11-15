@@ -51,6 +51,7 @@ The pipeline refreshes terms that have not started yet. Future-term availability
 - Unverifiable lecture/component associations are blocked rather than guessed from order or instructor names. TBA meetings have no known times to check. Finals may be unavailable; review section details before registering.
 - Dense searches have an enumeration limit; see the [engine guide](engine/README.md) for truncation and scoring details.
 - This independent student project is unaffiliated with USC or RateMyProfessors.
+- [Privacy policy](PRIVACY.md): what the extension keeps on your device, what it sends to the AI backend and Anthropic, and what it does on WebReg.
 
 See [User Feedback](<User Feedback.md>) for the running feedback log and implementation status.
 
