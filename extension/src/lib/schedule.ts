@@ -152,23 +152,45 @@ const GE_NAMES: Record<string, string> = {
   H: "Traditions and Historical Foundations",
 };
 
-/** Friendly label for a GE category code. Codes are opaque; unknown ones are shown as-is. */
+// Public USC catalog prefixes (Fall2015OrLater). Keep these values intact for
+// AI catalog queries; only translate their presentation.
+const GE_LETTERS: Record<string, string> = {
+  ARTS: "A", HINQ: "B", SANA: "C", LIFE: "D", PSC: "E", QREA: "F", GPG: "G", GPH: "H",
+};
+const OTHER_GE_NAMES: Record<string, string> = {
+  DCL: "Dornsife Core Literacy",
+  GESM: "General Education Seminar",
+};
+
+function geLetter(code: string): string | undefined {
+  const normalized = code.trim().toUpperCase();
+  return GE_LETTERS[normalized] ?? /^(?:GE[-\s]?)?([A-H])$/.exec(normalized)?.[1];
+}
+
+/** Friendly labels for both live catalog prefixes and sample letter codes. */
 export function geLabel(code: string): string {
-  const m = /^(?:GE[-\s]?)?([A-H])$/i.exec(code.trim());
-  if (m) return `GE-${m[1].toUpperCase()} ${GE_NAMES[m[1].toUpperCase()]}`;
-  return code;
+  const letter = geLetter(code);
+  if (letter) return `GE-${letter} — ${GE_NAMES[letter]}`;
+  return OTHER_GE_NAMES[code.trim().toUpperCase()] ?? code;
 }
 
 export function geShort(code: string): string {
-  const m = /^(?:GE[-\s]?)?([A-H])$/i.exec(code.trim());
-  return m ? `GE-${m[1].toUpperCase()}` : code;
+  const letter = geLetter(code);
+  return letter ? `GE-${letter}` : OTHER_GE_NAMES[code.trim().toUpperCase()] ?? code;
 }
 
-/** All GE category codes present in the term, sorted. */
+/** Original category values, with GE-A through GE-H first in letter order. */
 export function geCategories(data: TermData): string[] {
   const set = new Set<string>();
   for (const c of Object.values(data.courses)) for (const g of c.ge) set.add(g);
-  return [...set].sort();
+  return [...set].sort((a, b) => {
+    const aLetter = geLetter(a);
+    const bLetter = geLetter(b);
+    if (aLetter && bLetter) return aLetter.localeCompare(bLetter);
+    if (aLetter) return -1;
+    if (bLetter) return 1;
+    return geLabel(a).localeCompare(geLabel(b));
+  });
 }
 
 export function unitsLabel(units: { min: number; max: number }): string {
