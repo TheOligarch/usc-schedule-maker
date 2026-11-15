@@ -96,6 +96,8 @@ describe("clear-section vs remove-course controls", () => {
     const [state, setState] = useState(start); current = state;
     return <Requirements data={data} state={state} onChange={(p) => setState((s) => ({ ...s, ...p }))} onNext={() => {}} />;
   }
+  const toggle = (code: string) => [...container.querySelectorAll<HTMLButtonElement>("button.pin-toggle")].find((b) => b.closest("li")!.querySelector(".code")!.textContent === code)!;
+  const expand = async (code: string) => { if (toggle(code).getAttribute("aria-expanded") !== "true") await act(async () => toggle(code).click()); };
   const choose = async (id: string, value: string) => {
     const select = container.querySelector<HTMLSelectElement>(`#${id}`)!;
     await act(async () => { select.value = value; select.dispatchEvent(new Event("change", { bubbles: true })); });
@@ -103,6 +105,7 @@ describe("clear-section vs remove-course controls", () => {
 
   it("pins a lab, clears just that pin with its own X, and removes the course only with the course button", async () => {
     await act(async () => root.render(<Harness start={{ ...defaultState(), required: ["BISC-120", "CORE-112"] }} />));
+    await expand("BISC-120");
     expect(container.querySelector("#pin-BISC-120-lab")!.querySelectorAll("option").length).toBe(7); // "Any lab" + 6 labs
     await choose("pin-BISC-120", "13003");
     await choose("pin-BISC-120-lab", "13006");
@@ -131,8 +134,48 @@ describe("clear-section vs remove-course controls", () => {
     expect(container.textContent).not.toContain("never relaxed");
   });
 
+  it("each course's pin area starts collapsed, expands and collapses on its own, and keeps pins while collapsed", async () => {
+    await act(async () => root.render(<Harness start={{ ...defaultState(), required: ["BISC-120", "CORE-112"] }} />));
+    for (const code of ["BISC-120", "CORE-112"]) {
+      const t = toggle(code);
+      expect(t.tagName).toBe("BUTTON"); // native button: focusable, Enter/Space activate it
+      expect(t.type).toBe("button");
+      expect(t.textContent).toBe("Require specific sections (optional)");
+      expect(t.getAttribute("aria-expanded")).toBe("false");
+      const panel = document.getElementById(t.getAttribute("aria-controls")!)!;
+      expect(panel.hidden).toBe(true);
+      expect(panel.querySelector(`#pin-${code}`)).not.toBeNull();
+    }
+    await act(async () => toggle("BISC-120").click());
+    expect(toggle("BISC-120").getAttribute("aria-expanded")).toBe("true");
+    expect(document.getElementById(toggle("BISC-120").getAttribute("aria-controls")!)!.hidden).toBe(false);
+    expect(toggle("CORE-112").getAttribute("aria-expanded")).toBe("false"); // per course
+    await choose("pin-BISC-120", "13003");
+    await choose("pin-BISC-120-lab", "13006");
+    await act(async () => toggle("BISC-120").click());
+    expect(toggle("BISC-120").getAttribute("aria-expanded")).toBe("false");
+    expect(current.sectionPins).toEqual({ "BISC-120": ["13003", "13006"] });
+    const summary = toggle("BISC-120").closest("li")!.querySelector(".pin-summary")!;
+    expect(summary.textContent).toBe("Pinned: Lecture 13003, Lab 13006");
+    expect(toggle("CORE-112").closest("li")!.querySelector(".pin-summary")).toBeNull();
+    // collapsed pins still drive generation
+    const r = await generateSchedulesAsync(data, buildRequest(current, data));
+    expect(r.schedules.map((s) => s.courses.find((c) => c.courseCode === "BISC-120")!.sectionIds)).toEqual(r.schedules.map(() => ["13003", "13006"]));
+  });
+
+  it("pins survive save and restore, and the restored card starts collapsed with its summary", async () => {
+    saveState({ ...defaultState(), required: ["BISC-120"], sectionPins: { "BISC-120": ["13006"] } });
+    await act(async () => root.render(<Harness start={loadState()} />));
+    expect(toggle("BISC-120").getAttribute("aria-expanded")).toBe("false");
+    expect(container.querySelector(".pin-summary")!.textContent).toBe("Pinned: Lab 13006");
+    await expand("BISC-120");
+    expect(container.querySelector<HTMLSelectElement>("#pin-BISC-120-lab")!.value).toBe("13006");
+    expect(current.sectionPins).toEqual({ "BISC-120": ["13006"] });
+  });
+
   it("units and the remove-course X share a fixed top-right corner, apart from the pin pickers and clear-pin chips", async () => {
     await act(async () => root.render(<Harness start={{ ...defaultState(), required: ["BISC-120"] }} />));
+    await expand("BISC-120");
     const card = container.querySelector<HTMLLIElement>("li.course-chip")!;
     const corner = () => card.querySelector<HTMLDivElement>(":scope > .chip-corner")!;
     const before = corner();
@@ -162,6 +205,8 @@ describe("clear-section vs remove-course controls", () => {
 
   it("a pin the term no longer offers can be cleared without removing the course", async () => {
     await act(async () => root.render(<Harness start={{ ...defaultState(), required: ["BISC-120"], sectionPins: { "BISC-120": ["99999"] } }} />));
+    expect(container.textContent).toContain("Pinned: 99999 (no longer offered)"); // visible while collapsed
+    await expand("BISC-120");
     expect(container.textContent).toContain("Section 99999 is no longer offered");
     await act(async () => container.querySelector<HTMLButtonElement>('button[aria-label="Clear unavailable pinned section 99999 for BISC-120"]')!.click());
     expect(current.sectionPins).toEqual({});

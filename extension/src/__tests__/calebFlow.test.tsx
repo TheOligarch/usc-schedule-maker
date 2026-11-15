@@ -58,6 +58,9 @@ it("pins and clears a themed section in Requirements and carries it through save
   const start = { ...defaultState(), required: ["CORE-112"] };
   const original = interviewSignature(start);
   await render(start, "requirements");
+  const toggle = container.querySelector<HTMLButtonElement>("button.pin-toggle")!;
+  expect(toggle.getAttribute("aria-expanded")).toBe("false");
+  await act(async () => toggle.click());
   const select = container.querySelector<HTMLSelectElement>("#pin-CORE-112")!;
   expect(select.textContent).toContain("63538"); expect(select.textContent).toContain("Amy Cannon"); expect(container.querySelector('label[for="pin-CORE-112"]')!.textContent).toBe("Lecture");
   await act(async () => { select.value = "63538"; select.dispatchEvent(new Event("change", { bubbles: true })); });

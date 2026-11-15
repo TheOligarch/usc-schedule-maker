@@ -62,7 +62,10 @@ Term data comes from the public `term-data` Supabase bucket (`index.json`, then 
 
 ## Section choices and schedule refinement
 
-Requirements offers optional section pins for each required course: one picker per
+Requirements offers optional section pins for each required course, in a "Require specific
+sections (optional)" area that starts collapsed for every course (including after a reload).
+A chevron toggle (`aria-expanded`) opens it. While it is collapsed, any active pins are
+summarized next to the label and still apply. Inside there is one picker per
 component (lecture, lab, discussion, quiz), listing section ID, meetings, instructors and
 section notes/themes when USC publishes them. Options come from the engine's own linkage
 rules (`src/lib/sectionPins.ts`), so only registrable linked combinations are offered:
