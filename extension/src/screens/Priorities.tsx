@@ -2,7 +2,7 @@ import type { Importance } from "../lib/contract-types";
 import { Card, Icon, StepFooter } from "../components/ui";
 
 const FACTORS: { key: keyof Importance; label: string; low: string; high: string; help: string }[] = [
-  { key: "rmp", label: "Professor ratings", low: "Don't care", high: "Top priority", help: "How much RateMyProfessors ratings of lecture instructors should move a schedule up or down." },
+  { key: "rmp", label: "Professor ratings", low: "Don't care", high: "Top priority", help: "How important are RateMyProfessor ratings of lecture instructors?" },
   { key: "daySpread", label: "How classes spread over the week", low: "Don't care", high: "Top priority", help: "Matching your preference for stacking classes on a few days or spreading them out." },
   { key: "breaks", label: "Breaks between classes", low: "Don't care", high: "Top priority", help: "Matching your preference for back-to-back classes or time in between." },
   { key: "seatRisk", label: "Getting a seat", low: "Don't care", high: "Top priority", help: "Pushing full, waitlisted and D-clearance sections down the list." },
