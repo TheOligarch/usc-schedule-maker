@@ -54,5 +54,5 @@ Term data comes from the public `term-data` Supabase bucket (`index.json`, then 
 
 - Ratings from RateMyProfessors.com. Only the lecture instructor's rating is used. Matches made on first initial + last name are labelled "possible match".
 - Seat counts come from the nightly snapshot. Inside the installed extension, the schedule being viewed is refreshed live from classes.usc.edu (at most 6 requests at a time, public course endpoint only).
-- "Register" links open the course's department listing in WebReg (`/Courses?DeptId=<DEPT>`) with the schedule's chosen sections for that course outlined and the first one scrolled into view. The highlight is visual only; adding to the course bin and registering are left to WebReg.
+- "Register" links open the course in WebReg (`/Courses?Program=<DEPT>&Course=<CODE>`) with the schedule's chosen sections for that course outlined and the first one scrolled into view. WebReg keeps the term in the session, so if it is on a different term the page says so and links to WebReg's term switch. The highlight is visual only; adding to the course bin and registering are left to WebReg.
 - Not affiliated with USC.

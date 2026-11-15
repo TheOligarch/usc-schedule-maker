@@ -489,7 +489,7 @@ function SectionDetails({
                           <td>
                             <a
                               className="btn btn-link btn-sm"
-                              href={webregRegisterUrl(c.courseCode, c.sectionIds)}
+                              href={webregRegisterUrl(c.courseCode, c.sectionIds, data.term.code)}
                               target="_blank"
                               rel="noopener noreferrer"
                               aria-label={`Register for ${c.courseCode} in WebReg, with this schedule's sections highlighted`}
