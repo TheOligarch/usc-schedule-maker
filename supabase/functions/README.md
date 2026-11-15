@@ -26,6 +26,16 @@ or `off` for models that reject the effort parameter) overrides the per-call eff
 are searched by interest in title and description. The model may only pick codes from those candidates. If the table is empty or missing for the term, the
 shortlists come back empty with a note in `summary`, never invented codes.
 
+## Course-aware interests
+
+Required WRIT-150 adds a writing-interest question; GESM course codes (including suffixed variants such as GESM-120g) add a seminar-topic question. GE slots
+identified as GESM or General Education Seminar share the seminar question instead of receiving a duplicate generic interest question. Both topics fit inside
+the ten-question budget, alongside the existing GE/elective questions. The extension's offline interview uses the same course-interest definitions.
+
+Answers appear in the editable summary and preference notes in both AI and fallback modes. Seminar-slot answers also feed the existing course shortlist
+selection. Required-course interests are retained as context; individual WRIT-150/GESM sections are not ranked by topic. Backend changes require deploying the
+`interview` function; bundled offline changes require a new extension build.
+
 ## Checks
 
 From this folder, with Deno 2:

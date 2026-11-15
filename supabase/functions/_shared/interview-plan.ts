@@ -1,6 +1,7 @@
 // The interview's shape, decided in code rather than by the model: which topics
 // are asked, in what order, and how they fit in the 10-question budget. Also the
 // built-in questions and answer parsing used when the model is unavailable.
+import { courseInterestNotes, CourseInterestTopic, courseInterestTopics, withCourseInterestNotes } from "./course-interests.ts";
 import { Day, DAYS, HHMM, HistoryItem, InterviewRequest, MAX_QUESTIONS, Preferences, Question, Slot } from "./types.ts";
 
 export type CoreKind =
@@ -12,7 +13,8 @@ export type CoreKind =
 
 export type Topic =
   | { id: string; kind: CoreKind; goal: string }
-  | { id: string; kind: "slots"; goal: string; slotIndexes: number[] };
+  | { id: string; kind: "slots"; goal: string; slotIndexes: number[] }
+  | CourseInterestTopic;
 
 const CORE_GOALS: Record<CoreKind, string> = {
   "day-spread": "Whether they want classes stacked on as few days as possible or spread across the week.",
@@ -42,10 +44,14 @@ function groupSlots(count: number, groups: number): number[][] {
 }
 
 /** Every topic the interview covers, in asking order; never more than MAX_QUESTIONS. */
-export function buildPlan(slots: Slot[]): Topic[] {
-  const core = coreKinds(slots.length);
+export function buildPlan(slots: Slot[], required: string[] = []): Topic[] {
+  const interests = courseInterestTopics(required, slots);
+  const openIndexes = slots.flatMap((_, i) => interests.some((t) => t.slotIndexes.includes(i)) ? [] : [i]);
+  const core = coreKinds(openIndexes.length + interests.length);
   const topics: Topic[] = core.map((kind) => ({ id: kind, kind, goal: CORE_GOALS[kind] }));
-  for (const slotIndexes of groupSlots(slots.length, MAX_QUESTIONS - core.length)) {
+  topics.push(...interests);
+  for (const group of groupSlots(openIndexes.length, MAX_QUESTIONS - core.length - interests.length)) {
+    const slotIndexes = group.map((i) => openIndexes[i]);
     const labels = slotIndexes.map((i) => `"${slots[i].label}"`).join(" and ");
     topics.push({
       id: `slots-${slotIndexes.join("-")}`,
@@ -147,6 +153,8 @@ export function fallbackQuestion(topic: Topic, req: InterviewRequest): Question 
         "Monday and Friday",
         "No day off needed",
       ]);
+    case "course-interest":
+      return q(topic.text, topic.options);
     case "slots": {
       const labels = topic.slotIndexes.map((i) => req.slots[i].label).join(" and ");
       return q(`What kind of topics interest you for ${labels}?`, [
@@ -181,7 +189,7 @@ function parseGapMinutes(text: string): number | null {
 
 /** The interest text a student gave for one slot, from the question that covered it. */
 export function slotInterest(plan: Topic[], history: HistoryItem[], slotIndex: number): string {
-  const topic = plan.find((t) => t.kind === "slots" && t.slotIndexes.includes(slotIndex));
+  const topic = plan.find((t) => (t.kind === "slots" || t.kind === "course-interest") && t.slotIndexes.includes(slotIndex));
   const item = topic && history.find((h) => h.questionId === topic.id);
   return item ? [item.answer, item.freeText].filter(Boolean).join(". ") : "";
 }
@@ -205,6 +213,7 @@ export function fallbackPreferences(plan: Topic[], req: InterviewRequest): Prefe
   for (const item of req.history) {
     const topic = plan.find((t) => t.id === item.questionId);
     const text = [item.answer, item.freeText].filter(Boolean).join(". ");
+    if (topic?.kind === "course-interest") continue;
     if (item.freeText?.trim()) notes.push(item.freeText.trim());
     if (!topic || topic.kind === "slots") continue;
 
@@ -225,7 +234,7 @@ export function fallbackPreferences(plan: Topic[], req: InterviewRequest): Prefe
     }
   }
 
-  prefs.notes = notes.length ? notes.join(" ").slice(0, 500) : null;
+  prefs.notes = withCourseInterestNotes(notes.join(" "), courseInterestNotes(courseInterestTopics(req.required, req.slots), req.history));
   return sanitizePreferences(prefs);
 }
 
