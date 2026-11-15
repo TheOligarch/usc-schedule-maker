@@ -250,11 +250,11 @@ export function Results({ data, state, onChange, onEdit, binTransport, sample }:
             onAddToBin={() => { if (!running) setBinFor({ schedule: selected, index: selectedIndex }); }}
           />
           {Object.values(state.sectionPins).some((ids) => ids.length) && <p className="small">Required sections: {Object.entries(state.sectionPins).filter(([, ids]) => ids.length).map(([c, ids]) => `${c} ${ids.join(" + ")}`).join(", ")}</p>}
-          <ScheduleFeedback data={data} schedule={selected} index={selectedIndex} state={state} running={running} onChange={onChange} />
-          <Explanation index={selectedIndex} text={explanations[selected.id]} state={explainState} onRetry={() => void explain()} />
           <Card className="cal-card">
             <WeekCalendar data={data} schedule={selected} allowed={allowed} highlight={highlight} onHighlight={setHighlight} />
           </Card>
+          <ScheduleFeedback data={data} schedule={selected} index={selectedIndex} state={state} running={running} onChange={onChange} />
+          <Explanation index={selectedIndex} text={explanations[selected.id]} state={explainState} onRetry={() => void explain()} />
           <SectionDetails
             sample={sample ?? false}
             data={data}

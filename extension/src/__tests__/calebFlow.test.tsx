@@ -314,3 +314,16 @@ it("caches suggestion checks per schedule and request, so revisiting costs no en
   expect(vi.mocked(generateSchedules).mock.calls.length).toBeGreaterThan(runs);
 });
 async function generateSchedulesFor(state: AppState) { return (await generateSchedules(data, buildRequest(state, data), { limit: 5 })).result; }
+
+it("orders each schedule as pager, week calendar, refine box, then the explanation", async () => {
+  await render(initial());
+  const main = container.querySelector(".sched-main")!;
+  const pager = main.querySelector(".pager")!;
+  const cal = main.querySelector(".cal-card")!;
+  const refine = main.querySelector("#schedule-feedback")!;
+  const why = main.querySelector(".explain")!;
+  const follows = (a: Element, b: Element) => !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+  expect(follows(pager, cal)).toBe(true);
+  expect(follows(cal, refine)).toBe(true);
+  expect(follows(refine, why)).toBe(true);
+});
