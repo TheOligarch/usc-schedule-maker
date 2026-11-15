@@ -10,6 +10,7 @@
 
 import {
   ADD_PATH_RE,
+  CSRF_HEADER,
   ADD_TYPE,
   COURSE_RE,
   PREPARE_TYPE,
@@ -81,7 +82,7 @@ export function createCourseBinService(fetcher: Fetcher, parse: (html: string) =
   async function loadPage(courseCode: string): Promise<PageResult> {
     let res: Response;
     try {
-      res = await request(coursePageUrl(courseCode), { method: "GET", credentials: "same-origin", redirect: "manual", cache: "no-store", headers: { Accept: "text/html" } });
+      res = await request(coursePageUrl(courseCode), { method: "GET", credentials: "same-origin", redirect: "manual", cache: "no-store", headers: { Accept: "text/html", [CSRF_HEADER]: "1" } });
     } catch (err) {
       return { kind: "error", message: `Could not load WebReg's ${courseCode} page: ${err instanceof Error ? err.message : String(err)}` };
     }

@@ -13,7 +13,11 @@
  * (see __tests__/fixtures/webreg-course-*.html, captured signed in). Pressing the button makes
  * jquery-unobtrusive-ajax POST to the data-ajax-url, same-origin, with the form fields
  * urlencoded: the clicked button (`submit=`), the anti-forgery token, and its own
- * `X-Requested-With=XMLHttpRequest` marker, plus jQuery's `X-Requested-With` header.
+ * `X-Requested-With=XMLHttpRequest` marker, plus jQuery's `X-Requested-With` header. WebReg's
+ * site bundle also adds `X-CSRF: 1` to every same-origin request (a jQuery ajaxPrefilter and a
+ * window.fetch wrapper); without it the add is refused with HTTP 401 "Missing or invalid X-CSRF
+ * header." (__tests__/fixtures/webreg-add-401-missing-csrf.json, a real response). The content
+ * script's fetch runs in its own world, outside WebReg's wrapper, so it sets the header itself.
  *
  * The extension makes exactly that request from its content script on webreg.usc.edu, in the
  * student's signed-in session: it loads the course page, finds the form for the section,
@@ -38,6 +42,8 @@ export const TERM_RE = /^\d{5}$/;
 export const COURSE_RE = /^[A-Z]{2,5}-\d{2,3}[A-Z]{0,4}$/;
 export const SECTION_RE = /^[0-9A-Za-z]{1,12}$/;
 export const TOKEN_FIELD = "__RequestVerificationToken";
+/** WebReg's site bundle sends this header, value "1", with every same-origin request. */
+export const CSRF_HEADER = "X-CSRF";
 
 export const PREPARE_TYPE = "usm:bin-prepare";
 export const ADD_TYPE = "usm:bin-add";
@@ -128,6 +134,7 @@ export function buildAddRequest(form: AddForm): BuiltRequest {
         Accept: "*/*",
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
         "X-Requested-With": "XMLHttpRequest",
+        [CSRF_HEADER]: "1",
       },
       body,
     },
@@ -137,9 +144,7 @@ export function buildAddRequest(form: AddForm): BuiltRequest {
 // ---- Response ------------------------------------------------------------------
 
 const MESSAGE_KEYS = ["message", "Message", "msg", "errorMessage", "ErrorMessage", "error", "Error", "statusMessage", "StatusMessage", "result", "Result", "text", "Text"];
-const SUCCESS_KEYS = ["success", "Success", "isSuccess", "IsSuccess", "succeeded", "Succeeded", "ok"];
 const ALREADY_RE = /\balready\b/i;
-const FAIL_RE = /\b(error|fail(ed|ure)?|cannot|can't|unable|not (be )?(added|allowed|permitted|available|found)|invalid|denied|exceed(s|ed)?)\b/i;
 const LOGIN_RE = /<title>[^<]*(log ?in|sign ?in|single sign-on)|<form[^>]*(login|signin|saml|shibboleth|sso)/i;
 
 function cleanText(raw: string): string {
@@ -177,26 +182,25 @@ export function responseMessage(body: string): string | null {
   return cleanText(body) || null;
 }
 
-function successFlag(body: string): boolean | null {
-  const json = readJson(body);
-  if (!json || typeof json !== "object") return null;
-  for (const key of SUCCESS_KEYS) if (typeof (json as Record<string, unknown>)[key] === "boolean") return (json as Record<string, boolean>)[key];
-  return null;
-}
-
-/** What WebReg's answer to an add means for that section. */
+/**
+ * What WebReg's answer to an add means for that section. WebReg's own page decides the same way
+ * (its `handleAddCourseBin`, read from the live site bundle): HTTP 200 is "placed in your Course
+ * Bin", any other status is "Error adding", and the body is not read. On top of that, a message
+ * saying "already" is reported as already in the bin, and a redirect, 401/403 or the sign-in page
+ * stops the run, since every later add would be refused the same way.
+ */
 export function classifyAddResponse(res: { status: number; type?: string; body: string }): BinAddResponse {
-  if (res.type === "opaqueredirect" || res.status === 0 || res.status === 401 || res.status === 403 || (res.status >= 300 && res.status < 400)) {
-    return { outcome: "auth", message: "WebReg did not accept the request from this session. Sign in to WebReg again, then retry." };
+  if (res.type === "opaqueredirect" || res.status === 0 || (res.status >= 300 && res.status < 400)) {
+    return { outcome: "auth", message: "WebReg redirected the request; its session may have ended. Sign in to WebReg again, then retry." };
+  }
+  const message = responseMessage(res.body);
+  if (res.status === 401 || res.status === 403) {
+    return { outcome: "auth", message: message ? `WebReg refused the request (HTTP ${res.status}): ${message}` : `WebReg refused the request (HTTP ${res.status}). Sign in to WebReg again, then retry.` };
   }
   if (LOGIN_RE.test(res.body)) return { outcome: "auth", message: "WebReg answered with its sign-in page. Sign in to WebReg again, then retry." };
-  const message = responseMessage(res.body);
   if (message && ALREADY_RE.test(message)) return { outcome: "already", message };
-  if (res.status < 200 || res.status >= 300) return { outcome: "failed", message: message ?? `WebReg answered HTTP ${res.status}.` };
-  const flag = successFlag(res.body);
-  if (flag === false) return { outcome: "failed", message: message ?? "WebReg reported that the section was not added." };
-  if (flag === null && message && FAIL_RE.test(message)) return { outcome: "failed", message };
-  return { outcome: "added", message };
+  if (res.status === 200) return { outcome: "added", message };
+  return { outcome: "failed", message: message ?? `WebReg answered HTTP ${res.status}.` };
 }
 
 // ---- App side: the run -----------------------------------------------------------

@@ -4,6 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import csci103Html from "./fixtures/webreg-course-CSCI-103.html?raw";
 import phys151Html from "./fixtures/webreg-course-PHYS-151.html?raw";
+import missingCsrf from "./fixtures/webreg-add-401-missing-csrf.json";
 import { CourseBinDialog } from "../components/CourseBinDialog";
 import { createCourseBinService, findAddForm, guardedFetcher, handleCourseBinMessage, pageActiveTerm, type Fetcher } from "../content/courseBin";
 import {
@@ -70,11 +71,16 @@ function fakeWebReg(options: { activeTerm?: string; answers?: Record<string, () 
       return new Response(html, { status: 200, headers: { "Content-Type": "text/html" } });
     }
     const id = /\/api\/section\/\d{5}\/(\w+)\/add$/.exec(u.pathname)?.[1];
+    // Like the real WebReg: an add without its X-CSRF header gets the captured 401.
+    if (method === "POST" && id && new Headers(init.headers).get("X-CSRF") !== "1") return realRefusal();
     if (method === "POST" && id) return options.answers?.[id]?.() ?? new Response(JSON.stringify({ success: true, message: "Section added to myCourseBin." }), { status: 200 });
     return new Response("not found", { status: 404 });
   };
   return { fetcher, seen, posts: () => seen.filter((s) => s.method === "POST") };
 }
+
+/** WebReg's real answer to an add sent without its X-CSRF header (fixtures/webreg-add-401-missing-csrf.json). */
+const realRefusal = () => new Response(missingCsrf.response.body, { status: missingCsrf.response.status, statusText: missingCsrf.response.statusText });
 
 const opaqueRedirect = () => ({ type: "opaqueredirect", status: 0, ok: false, text: async () => "" }) as unknown as Response;
 
@@ -111,7 +117,7 @@ describe("WebReg's add form, as the saved pages render it", () => {
     expect(built.init.method).toBe("POST");
     expect(built.init.credentials).toBe("same-origin");
     expect(built.init.redirect).toBe("manual");
-    expect(built.init.headers).toEqual({ Accept: "*/*", "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", "X-Requested-With": "XMLHttpRequest" });
+    expect(built.init.headers).toEqual({ Accept: "*/*", "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8", "X-Requested-With": "XMLHttpRequest", "X-CSRF": "1" });
     expect(built.init.body).toBe("submit=&__RequestVerificationToken=tok%2F%2B%3D1&X-Requested-With=XMLHttpRequest");
     expect([...new URLSearchParams(built.init.body).entries()]).toEqual([
       ["submit", ""],
@@ -180,19 +186,28 @@ describe("only adding is possible", () => {
 describe("WebReg's answer to an add", () => {
   const json = (v: unknown) => JSON.stringify(v);
 
-  it("reads success, already-present and failure with WebReg's message", () => {
-    expect(classifyAddResponse({ status: 200, body: json({ success: true, message: "Added to myCourseBin" }) })).toEqual({ outcome: "added", message: "Added to myCourseBin" });
+  it("decides like WebReg's own handler: 200 is added, any other status failed with WebReg's message", () => {
+    expect(classifyAddResponse({ status: 200, body: json({ message: "Added to myCourseBin" }) })).toEqual({ outcome: "added", message: "Added to myCourseBin" });
     expect(classifyAddResponse({ status: 200, body: "" })).toEqual({ outcome: "added", message: null });
     expect(classifyAddResponse({ status: 200, body: json("Section 29966 is already in your myCourseBin.") }).outcome).toBe("already");
     expect(classifyAddResponse({ status: 409, body: json({ message: "Course already exists in course bin" }) }).outcome).toBe("already");
-    expect(classifyAddResponse({ status: 200, body: json({ success: false, message: "Section is closed" }) })).toEqual({ outcome: "failed", message: "Section is closed" });
-    expect(classifyAddResponse({ status: 200, body: json({ Message: "Unable to add section: unit limit exceeded" }) })).toEqual({ outcome: "failed", message: "Unable to add section: unit limit exceeded" });
+    expect(classifyAddResponse({ status: 400, body: json({ Message: "Unable to add section: unit limit exceeded" }) })).toEqual({ outcome: "failed", message: "Unable to add section: unit limit exceeded" });
     expect(classifyAddResponse({ status: 500, body: "<html><body><h1>Error.</h1><p>An error occurred.</p></body></html>" })).toEqual({ outcome: "failed", message: "Error. An error occurred." });
     expect(classifyAddResponse({ status: 400, body: "" })).toEqual({ outcome: "failed", message: "WebReg answered HTTP 400." });
+    expect(classifyAddResponse({ status: 204, body: "" })).toEqual({ outcome: "failed", message: "WebReg answered HTTP 204." });
+  });
+
+  it("stops on WebReg's real refusal of an add without its X-CSRF header, showing WebReg's message", () => {
+    expect(missingCsrf.request.headers).not.toHaveProperty("X-CSRF");
+    expect(classifyAddResponse({ status: missingCsrf.response.status, body: missingCsrf.response.body })).toEqual({
+      outcome: "auth",
+      message: "WebReg refused the request (HTTP 401): Missing or invalid X-CSRF header.",
+    });
   });
 
   it("treats a redirect, 401/403 or the sign-in page as a session problem", () => {
     expect(classifyAddResponse({ status: 0, type: "opaqueredirect", body: "" }).outcome).toBe("auth");
+    expect(classifyAddResponse({ status: 302, body: "" }).outcome).toBe("auth");
     expect(classifyAddResponse({ status: 401, body: "" }).outcome).toBe("auth");
     expect(classifyAddResponse({ status: 403, body: "" }).outcome).toBe("auth");
     expect(classifyAddResponse({ status: 200, body: "<html><head><title>USC Sign In</title></head><body><form action='/login'></form></body></html>" }).outcome).toBe("auth");
@@ -204,7 +219,7 @@ describe("content script service", () => {
     const web = fakeWebReg({
       answers: {
         "29900": () => new Response(JSON.stringify({ message: "Section 29900 is already in your myCourseBin." }), { status: 200 }),
-        "50390": () => new Response(JSON.stringify({ success: false, message: "Section 50390 is cancelled." }), { status: 200 }),
+        "50390": () => new Response(JSON.stringify({ message: "Section 50390 is cancelled." }), { status: 400 }),
       },
     });
     const service = createCourseBinService(web.fetcher);
@@ -227,6 +242,7 @@ describe("content script service", () => {
     expect(gets.every((s) => s.init.credentials === "same-origin" && s.init.redirect === "manual")).toBe(true);
     const posts = web.posts();
     expect(posts.map((s) => s.url)).toEqual(ALL_IDS.map((id) => `https://webreg.usc.edu/api/section/20271/${id}/add`));
+    expect(posts.every((s) => new Headers(s.init.headers).get("X-CSRF") === "1")).toBe(true);
     expect(posts.map((s) => new URLSearchParams(s.init.body as string).get("__RequestVerificationToken"))).toEqual(["token-CSCI-103", "token-CSCI-103", "token-CSCI-103", "token-PHYS-151", "token-PHYS-151", "token-PHYS-151"]);
     expectOnlyReadsAndAdds(web.seen);
   });
@@ -356,7 +372,7 @@ describe("Add all to myCourseBin dialog", () => {
     const web = fakeWebReg({
       answers: {
         "29900": () => new Response(JSON.stringify("Section 29900 is already in your myCourseBin."), { status: 200 }),
-        "50390": () => new Response(JSON.stringify({ success: false, message: "Section 50390 is cancelled." }), { status: 200 }),
+        "50390": () => new Response(JSON.stringify({ message: "Section 50390 is cancelled." }), { status: 400 }),
       },
     });
     render(createCourseBinService(web.fetcher));
@@ -400,7 +416,7 @@ describe("Add all to myCourseBin dialog", () => {
     await act(async () => button(/Add 6 sections/).click());
     await settle();
 
-    expect(results()).toEqual(["Added", "Added", "Failed: WebReg did not accept the request from this session. Sign in to WebReg again, then retry.", "Not tried", "Not tried", "Not tried"]);
+    expect(results()).toEqual(["Added", "Added", "Failed: WebReg redirected the request; its session may have ended. Sign in to WebReg again, then retry.", "Not tried", "Not tried", "Not tried"]);
     expect(host.querySelector("[role=alert]")?.textContent).toMatch(/Stopped: .*Sign in to WebReg again/);
     expect(web.posts()).toHaveLength(3);
   });
