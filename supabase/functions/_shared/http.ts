@@ -8,9 +8,9 @@ const MAX_BODY_BYTES = 256 * 1024;
 
 export const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-usm-install-id",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Expose-Headers": SOURCE_HEADER,
+  "Access-Control-Expose-Headers": `${SOURCE_HEADER}, retry-after`,
   "Access-Control-Max-Age": "86400",
 };
 
@@ -20,6 +20,8 @@ export class HttpError extends Error {
     readonly code: string,
     message: string,
     readonly details?: unknown,
+    /** Extra response headers, such as Retry-After on a 429. */
+    readonly headers: Record<string, string> = {},
   ) {
     super(message);
     this.name = "HttpError";
@@ -37,6 +39,7 @@ export function errorResponse(err: HttpError): Response {
   return json(
     { error: { code: err.code, message: err.message, ...(err.details !== undefined ? { details: err.details } : {}) } },
     err.status,
+    err.headers,
   );
 }
 

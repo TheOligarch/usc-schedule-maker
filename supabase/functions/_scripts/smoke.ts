@@ -6,6 +6,8 @@
 const BASE = (Deno.env.get("USM_FUNCTIONS_URL") ?? "https://mmdvgvpckweiklkbuxvy.supabase.co/functions/v1").replace(/\/+$/, "");
 const KEY = Deno.env.get("USM_ANON_KEY");
 const TERM = Deno.env.get("USM_TERM") ?? "20271";
+// One anonymous install ID per run, as the extension sends, so the run counts against its own rate-limit budget.
+const INSTALL_ID = crypto.randomUUID();
 if (!KEY) {
   console.error("Set USM_ANON_KEY to the project's anon key.");
   Deno.exit(2);
@@ -21,7 +23,7 @@ async function call(path: string, init: RequestInit = {}): Promise<{ status: num
   const started = performance.now();
   const res = await fetch(`${BASE}/${path}`, {
     ...init,
-    headers: { Authorization: `Bearer ${KEY}`, apikey: KEY!, "Content-Type": "application/json", ...init.headers },
+    headers: { Authorization: `Bearer ${KEY}`, apikey: KEY!, "Content-Type": "application/json", "x-usm-install-id": INSTALL_ID, ...init.headers },
   });
   const text = await res.text();
   let body: any = text;

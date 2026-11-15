@@ -5,14 +5,23 @@
  * Otherwise the Supabase Edge Functions from the shared contract are called with the
  * anon key. `offline: true` forces the built-in mock for one call, which the UI offers
  * when the AI service is unreachable.
+ *
+ * Every call carries the anonymous install ID (lib/installId.ts) for the functions' rate limits.
+ * An HTTP 429 becomes an AiRateLimitError with a friendly wait message, and further calls to that
+ * function (or to all of them, for the global breaker) fail fast locally until the wait is over.
  */
 import { withElectiveInterests } from "./electiveInterests";
 import { FUNCTIONS_BASE, SUPABASE_ANON_KEY, USE_MOCKS } from "./config";
+import { AiError, AiRateLimitError, type LimitScope } from "./aiErrors";
+import { getInstallId } from "./installId";
 import type { AiHealth, ExplainRequest, ExplainResponse, InterviewRequest, InterviewResponse, RefineRequest, RefineResponse, TermData } from "./contract-types";
 import { mockExplain, mockInterview } from "../mocks/mockAi";
 import { normalizeClockTimes } from "../../../supabase/functions/_shared/clock";
 
-export class AiError extends Error {}
+export { AiError, AiRateLimitError };
+
+/** Header the functions count requests by; see supabase/functions/_shared/rate-limit.ts. */
+export const INSTALL_ID_HEADER = "x-usm-install-id";
 
 /** Where an answer came from: the model, the function's own rule-based fallback, or the local mock. */
 export type AiSource = "ai" | "fallback" | "mock";
@@ -24,8 +33,48 @@ export interface AiCallOptions {
 
 export const AI_IS_MOCK = USE_MOCKS;
 
+/** Pauses after a 429, per function name; "*" is the global breaker and pauses every function. */
+const pauses = new Map<string, { until: number; scope: LimitScope }>();
+const ALL = "*";
+
+function activePause(name: string): AiRateLimitError | null {
+  const now = Date.now();
+  let best: { until: number; scope: LimitScope } | null = null;
+  for (const key of [name, ALL]) {
+    const p = pauses.get(key);
+    if (p && p.until > now && (!best || p.until > best.until)) best = p;
+  }
+  return best ? new AiRateLimitError(best.scope, Math.ceil((best.until - now) / 1000)) : null;
+}
+
+/** Tests only: forget every pause. */
+export function resetAiPauses(): void {
+  pauses.clear();
+}
+
+/** Reads a 429: the body's { scope, retryAfterSeconds } first, then the Retry-After header. */
+async function rateLimitFrom(res: Response): Promise<AiRateLimitError> {
+  const body = (await res.json().catch(() => null)) as { error?: { details?: { scope?: unknown; retryAfterSeconds?: unknown } } } | null;
+  const details = body?.error?.details;
+  const scope: LimitScope = details?.scope === "global" || details?.scope === "network" ? details.scope : "user";
+  const fromBody = typeof details?.retryAfterSeconds === "number" ? details.retryAfterSeconds : NaN;
+  const fromHeader = Number(res.headers.get("retry-after"));
+  const seconds = [fromBody, fromHeader].find((n) => Number.isFinite(n) && n > 0) ?? 60;
+  return new AiRateLimitError(scope, Math.min(Math.ceil(seconds), 2 * 86400));
+}
+
+async function installIdHeader(): Promise<Record<string, string>> {
+  try {
+    return { [INSTALL_ID_HEADER]: await getInstallId() };
+  } catch {
+    return {};
+  }
+}
+
 async function callFunction<T>(name: string, method: "GET" | "POST", body: unknown, signal?: AbortSignal): Promise<{ body: T; source: AiSource }> {
   if (!SUPABASE_ANON_KEY) throw new AiError("This build has no Supabase anon key (VITE_SUPABASE_ANON_KEY), so the AI service cannot be reached.");
+  const paused = activePause(name);
+  if (paused) throw paused;
   let res: Response;
   try {
     res = await fetch(`${FUNCTIONS_BASE}/${name}`, {
@@ -33,6 +82,7 @@ async function callFunction<T>(name: string, method: "GET" | "POST", body: unkno
       headers: {
         Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         apikey: SUPABASE_ANON_KEY,
+        ...(await installIdHeader()),
         ...(method === "POST" ? { "Content-Type": "application/json" } : {}),
       },
       body: method === "POST" ? JSON.stringify(body) : undefined,
@@ -41,6 +91,11 @@ async function callFunction<T>(name: string, method: "GET" | "POST", body: unkno
   } catch (err) {
     if (err instanceof DOMException && err.name === "AbortError") throw err;
     throw new AiError("Could not reach the AI service. Check your connection and try again.");
+  }
+  if (res.status === 429) {
+    const limited = await rateLimitFrom(res);
+    pauses.set(limited.scope === "global" ? ALL : name, { until: Date.now() + limited.retryAfterSeconds * 1000, scope: limited.scope });
+    throw limited;
   }
   if (!res.ok) throw new AiError(`The AI service returned an error (HTTP ${res.status}).`);
   const source: AiSource = res.headers.get("x-usm-ai-source") === "fallback" ? "fallback" : "ai";

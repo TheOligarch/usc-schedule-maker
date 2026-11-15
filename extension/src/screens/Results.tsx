@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { AiError, explainSchedules } from "../lib/ai";
+import { AiRateLimitError } from "../lib/aiErrors";
 import { MAX_RESULT_LIMIT, USE_MOCKS } from "../lib/config";
 import type { Blocker, PenaltyKind, RankedSchedule, TermData } from "../lib/contract-types";
 import { chromeBinTransport, courseBinAvailable, type BinTransport } from "../lib/courseBin";
@@ -65,6 +66,8 @@ export function Results({ data, state, onChange, onEdit, binTransport, sample }:
   const [highlight, setHighlight] = useState<string | null>(null);
   const [explanations, setExplanations] = useState<Record<string, string>>({});
   const [explainState, setExplainState] = useState<"idle" | "loading" | "error">("idle");
+  /** The wait message when explanations are paused by the AI rate limit. */
+  const [explainPause, setExplainPause] = useState<string | null>(null);
   const [seatState, setSeatState] = useState<SeatState>({ seats: {}, fetchedAt: {}, loading: false, error: null });
   const listRef = useRef<HTMLOListElement>(null);
   const [binFor, setBinFor] = useState<{ schedule: RankedSchedule; index: number } | null>(null);
@@ -102,13 +105,15 @@ export function Results({ data, state, onChange, onEdit, binTransport, sample }:
       const top = schedules.slice(0, 10);
       if (top.length === 0) return;
       setExplainState("loading");
+      setExplainPause(null);
       try {
         const res = await explainSchedules({ preferences: request.preferences, schedules: top.map((s) => ({ ...s, display: displayString(data, s) })) });
         setExplanations(Object.fromEntries(res.explanations.map((e) => [e.id, e.text])));
         setExplainState("idle");
       } catch (err) {
         setExplainState("error");
-        if (!(err instanceof AiError)) console.warn("explain failed", err);
+        if (err instanceof AiRateLimitError) setExplainPause(err.message);
+        else if (!(err instanceof AiError)) console.warn("explain failed", err);
       }
     },
     [topKey, data, JSON.stringify(request.preferences)],
@@ -254,7 +259,7 @@ export function Results({ data, state, onChange, onEdit, binTransport, sample }:
             <WeekCalendar data={data} schedule={selected} allowed={allowed} highlight={highlight} onHighlight={setHighlight} />
           </Card>
           <ScheduleFeedback data={data} schedule={selected} index={selectedIndex} state={state} running={running} onChange={onChange} />
-          <Explanation index={selectedIndex} text={explanations[selected.id]} state={explainState} onRetry={() => void explain()} />
+          <Explanation index={selectedIndex} text={explanations[selected.id]} state={explainState} pause={explainPause} onRetry={() => void explain()} />
           <SectionDetails
             sample={sample ?? false}
             data={data}
@@ -337,14 +342,21 @@ function ScheduleHeader({
   );
 }
 
-function Explanation({ index, text, state, onRetry }: { index: number; text: string | undefined; state: "idle" | "loading" | "error"; onRetry: () => void }) {
+function Explanation({ index, text, state, pause, onRetry }: { index: number; text: string | undefined; state: "idle" | "loading" | "error"; pause: string | null; onRetry: () => void }) {
   if (index >= 10) return null;
   return (
     <div className="explain" aria-live="polite">
       <Icon name="sparkle" />
       <div>
         <span className="explain-label">Why this schedule</span>
-        {text ? <p>{text}</p> : state === "loading" ? <p className="skeleton">Writing a short explanation...</p> : state === "error" ? (
+        {text ? <p>{text}</p> : state === "loading" ? <p className="skeleton">Writing a short explanation...</p> : state === "error" && pause ? (
+          <p className="muted">
+            {pause}{" "}
+            <button type="button" className="link-btn" onClick={onRetry}>
+              Try again
+            </button>
+          </p>
+        ) : state === "error" ? (
           <p>
             Explanation unavailable.{" "}
             <button type="button" className="link-btn" onClick={onRetry}>

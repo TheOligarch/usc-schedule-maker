@@ -9,6 +9,7 @@
  * student as a summary, and text that is not understood is reported, never ignored.
  */
 import type { Day, HHMM, RankedSchedule, ScheduleRule, Section, SectionType, TermData } from "./contract-types";
+import { AiRateLimitError } from "./aiErrors";
 import { courseSections } from "./sectionPins";
 import { DAYS, fmtTime, toHHMM, toMin } from "./time";
 
@@ -660,6 +661,7 @@ export async function interpretRefinement(text: string, ctx: ParseContext, ai?: 
   const base = { scheduleId: ctx.schedule?.id ?? "no-feasible-schedule", text: trimmed };
   if (complete) return { ...base, constraints: local.constraints, summary: summarize(local.constraints), source: "parser" };
 
+  let aiPause: string | null = null;
   if (ai) {
     try {
       const res = await ai(trimmed, ctx);
@@ -672,11 +674,12 @@ export async function interpretRefinement(text: string, ctx: ParseContext, ai?: 
     } catch (err) {
       if (err instanceof RefinementError) throw err;
       if (err instanceof DOMException && err.name === "AbortError") throw err;
+      if (err instanceof AiRateLimitError) aiPause = err.message;
       // AI unreachable: fall through to whatever the parser understood
     }
   }
   if (!local.constraints.length) {
-    throw new RefinementError(`I couldn’t understand “${local.unparsed.join("; ") || trimmed}”. ${HELP}`);
+    throw new RefinementError(`I couldn’t understand “${local.unparsed.join("; ") || trimmed}”. ${aiPause ? `${aiPause} ` : ""}${HELP}`);
   }
   const ignored = [...local.unparsed, ...(local.ignored.length ? [local.ignored.join(" ")] : [])].join("; ");
   return { ...base, constraints: local.constraints, summary: summarize(local.constraints), source: "parser", ...(ignored ? { ignored } : {}) };

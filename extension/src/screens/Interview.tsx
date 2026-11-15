@@ -1,6 +1,7 @@
 import { isElectiveQuestion } from "../lib/electiveInterests";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AI_IS_MOCK, AiError, interviewTurn, type AiSource } from "../lib/ai";
+import { AiRateLimitError } from "../lib/aiErrors";
 import { MAX_INTERVIEW_QUESTIONS, MAX_SHORTLIST } from "../lib/config";
 import type { Course, Importance, InterviewHistoryItem, InterviewQuestion, Preferences, Shortlist, TermData } from "../lib/contract-types";
 import { geLabel, geShort, unitsLabel } from "../lib/schedule";
@@ -25,6 +26,8 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
   const [question, setQuestion] = useState<InterviewQuestion | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** The error is a rate-limit pause: the offline interview becomes the main way forward. */
+  const [limited, setLimited] = useState(false);
   const [offline, setOffline] = useState(sampleData);
   const [categoryChoices, setCategoryChoices] = useState<string[]>([]);
   const [freeText, setFreeText] = useState("");
@@ -44,6 +47,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
       abortRef.current = ctrl;
       setLoading(true);
       setError(null);
+      setLimited(false);
       try {
         const blocks = Object.values(allowedTimes(state.times)).flat();
         const hardHours = blocks.length
@@ -72,7 +76,8 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
         }
       } catch (err) {
         if (ctrl.signal.aborted || (err instanceof DOMException && err.name === "AbortError")) return;
-        setError(err instanceof AiError ? err.message : "Something went wrong while talking to the AI service.");
+        setLimited(err instanceof AiRateLimitError);
+        setError(err instanceof AiError || err instanceof AiRateLimitError ? err.message : "Something went wrong while talking to the AI service.");
       } finally {
         if (!ctrl.signal.aborted) setLoading(false);
       }
@@ -228,7 +233,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
             {loading && <Spinner label={state.history.length === 0 ? "Getting your first question..." : "Thinking..."} />}
             {error && (
               <Notice
-                tone="error"
+                tone={limited ? "warn" : "error"}
                 action={
                   <div className="row gap-sm">
                     <button type="button" className="btn btn-secondary btn-sm" onClick={() => void ask(state.history)}>
@@ -237,7 +242,7 @@ export function Interview({ data, sampleData, state, onChange, onBack, onNext }:
                     {!AI_IS_MOCK && !offline && (
                       <button
                         type="button"
-                        className="btn btn-ghost btn-sm"
+                        className={`btn ${limited ? "btn-primary" : "btn-ghost"} btn-sm`}
                         onClick={() => {
                           setOffline(true);
                           void ask(state.history, true);
