@@ -19,14 +19,7 @@ interface Props {
 export function Priorities({ importance, onImportance, onBack, onNext }: Props) {
   return (
     <div className="screen">
-      <div className="intro">
-        <h1>Build schedules around what you actually want.</h1>
-        <p className="lead">
-          Your courses, available times and unit cap set the rules. Choose what matters most below, then answer a few questions about your interests and week layout. Professor ratings affect ranking, never eligibility.
-        </p>
-      </div>
-
-      <Card title="What matters to you?" subtitle="Rate each factor from 1 (don't care) to 10 (top priority). These weights decide how schedules are ranked; they never remove a schedule.">
+      <Card title="What matters to you?" subtitle="Rate each factor from 1 (don't care) to 10 (top priority). These factors help decide the rankings for your potential schedules">
         <div className="sliders">
           {FACTORS.map((f) => (
             <div key={f.key} className="slider-row">

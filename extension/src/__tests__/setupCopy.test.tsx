@@ -34,7 +34,12 @@ describe("setup and interview guidance", () => {
   it("offers rating priority and an editable shortlist without repeating setup controls", () => {
     const state = defaultState();
     const priorities = renderToStaticMarkup(<Priorities importance={state.importance} onImportance={noop} onBack={noop} onNext={noop} />);
-    expect(priorities).toContain("Professor ratings affect ranking, never eligibility");
+    expect(priorities).not.toContain("Build schedules around what you actually want.");
+    expect(priorities).not.toContain("Your courses, available times and unit cap set the rules.");
+    expect(priorities).not.toContain('class="intro"');
+    expect(priorities).toContain("Rate each factor from 1 (don&#x27;t care) to 10 (top priority).");
+    expect(priorities).toContain("These factors help decide the rankings for your potential schedules");
+    expect(priorities).not.toContain("These weights decide how schedules are ranked");
     expect(priorities).toContain('id="imp-rmp"');
     state.slots = [{ id: "s", label: "Elective", kind: "elective" }];
     state.interview = { preferences: DEFAULT_PREFERENCES, summary: [], shortlists: [{ label: "Elective", options: [] }] };
